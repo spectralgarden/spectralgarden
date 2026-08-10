@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SPECTRAL GARDEN // LABS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="light-theme">
+
+    <!-- CRT Scanline and Flicker Overlay Grid (Subdued for light theme) -->
+    <div class="crt-overlay"></div>
+    <div class="vhs-flicker"></div>
+    
+    <!-- Red Damage HUD Overlay -->
+    <div id="damage-overlay"></div>
+
+    <!-- Background Three.js Infinite Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Cyber Goth Level Transition Overlay Banner -->
+    <div id="level-banner" class="level-banner">
+        <div id="level-banner-text" class="level-banner-glitch">LEVEL 1</div>
+        <div id="level-banner-sub" class="level-banner-subtext">VOID SIGNAL RECONFIGURED</div>
+    </div>
+
+    <!-- ESC Pause Menu Overlay Modal -->
+    <div id="pause-modal" class="pause-modal" style="display: none;">
+        <div class="pause-content">
+            <div class="pause-header">SYSTEM HALTED // PAUSED</div>
+            <div class="pause-sub">PRESS [ESC] OR CLICK RESUME TO RE-ENGAGE CORE</div>
+            <div class="pause-btn-row">
+                <button class="retro-btn" onclick="togglePauseGame()">RESUME SESSION</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over / Leaderboard Prompt Modal -->
+    <div id="gameover-modal" class="gameover-modal" style="display: none;">
+        <div class="gameover-content">
+            <div class="gameover-header">SYS_CRASH // CORE DESTROYED</div>
+            <div class="gameover-score-display">FINAL SCORE: <span id="final-score-val">0</span></div>
+            <p>Enter your network operator nickname for the local highscore matrix:</p>
+            <input type="text" id="leaderboard-name-input" maxlength="12" placeholder="ANONYMOUS" autocomplete="off">
+            <div class="gameover-btn-row">
+                <button class="retro-btn" onclick="submitScoreToLeaderboard()">SUBMIT RECORD</button>
+            </div>
+            <div class="leaderboard-table-container">
+                <div class="lb-title">-- LOCAL HIGH_SCORES --</div>
+                <div id="leaderboard-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boss HUD Arena Panel -->
+    <div id="boss-hud" class="boss-hud" style="display: none;">
+        <div class="boss-title">CORE_BREACH_CORRUPTOR.EXE</div>
+        <div class="boss-hp-bar-outer">
+            <div id="boss-hp-bar-inner" class="boss-hp-bar-inner"></div>
+        </div>
+        <div class="boss-hp-text">HP: <span id="boss-hp-current">0</span> / <span id="boss-hp-max">0</span></div>
+    </div>
+
+    <!-- Vintage GUI Desktop Environment -->
+    <div id="desktop">
+        
+        <!-- Large Background Wallpaper Logo -->
+        <div class="wallpaper-logo">SPECTRAL GARDEN</div>
+
+        <!-- DESKTOP ICONS REMOVED/COMMENTED OUT PER REQUEST -->
+        <!-- All execution handled cleanly via the [ VOID ] start menu -->
+        <div class="desktop-icons" style="display: none;">
+            <!-- 
+            <div class="icon" onclick="openWindow('vst-window')">
+                <div class="icon-pic">🔊</div>
+                <div class="icon-label">vst_rack.exe</div>
+            </div>
+            <div class="icon" onclick="openWindow('games-window')">
+                <div class="icon-pic">👾</div>
+                <div class="icon-label">arcade.exe</div>
+            </div>
+            <div class="icon" onclick="openWindow('apps-window')">
+                <div class="icon-pic">🛠️</div>
+                <div class="icon-label">toolbox.exe</div>
+            </div>
+            <div class="icon" onclick="openWindow('music-window')">
+                <div class="icon-pic">💿</div>
+                <div class="icon-label">cd_player.exe</div>
+            </div>
+            -->
+        </div>
+
+        <!-- Admin Command Prompt Window -->
+        <div id="admin-prompt-window" class="window" style="top: 250px; left: 300px; width: 450px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\SYS\ADMIN_CONSOLE.EXE</span>
+                <button class="close-btn" onclick="closeWindow('admin-prompt-window')">X</button>
+            </div>
+            <div class="window-body terminal-body">
+                <div id="admin-terminal-output">SYS_ADMIN: ENTER LEVEL SKIP COMMANDS (e.g. 'admin69_skip_to_15')...<br></div>
+                <form id="admin-terminal-form" onsubmit="submitAdminCommand(event)">
+                    <span class="prompt">></span>
+                    <input type="text" id="admin-terminal-input" autocomplete="off" maxlength="50" autofocus>
+                </form>
+            </div>
+        </div>
+
+        <!-- Draggable Window 1: VST Showcase -->
+        <div id="vst-window" class="window" style="top: 30px; left: 180px; width: 450px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\PROG\VST_UNITS\MATRIX.EXE</span>
+                <button class="close-btn" onclick="closeWindow('vst-window')">X</button>
+            </div>
+            <div class="window-body">
+                <div class="vst-preview">
+                    <img id="vst-img" src="assets/images/vstforsaken.gif" alt="[Vapor Synth VST Interface Image]" />
+                </div>
+                <h3>VST MODULE READY</h3>
+                <p>Select a paranormal synthesis module from the [ VOID ] menu below.</p>
+                <div class="action-bar"></div>
+                <div class="window-navigation">
+                    <button class="retro-btn nav-btn" onclick="navigateModule('vst', 'prev')">◀ BACK</button>
+                    <button class="retro-btn nav-btn" onclick="navigateModule('vst', 'next')">NEXT ▶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Draggable Window 4: Games Cabinet -->
+        <div id="games-window" class="window" style="top: 15%; left: 30%; width: 420px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\PROG\GAMES\ARCADE_CORE.EXE</span>
+                <button class="close-btn" onclick="closeWindow('games-window')">X</button>
+            </div>
+            <div class="window-body">
+                <div class="window-preview">
+                    <img id="game-img" src="" alt="[Game Simulation Preview]" />
+                </div>
+                <h3>SPECTRAL GARDEN // CORE SIMULATION</h3>
+                <p>In active development. System telemetry online.</p>
+                <div class="game-terminal-box">CORE_STATUS: RUNNING...</div>
+                <div class="window-navigation">
+                    <button class="retro-btn nav-btn" onclick="navigateModule('games', 'prev')">◀ BACK</button>
+                    <button class="retro-btn nav-btn" onclick="navigateModule('games', 'next')">NEXT ▶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Draggable Window 5: App Utilities (Akashic Tarot) -->
+        <div id="apps-window" class="window" style="top: 30%; left: 35%; width: 440px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\PROG\APPS\AKASHIC_TAROT.EXE</span>
+                <button class="close-btn" onclick="closeWindow('apps-window')">X</button>
+            </div>
+            <div class="window-body">
+                <div class="window-preview">
+                    <img id="app-img" src="assets/images/tarot_preview.gif" alt="[Akashic Tarot Interface]" />
+                </div>
+                <h3>AKASHIC TAROT WEBAPP</h3>
+                <p>Interactive divination tool module.</p>
+                <div class="app-data-box">STATUS: ONLINE</div>
+                <div class="window-navigation">
+                    <button class="retro-btn nav-btn" onclick="navigateModule('apps', 'prev')">◀ BACK</button>
+                    <button class="retro-btn nav-btn" onclick="navigateModule('apps', 'next')">NEXT ▶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MUSIC WINDOW COMMENTED OUT PER REQUEST -->
+        <!--
+        <div id="music-window" class="window" style="top: 45%; left: 40%; width: 380px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\MEDIA\PLAYER\AUDIO_TRACK.EXE</span>
+                <button class="close-btn" onclick="closeWindow('music-window')">X</button>
+            </div>
+            <div class="window-body">
+                <div class="window-preview"><img id="music-img" src="" alt="" /></div>
+                <h3>SPECTRAL AUDIO DECK</h3>
+                <div class="music-tracker-display">[ ACTIVE TRACK LOADED ]</div>
+                <div class="window-navigation">
+                    <button class="retro-btn nav-btn" onclick="navigateModule('music', 'prev')">◀ BACK</button>
+                    <button class="retro-btn nav-btn" onclick="navigateModule('music', 'next')">NEXT ▶</button>
+                </div>
+            </div>
+        </div>
+        -->
+
+    </div>
+
+    <!-- 90s Cyber OS Taskbar system -->
+    <div id="taskbar">
+        <button class="start-btn" onclick="toggleStartMenu(event)">
+            <span>🌀</span> [ VOID ]
+        </button>
+        <div class="taskbar-right">
+            <!-- Lives Display Widget -->
+            <div class="lives-display-box">
+                LIVES: <span id="lives-num-display">❤️❤️❤️</span>
+            </div>
+
+            <!-- Level Display Widget -->
+            <div class="level-display-box">
+                LVL: <span id="level-num-display">1</span>/32
+            </div>
+
+            <!-- Experience Load Bar -->
+            <div class="xp-container">
+                <div class="xp-label">
+                    <span>XP</span>
+                    <span id="xp-text">0/2000</span>
+                </div>
+                <div class="xp-bar-outer">
+                    <div id="xp-bar-inner" class="xp-bar-inner"></div>
+                </div>
+            </div>
+
+            <!-- Energy Reserve Bar -->
+            <div class="energy-container">
+                <div class="energy-label">
+                    <span>ENERGY</span>
+                    <span id="energy-text">100%</span>
+                </div>
+                <div class="energy-bar-outer">
+                    <div id="energy-bar-inner" class="energy-bar-inner"></div>
+                </div>
+            </div>
+
+            <!-- Health / Data Shield progress bar -->
+            <div class="shield-container">
+                <div class="shield-label">
+                    <span>DATA_SHIELD</span>
+                    <span id="shield-text">100%</span>
+                </div>
+                <div class="shield-bar-outer">
+                    <div id="shield-bar-inner" class="shield-bar-inner"></div>
+                </div>
+            </div>
+
+            <!-- How To Play Flush Taskbar Popup -->
+            <div id="help-submenu-container">
+                <button id="help-submenu-trigger" class="retro-btn" onclick="toggleHelpSubmenu(event)">? HOW TO PLAY</button>
+                <div id="help-submenu">
+                    <div class="help-content-inner">
+                        <div class="help-title">[ FIELD MANUAL & SPELLS ]</div>
+                        <p>• <b>SLINGSHOT:</b> Click & drag core, release to fling.</p>
+                        <p>• <b>PAUSE:</b> Press [ESC] at any time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Bug Tray Access Submenu -->
+            <div id="bug-submenu-container">
+                <button id="bug-submenu-trigger" class="retro-btn" onclick="toggleBugSubmenu(event)">◀</button>
+                <div id="bug-submenu">
+                    <div class="bug-counter-container">
+                        <span class="bug-submenu-icon">👾</span>
+                        <div class="bug-stats-grid">
+                            <div>ORB HP: <span id="orb-hp-display">100</span>%</div>
+                            <div>KILLS: <span id="bug-counter">0</span></div>
+                            <div>HIGH : <span id="bug-highscore">0</span></div>
+                        </div>
+                        <span class="retro-tooltip-text">Data Bug Registry</span>
+                    </div>
+                </div>
+            </div>
+            <div id="system-clock">--:-- --</div>
+        </div>
+    </div>
+
+    <!-- [ VOID ] Panel Submenu Tree: Cleaned (Music Player and placeholders commented out) -->
+    <div id="start-menu">
+        <div class="start-menu-inner">
+            <div class="start-menu-sidebar">
+                <div class="sidebar-text">SPECTRAL GARDEN</div>
+            </div>
+            <div class="start-menu-content">
+                
+                <!-- VSTs: All 14 fully preserved -->
+                <div class="menu-item">
+                    <span>🔊 VSTs</span> <span class="menu-item-arrow">▶</span>
+                    <div class="submenu">
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_a')">arcane bits</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_b')">CrescentQ</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_c')">downer</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_d')">Echofield Reliquary</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_e')">Etherforge Harmonics</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_f')">forsaken</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_g')">Hexchant Harmonizer</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_h')">Isolated</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_i')">Serpentine</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_j')">Sorrow Storm</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_k')">Spectral Wraith</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_l')">Trickster</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_m')">Voidbreak</div>
+                        <div class="submenu-item" onclick="loadModule('vst', 'vst_n')">Wraithgate Vocoder</div>
+                    </div>
+                </div>
+
+                <!-- GAMES: Main game active -->
+                <div class="menu-item">
+                    <span>👾 GAMES</span> <span class="menu-item-arrow">▶</span>
+                    <div class="submenu">
+                        <div class="submenu-item" onclick="loadModule('games', 'game_a')">Spectral Garden (Main Game)</div>
+                    </div>
+                </div>
+
+                <!-- APPS: Akashic Tarot active -->
+                <div class="menu-item">
+                    <span>🛠️ APPS</span> <span class="menu-item-arrow">▶</span>
+                    <div class="submenu">
+                        <div class="submenu-item" onclick="loadModule('apps', 'app_a')">Akashic Tarot</div>
+                    </div>
+                </div>
+
+                <!-- MUSIC PLAYER COMMENTED OUT -->
+                <!--
+                <div class="menu-item">
+                    <span>💿 MUSIC</span> <span class="menu-item-arrow">▶</span>
+                    <div class="submenu">
+                        <div class="submenu-item" onclick="loadModule('music', 'track_a')">Hypnotic Vortex Loop</div>
+                    </div>
+                </div>
+                -->
+
+                <!-- Admin Terminal Command Line Option -->
+                <div class="menu-item" onclick="openWindow('admin-prompt-window'); document.getElementById('start-menu').style.display='none';">
+                    <span>⚡ COMMAND LINE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebGL and Logic Drivers -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

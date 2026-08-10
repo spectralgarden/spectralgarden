@@ -1,0 +1,1264 @@
+/* ========================================================================== */
+/* SPECTRAL GARDEN // LABS - Brutalist Clean Light Theme (White, Black, Red)  */
+/* ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+body {
+    background-color: #f4f4f4;
+    font-family: "Courier New", Courier, monospace;
+    color: #111111;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: url('../assets/images/star_cursor.png') 32 2, auto;
+}
+
+a, button, .retro-btn, .close-btn, .icon, .start-btn, .submenu-item, .menu-item, input, .window-header {
+    cursor: url('../assets/images/star_cursor.png') 32 2, pointer !important;
+}
+
+body.bomb-armed, body.bomb-armed * {
+    cursor: crosshair !important;
+}
+
+body.bomb-burst-flash::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(204, 0, 51, 0.15);
+    z-index: 100008;
+    pointer-events: none;
+    animation: flash-decay 0.2s ease-out forwards;
+}
+
+@keyframes flash-decay {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.sparkle-trail {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    z-index: 100004;
+    transform: translate(-50%, -50%);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    background-color: #cc0033;
+}
+
+/* CRT Screen Scanlines and Subtle Light Toning */
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.02) 50%), linear-gradient(90deg, rgba(204, 0, 0, 0.01), rgba(0, 0, 0, 0.005), rgba(0, 0, 204, 0.01));
+    background-size: 100% 4px, 6px 100%;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.vhs-flicker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.01);
+    opacity: 0.05;
+    z-index: 9998;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.05; }
+    50% { opacity: 0.07; }
+    100% { opacity: 0.04; }
+}
+
+#damage-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(204, 0, 51, 0);
+    z-index: 100005;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.05s ease-out;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#desktop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 40px);
+    z-index: 10;
+    padding: 20px;
+    padding-bottom: 60px;
+    overflow: hidden;
+}
+
+.wallpaper-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(2.5rem, 8vw, 6.5rem);
+    font-weight: 900;
+    letter-spacing: 18px;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+    color: rgba(0, 0, 0, 0.03);
+    text-shadow: 
+        -3px 0px 0px rgba(204, 0, 51, 0.08),
+        3px 0px 0px rgba(0, 0, 0, 0.06),
+        0px 0px 15px rgba(0, 0, 0, 0.05);
+    animation: wallpaper-pulse 8s ease-in-out infinite;
+}
+
+@keyframes wallpaper-pulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.02);
+    }
+}
+
+.desktop-icons {
+    display: none;
+}
+
+/* Brutalist Light Windows Styling */
+.window {
+    background-color: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.85);
+    border-radius: 0px;
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+    position: absolute;
+    z-index: 10;
+}
+
+.window-header {
+    background: #111111;
+    color: #ffffff;
+    padding: 6px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #cc0033;
+    font-size: 12px;
+}
+
+.window-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.close-btn {
+    background: #111111;
+    border: 1px solid #cc0033;
+    color: #cc0033;
+    font-size: 11px;
+    font-weight: bold;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.close-btn:hover {
+    background: #cc0033;
+    color: #ffffff;
+}
+
+.close-btn:active {
+    background: #880022;
+}
+
+.window-body {
+    padding: 12px;
+    color: #111111;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.retro-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #ffffff;
+    border: 2px solid #111111;
+    color: #111111;
+    text-align: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: 3px 3px 0px #111111;
+    transition: transform 0.05s ease, background 0.05s;
+}
+
+.retro-btn:hover {
+    background: #111111;
+    color: #ffffff;
+    box-shadow: 3px 3px 0px #cc0033;
+}
+
+.retro-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #111111;
+}
+
+.action-bar {
+    display: flex;
+    gap: 8px;
+}
+
+.window-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed #cccccc;
+    gap: 8px;
+}
+
+.nav-btn {
+    flex: 1;
+    font-weight: bold;
+}
+
+.vst-preview, .window-preview {
+    width: 100%;
+    height: 180px;
+    background-color: #000000;
+    border: 2px solid #111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.vst-preview img, .window-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.terminal-body {
+    background-color: #0b0b0b;
+    border: 1px solid #333333;
+    font-family: 'Courier New', monospace;
+    height: 220px;
+    overflow-y: auto;
+}
+
+#terminal-output, #admin-terminal-output {
+    flex-grow: 1;
+    white-space: pre-wrap;
+    color: #00ff66;
+}
+
+#terminal-form, #admin-terminal-form {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+}
+
+.prompt {
+    color: #cc0033;
+    margin-right: 5px;
+}
+
+#terminal-input, #admin-terminal-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #00ff66;
+    font-family: inherit;
+    font-size: inherit;
+    flex-grow: 1;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.game-terminal-box, .app-data-box {
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    color: #111111;
+    font-family: monospace;
+    padding: 8px;
+    height: 100px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-size: 11px;
+}
+
+/* Taskbar Styling */
+#taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #ffffff;
+    border-top: 2px solid #111111;
+    box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 10000;
+}
+
+.start-btn {
+    background-color: #111111;
+    border: 2px solid #cc0033;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 14px;
+    outline: none;
+    box-shadow: 2px 2px 0px #cc0033;
+    transition: background 0.15s;
+}
+
+.start-btn:hover {
+    background: #cc0033;
+}
+
+.start-btn:active {
+    background: #880022;
+}
+
+.taskbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 85%;
+}
+
+#system-clock {
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    color: #111111;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    height: 28px;
+}
+
+.level-display-box {
+    background-color: #eaeaea;
+    border: 1px solid #cc0033;
+    color: #cc0033;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    font-weight: bold;
+}
+
+.lives-display-box {
+    background-color: #eaeaea;
+    border: 1px solid #cc0033;
+    color: #cc0033;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    font-weight: bold;
+}
+
+/* XP Taskbar Widget */
+.xp-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 28px;
+    width: 100px;
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 9px;
+}
+
+.xp-label {
+    display: flex;
+    justify-content: space-between;
+    color: #111111;
+    font-weight: bold;
+}
+
+.xp-bar-outer {
+    width: 100%;
+    height: 4px;
+    background-color: #cccccc;
+    border: 1px solid #111111;
+    margin-top: 1px;
+    overflow: hidden;
+}
+
+.xp-bar-inner {
+    width: 0%;
+    height: 100%;
+    background-color: #cc0033;
+    transition: width 0.1s ease-out;
+}
+
+/* Energy Reserve Taskbar Widget */
+.energy-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 28px;
+    width: 100px;
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 9px;
+}
+
+.energy-label {
+    display: flex;
+    justify-content: space-between;
+    color: #111111;
+    font-weight: bold;
+}
+
+.energy-bar-outer {
+    width: 100%;
+    height: 4px;
+    background-color: #cccccc;
+    border: 1px solid #111111;
+    margin-top: 1px;
+    overflow: hidden;
+}
+
+.energy-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: #111111;
+    transition: width 0.1s ease-out;
+}
+
+/* Shield Progress Taskbar Widget */
+.shield-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 28px;
+    width: 110px;
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 9px;
+}
+
+.shield-label {
+    display: flex;
+    justify-content: space-between;
+    color: #111111;
+    font-weight: bold;
+}
+
+.shield-bar-outer {
+    width: 100%;
+    height: 4px;
+    background-color: #cccccc;
+    border: 1px solid #111111;
+    margin-top: 1px;
+    overflow: hidden;
+}
+
+.shield-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: #cc0033;
+    transition: width 0.1s ease-out;
+}
+
+/* How To Play Flush Taskbar Popup */
+#help-submenu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#help-submenu-trigger {
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: bold;
+    height: 28px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    color: #111111;
+    background: #eaeaea;
+    border: 1px solid #111111;
+}
+
+#help-submenu {
+    display: none;
+    position: absolute;
+    bottom: 38px;
+    right: 0;
+    width: 290px;
+    background-color: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    z-index: 10002;
+}
+
+.help-content-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: monospace;
+    font-size: 10px;
+    color: #111111;
+    line-height: 1.3;
+}
+
+.help-title {
+    color: #cc0033;
+    font-weight: bold;
+    border-bottom: 1px dashed #111111;
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+}
+
+/* Pause Menu Styling */
+.pause-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 100030;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pause-content {
+    background: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.9);
+    width: 360px;
+    padding: 24px;
+    text-align: center;
+    font-family: monospace;
+    color: #111111;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pause-header {
+    color: #111111;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.pause-sub {
+    font-size: 10px;
+    color: #555555;
+    letter-spacing: 1px;
+}
+
+.pause-btn-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+/* Game Over Leaderboard Modal Styling */
+.gameover-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 100020;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameover-content {
+    background: #ffffff;
+    border: 2px solid #cc0033;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.9);
+    width: 380px;
+    padding: 20px;
+    text-align: center;
+    font-family: monospace;
+    color: #111111;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gameover-header {
+    color: #cc0033;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.gameover-score-display {
+    font-size: 18px;
+    color: #111111;
+    font-weight: bold;
+}
+
+.gameover-content p {
+    font-size: 11px;
+    color: #555555;
+}
+
+#leaderboard-name-input {
+    background: #eaeaea;
+    border: 1px solid #111111;
+    color: #111111;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 8px;
+    text-align: center;
+    outline: none;
+    letter-spacing: 2px;
+}
+
+.gameover-btn-row {
+    display: flex;
+    justify-content: center;
+}
+
+.leaderboard-table-container {
+    background: #eaeaea;
+    border: 1px solid #111111;
+    padding: 10px;
+    max-height: 160px;
+    overflow-y: auto;
+    font-size: 11px;
+    text-align: left;
+}
+
+.lb-title {
+    color: #cc0033;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 6px;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.lb-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px dotted #cccccc;
+}
+
+.lb-row span:nth-child(2) {
+    color: #cc0033;
+    font-weight: bold;
+}
+
+/* Boss HUD Panel */
+.boss-hud {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    background-color: #ffffff;
+    border: 2px solid #cc0033;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    z-index: 100009;
+    font-family: monospace;
+    text-align: center;
+}
+
+.boss-title {
+    color: #cc0033;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.boss-hp-bar-outer {
+    width: 100%;
+    height: 10px;
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.boss-hp-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: #cc0033;
+    transition: width 0.1s ease;
+}
+
+.boss-hp-text {
+    font-size: 9px;
+    color: #555555;
+}
+
+/* Boss Entity */
+.boss-entity {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #111111;
+    border: 2px solid #cc0033;
+    box-shadow: 0 0 25px rgba(204, 0, 51, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #cc0033;
+    z-index: 996;
+    pointer-events: none;
+}
+
+.boss-projectile {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #cc0033;
+    z-index: 995;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.boss-charge-line {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(204, 0, 51, 0.5);
+    z-index: 994;
+    pointer-events: none;
+    transform-origin: top left;
+}
+
+#bug-submenu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#bug-submenu-trigger {
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: bold;
+    width: 24px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    background: #eaeaea;
+    border: 1px solid #111111;
+}
+
+#bug-submenu {
+    display: none;
+    position: absolute;
+    bottom: 35px;
+    right: 0;
+    background-color: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+    padding: 8px 12px;
+    z-index: 10002;
+    white-space: nowrap;
+}
+
+.bug-counter-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #cc0033;
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.bug-stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+}
+
+.bug-stats-grid span {
+    color: #111111;
+}
+
+.bug-submenu-icon {
+    font-size: 18px;
+    display: inline-block;
+}
+
+.retro-tooltip-text {
+    visibility: hidden;
+    background-color: #111111;
+    color: #ffffff;
+    border: 1px solid #cc0033;
+    text-align: center;
+    padding: 4px 8px;
+    position: absolute;
+    z-index: 100003;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 10px;
+    font-family: monospace;
+    pointer-events: none;
+}
+
+.bug-counter-container:hover .retro-tooltip-text {
+    visibility: visible;
+}
+
+.data-bug {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    z-index: 999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    will-change: transform;
+}
+
+.data-bug.healer-bug {
+    filter: drop-shadow(0px 0px 6px #cc0033) !important;
+}
+
+.bug-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 50%;
+    background-color: #cc0033;
+}
+
+/* Collectible Power-up Node */
+.retro-powerup {
+    position: absolute;
+    background: #ffffff;
+    border: 2px solid #111111;
+    color: #111111;
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 5px 8px;
+    box-shadow: 2px 2px 0px #111111;
+    z-index: 998;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.retro-powerup.health-potion {
+    border-color: #cc0033;
+    color: #cc0033;
+}
+
+.retro-powerup.bomb-powerup {
+    border-color: #ff6600;
+    color: #ff6600;
+}
+
+.retro-powerup.energy-cell {
+    border-color: #111111;
+    color: #111111;
+}
+
+/* Visual Aura Waves */
+.aura-wave {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 990;
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 1;
+    transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 0.4s ease-out;
+}
+
+.aura-wave.damage {
+    width: 360px;
+    height: 360px;
+    border: 4px solid #cc0033;
+    background: rgba(204, 0, 51, 0.05);
+}
+
+.aura-wave.knockback {
+    width: 480px;
+    height: 480px;
+    border: 4px solid #111111;
+    background: rgba(17, 17, 17, 0.05);
+}
+
+.aura-wave.expanded {
+    transform: translate(-50%, -50%) scale(1.0);
+    opacity: 0;
+}
+
+.aoe-explosion {
+    position: absolute;
+    border: 3px double #cc0033;
+    border-radius: 50%;
+    background: rgba(204, 0, 51, 0.06);
+    pointer-events: none;
+    z-index: 100006;
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 1;
+    transition: transform 0.6s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 0.6s ease-out;
+}
+
+.aoe-explosion.detonated {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+}
+
+.fighter-orb {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #cc0033;
+    border: 2px solid #111111;
+    border-radius: 50%;
+    z-index: 998;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.laser-beam {
+    position: absolute;
+    height: 2px;
+    background: #cc0033;
+    z-index: 997;
+    pointer-events: none;
+    transform-origin: top left;
+}
+
+.spiral-vortex-wrapper {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    z-index: 998;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.spiral-vortex-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spiral-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed #111111;
+}
+
+.ring-1 {
+    width: 100%;
+    height: 100%;
+    animation: spin-clockwise 1.6s linear infinite;
+}
+
+.ring-2 {
+    width: 75%;
+    height: 75%;
+    border-color: #cc0033;
+    animation: spin-counter 1.1s linear infinite;
+}
+
+.ring-3 {
+    width: 45%;
+    height: 45%;
+    animation: spin-clockwise 0.7s linear infinite;
+}
+
+.vortex-symbol {
+    font-size: 34px;
+    z-index: 999;
+    color: #cc0033;
+}
+
+@keyframes spin-clockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spin-counter {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* Level Announcement Banner Glitch Overlay */
+.level-banner {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    text-align: center;
+    z-index: 100007;
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+}
+
+.level-banner.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+}
+
+.level-banner-glitch {
+    font-size: clamp(2.5rem, 9vw, 6.5rem);
+    font-weight: 900;
+    color: #111111;
+    text-transform: uppercase;
+    letter-spacing: 14px;
+    text-shadow: 
+        -3px -3px 0px #cc0033,
+        3px 3px 0px #666666;
+}
+
+.level-banner-subtext {
+    font-size: 13px;
+    color: #cc0033;
+    letter-spacing: 8px;
+    margin-top: 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+#start-menu {
+    position: fixed;
+    bottom: 40px;
+    left: 10px;
+    width: 260px;
+    background-color: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+    display: none;
+    z-index: 10001;
+}
+
+.start-menu-inner {
+    display: flex;
+    width: 100%;
+}
+
+.start-menu-sidebar {
+    width: 32px;
+    background: #111111;
+    border-right: 2px solid #cc0033;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.sidebar-text {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+.start-menu-content {
+    flex-grow: 1;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.menu-item {
+    position: relative;
+    padding: 8px 12px;
+    color: #111111;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.menu-item:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.menu-item-arrow {
+    font-size: 9px;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    background-color: #ffffff;
+    border: 2px solid #111111;
+    width: 200px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
+    z-index: 10002;
+    padding: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cc0033 #eaeaea;
+}
+
+.submenu::-webkit-scrollbar {
+    width: 10px;
+}
+
+.submenu::-webkit-scrollbar-track {
+    background: #eaeaea;
+    border: 1px solid #111111;
+}
+
+.submenu::-webkit-scrollbar-thumb {
+    background: #cc0033;
+    border: 1px solid #111111;
+}
+
+.menu-item:hover .submenu,
+.submenu:hover {
+    display: block;
+}
+
+.submenu-item {
+    padding: 8px 10px;
+    color: #111111;
+    font-size: 11px;
+}
+
+.submenu-item:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+/* Mobile responsive settings */
+@media screen and (max-width: 768px) {
+    body {
+        cursor: default !important;
+    }
+    a, button, .retro-btn, .close-btn, .icon, .start-btn, .submenu-item, .menu-item, input, .window-header {
+        cursor: default !important;
+    }
+    .window {
+        width: 90% !important;
+        left: 5% !important;
+    }
+    #taskbar {
+        padding: 0 5px;
+    }
+    .taskbar-right {
+        gap: 4px;
+    }
+    .xp-container, .energy-container, .shield-container {
+        width: 60px;
+        padding: 2px;
+        font-size: 7px;
+    }
+    .xp-label span:nth-child(2),
+    .energy-label span:nth-child(2),
+    .shield-label span:nth-child(2) {
+        display: none;
+    }
+    #system-clock {
+        padding: 4px 6px;
+        font-size: 9px;
+    }
+}
