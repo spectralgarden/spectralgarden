@@ -1279,3 +1279,12 @@ body.bomb-burst-flash::after {
     padding: 14px;
     line-height: 1.5;
 }
+.app-data-box a {
+    color: #cc0033;
+    text-decoration: underline;
+}
+.app-data-box a:hover {
+    background-color: #111111;
+    color: #ffffff;
+    text-decoration: none;
+}

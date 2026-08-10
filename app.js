@@ -28,7 +28,7 @@ const moduleDatabase = {
             image: "assets/images/vst_downer.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/downer/releases/download/downer/downer.zip" },
-                { text: "MAC and Linux coming soon", href: "#" }
+               
             ]
         },
         vst_d: {
@@ -203,77 +203,84 @@ const moduleDatabase = {
             content: "STATUS: SIMULATING...\nRENDERING ENGINE: VECTOR_CORE_V1\nFPS: 60 [STABLE]"
         }
     },
-    apps: {
+   apps: {
         app_a: {
-            title: "C:\\PROG\\APPS\\HEX_EDITOR.EXE",
-            header: "HEX_DECIMATOR V0.1",
-            desc: "Read raw binary offsets from corrupt floppy images. Safe memory mapping implemented.",
-            image: "assets/images/app_hex_editor.gif",
-            content: "0000h: 4D 5A 90 00 03 00 00 00 | MZ......\n0010h: 04 00 00 00 FF FF 00 00 | ........"
+            title: "C:\\PROG\\APPS\\AKASHIC_TAROT.EXE",
+            header: "AKASHIC TAROT V2.3",
+            desc: "A ritual-coded search guide for the Akashic Tarot deck. Built as a static web portal using HTML, CSS, and JavaScript.",
+            image: "assets/images/tarot_preview.gif",
+            content: "--- AKASHIC TAROT SYSTEM SPECS ---<br><br>" +
+                     "✨ <strong>FEATURES:</strong><br>" +
+                     "• Search: Instantly locates & highlights cards.<br>" +
+                     "• Random Draw: Simulates a digital pull.<br>" +
+                     "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
+                     "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" +
+                     "🌐 <strong>LIVE PORTAL:</strong><br>" +
+                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"
         },
-        app_b: {
+        /*app_b: {
             title: "C:\\PROG\\APPS\\SPECTROGRAM.EXE",
             header: "PULSE SPECTROGRAM",
             desc: "Real-time frequency tracking utility analyzing underlying carrier signals.",
             image: "assets/images/app_spectrogram.gif",
             content: "FREQ TRACKING ACTIVE\n[|||||||||||||||||||||||] 12.4Hz\n[||||||||||||           ] 4.1Hz"
-        },
-        app_c: {
+        },*/
+        /*app_c: {
             title: "C:\\PROG\\APPS\\SHREDDER.EXE",
             header: "FILE SHREDDER",
             desc: "Destructive digital deletion utility utilizing high-entropy randomized dummy data overwrites.",
             image: "assets/images/app_shredder.gif",
             content: "ALGORITHM: DOD 5220.22-M\nTARGET: TEMP_SESSION_LOG.DAT\nSTATUS: IN PROGRESS [88%]"
-        },
-        app_d: {
+        },*/
+        /*app_d: {
             title: "C:\\PROG\\APPS\\SIG_GEN.EXE",
             header: "SIGNAL GENERATOR",
             desc: "Generates static reference wave frequencies, custom sweep waves, and pure white noise files.",
             image: "assets/images/app_sig_gen.gif",
             content: "WAVEFORM: SINE\nOUTPUT FREQ: 440.00 Hz\nAMPLITUDE: -12.0 dB"
-        },
-        app_e: {
+        },*/
+        /*app_e: {
             title: "C:\\PROG\\APPS\\DECRYPTOR.EXE",
             header: "DECRYPTOR PRO",
             desc: "Decodes structured system logs encoded with customized alphanumeric shift mechanics.",
             image: "assets/images/app_decryptor.gif",
             content: "ALGORITHM: ROT13 + BASE64\nCIPHER: UVNfSjN4X0xVMg==\nDECRYPTED: SYS_KEY_99"
-        },
-        app_f: {
+        },*/
+        /*app_f: {
             title: "C:\\PROG\\APPS\\MEM_INSPECT.EXE",
             header: "MEM INSPECTOR",
             desc: "Inspect active RAM block addresses and virtual system hardware registry partitions.",
             image: "assets/images/app_mem_inspect.gif",
             content: "RAM ACTIVE: 512 KB\nHEAP ALLOCATION: 256 KB\nFREE ADDR: 0x0F44BB"
-        },
-        app_g: {
+        },*/
+        /*app_g: {
             title: "C:\\PROG\\APPS\\PAINTER.EXE",
             header: "VECTOR PAINTER",
             desc: "Draw mathematical coordinate lines and wireframe models on virtual display adapters.",
             image: "assets/images/app_painter.gif",
             content: "CANVAS RESOLUTION: 320x240\nPOINTS PLOTTED: 8\nVECTOR REFRESH: ON"
-        },
-        app_h: {
+        },*/
+        /*app_h: {
             title: "C:\\PROG\\APPS\\NODE_MAP.EXE",
             header: "NODE MAPPER",
             desc: "Traces topological layouts of local network relays and interconnected virtual routers.",
             image: "assets/images/app_node_map.gif",
             content: "HOPS DETECTED: 4\nLATENCY: 12ms\nGATEWAY: 192.168.1.254"
-        },
-        app_i: {
+        },*/
+        /*app_i: {
             title: "C:\\PROG\\APPS\\LOG_VIEW.EXE",
             header: "LOG VIEWER",
             desc: "Read real-time background records and security tracking system indicators.",
             image: "assets/images/app_log_view.gif",
             content: "02:14:10 - RECV [SYS_PING]\n02:14:15 - OK [HANDSHAKE]\n02:14:22 - ALERT: ENCRYPT SCAN"
-        },
-        app_j: {
+        },*/
+        /*app_j: {
             title: "C:\\PROG\\APPS\\CLOCK_SYNC.EXE",
             header: "CLOCK SYNC",
             desc: "NTP protocol alignment system matching global regional systems to network clocks.",
             image: "assets/images/app_clock_sync.gif",
             content: "SERVER: TIME.VOID.NTP\nVARIANCE: -0.0024s\nSTATUS: DRIFT CORRECTED"
-        }
+        }*/
     },
     music: {
         track_a: {
@@ -2092,7 +2099,10 @@ function loadModule(category, key) {
         win.querySelector('.window-header .window-title').textContent = data.title;
         win.querySelector('.window-body h3').textContent = data.header;
         win.querySelector('.window-body p').textContent = data.desc;
-        win.querySelector('.app-data-box').textContent = data.content;
+        
+        // Use innerHTML instead of textContent so <a> links become clickable
+        const appBox = win.querySelector('.app-data-box');
+        appBox.innerHTML = data.content;
 
         const img = win.querySelector('#app-img');
         if (img) {
