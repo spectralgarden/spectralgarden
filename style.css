@@ -1262,3 +1262,14 @@ body.bomb-burst-flash::after {
         font-size: 9px;
     }
 }
+/* ========================================================================== */
+/* Terms of Service Box Tweaks                                                */
+/* ========================================================================== */
+#tos-window .app-data-box {
+    background-color: #ffffff;
+    color: #111111;
+    border: 1px solid #111111;
+    padding: 10px;
+    font-size: 11px;
+    overflow-y: auto;
+}

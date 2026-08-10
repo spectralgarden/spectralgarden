@@ -65,7 +65,27 @@
 
     <!-- Vintage GUI Desktop Environment -->
     <div id="desktop">
-        
+        <!-- Draggable Window: Terms of Service -->
+        <div id="tos-window" class="window" style="top: 20%; left: 35%; width: 440px; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\SYS\TERMS_OF_SERVICE.TXT</span>
+                <button class="close-btn" onclick="closeWindow('tos-window')">X</button>
+            </div>
+            <div class="window-body">
+                <h3>SPECTRAL GARDEN // TERMS OF SERVICE</h3>
+                <div class="app-data-box" style="height: 160px; line-height: 1.4;">
+                    <strong>[ DISCLAIMER & USE AT YOUR OWN RISK ]</strong><br><br>
+                    All VST plugins, software units, and applications provided through Spectral Garden are experimental digital tools. While extreme care, rigorous testing, and attention to detail have been applied to ensure stable, high-performance architecture, all downloads and modules are provided <strong>"AS IS"</strong> without warranty of any kind.<br><br>
+                    Use of these VST units and software applications is strictly <strong>at your own risk</strong>. The creator assumes no liability for audio hardware clipping, data corruption, DAW crashes, or unexpected sonic anomalies.<br><br>
+                    <strong>[ PLATFORM AVAILABILITY ]</strong><br>
+                    • <strong>Windows:</strong> Fully supported (VST3 / Standalone).<br>
+                    • <strong>macOS Support:</strong> Universal Binary / AU / VST3 support packages are <em>coming soon</em>. Stay tuned for updates.
+                </div>
+                <div class="window-navigation">
+                    <button class="retro-btn nav-btn" onclick="closeWindow('tos-window')">ACKNOWLEDGE</button>
+                </div>
+            </div>
+        </div>
         <!-- Large Background Wallpaper Logo -->
         <div class="wallpaper-logo">SPECTRAL GARDEN</div>
 
@@ -194,6 +214,8 @@
             <span>🌀</span> [ VOID ]
         </button>
         <div class="taskbar-right">
+            <!-- Terms of Service Taskbar Button -->
+            <button class="retro-btn" onclick="openWindow('tos-window')" style="height: 28px; padding: 0 8px; display: flex; align-items: center; background: #eaeaea; font-size: 10px;">⚖️ TERMS</button>
             <!-- Lives Display Widget -->
             <div class="lives-display-box">
                 LIVES: <span id="lives-num-display">❤️❤️❤️</span>
