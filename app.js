@@ -33,20 +33,20 @@ const moduleDatabase = {
         },
         vst_d: {
             title: "C:\\PROG\\VST_UNITS\\ECHOFIELD_RELIQUARY.EXE",
-            header: "Echofield Reliquary",
-            desc: "An analog multi-tap delay modeling audio decay inside hollow subterranean vaults.",
+            header: "Echofield Reliquary V1.0.0",
+            desc: "Ambient cathedral reverb & delay‑matrix synthesizer for evolving, spectral spaces",
             image: "assets/images/vst_echofield.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Echofield-Reliquary/releases/download/Echofield_Reliquary/echofield.reliquary.zip" }
             ]
         },
         vst_e: {
             title: "C:\\PROG\\VST_UNITS\\ETHERFORGE_HARMONICS.EXE",
-            header: "Etherforge Harmonics",
-            desc: "Adds synthetic valve excitation to high frequencies, creating crystalline clarity above distorted tracks.",
+            header: "Etherforge Harmonic V1.0",
+            desc: "Sacred Cathedral Space & Acoustic Portal Simulator.",
             image: "assets/images/vst_etherforge.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/ETHERFORGE-HARMONICS/releases/download/ETHERFORGE_HARMONICS/ETHERFORGE.HARMONICS.zip" }
             ]
         },
         vst_f: {
@@ -79,10 +79,10 @@ const moduleDatabase = {
         vst_i: {
             title: "C:\\PROG\\VST_UNITS\\SERPENTINE.EXE",
             header: "Serpentine v2.2",
-            desc: "A highly resonant lowpass filter modeled on hardware feedback loop wiring diagrams.",
+            desc: "Serpentine is a three‑band dynamics processor and waveshaping saturator It providesanalog‑style saturation, multi‑stage dynamics control, and flexible crossover management using Linkwitz‑Riley filters and phase‑aligned reconstruction",
             image: "assets/images/vst_serpentine.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Serpentine/releases/download/SERPENTINE/Serpentine.zip" }
             ]
         },
         vst_j: {
