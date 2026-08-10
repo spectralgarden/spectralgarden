@@ -4,7 +4,7 @@ const moduleDatabase = {
         vst_a: {
             title: "C:\\PROG\\VST_UNITS\\ARCANE_BITS.EXE",
             header: "arcane bits v1.0",
-            desc: "An experimental 8-bit signal decimator mimicking vintage physical digital-analog converter logic.",
+            desc: "An experimental 8-bit signal decimator mimicking vintage physical digital-analog converter logic. COMING SOON",
             image: "assets/images/vst_arcane_bits.gif",
             links: [
                 { text: "DOWNLOAD DLL (64-BIT)", href: "#" },
@@ -61,7 +61,7 @@ const moduleDatabase = {
         vst_g: {
             title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
             header: "Hexchant Harmonizer V1.0.0",
-            desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios.",
+            desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios. Coming soon",
             image: "assets/images/vst_hexchant.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
@@ -78,7 +78,7 @@ const moduleDatabase = {
         },
         vst_i: {
             title: "C:\\PROG\\VST_UNITS\\SERPENTINE.EXE",
-            header: "Serpentine v2.2",
+            header: "Serpentine v1.0.0",
             desc: "Serpentine is a three‑band dynamics processor and waveshaping saturator It providesanalog‑style saturation, multi‑stage dynamics control, and flexible crossover management using Linkwitz‑Riley filters and phase‑aligned reconstruction",
             image: "assets/images/vst_serpentine.gif",
             links: [
@@ -88,17 +88,17 @@ const moduleDatabase = {
         vst_j: {
             title: "C:\\PROG\\VST_UNITS\\SORROW_STORM.EXE",
             header: "Sorrow Storm",
-            desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain.",
+            desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain. Coming soon",
             image: "assets/images/vst_sorrow_storm.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
             ]
         },
         vst_k: {
-            title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.EXE",
-            header: "Spectral Wraith",
+            title: "C:\\PROG\\VST_UNITS\\WRAITHGATE_VOCODER.EXE",
+            header: "Wraithgate Vocoder v1.0.0",
             desc: "Wraithgate Vocoder is a high-performance, real-time spectral morphing processor designed for Windows VST3 hosts. It bridges the frequency characteristics of an incoming Modulator (traditionally a vocal or speech source) with a Carrier (internal synthesized waves or an external sidechained instrument) through a highly optimized 32-band filterbank, enhanced by a unique Spectral Ghost Engine..",
-            image: "assets/images/vst_spectral_wraith.gif",
+            image: "assets/images/vst_wraithgate_vocoder.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Wraithgate-Vocoder/releases/download/WraithgateVocoder/Wraithgate.Vocoder.zip" }
             ]
@@ -106,7 +106,7 @@ const moduleDatabase = {
         vst_l: {
             title: "C:\\PROG\\VST_UNITS\\TRICKSTER.EXE",
             header: "Trickster v1.0",
-            desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies.Coming soon",
+            desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies. Coming soon",
             image: "assets/images/vst_trickster.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
@@ -122,9 +122,9 @@ const moduleDatabase = {
             ]
         },
         vst_n: {
-            title: "C:\\PROG\\VST_UNITS\\WRAITHGATE_VOCODER.EXE",
-            header: "Wraithgate Vocoder",
-            desc: "A vintage 32-band vocoder engine blending internal carrier waves with analog microphone modulations.",
+            title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.EXE",
+            header: "Spectre Wraith",
+            desc: "A vintage 32-band vocoder engine blending internal carrier waves with analog microphone modulations.Coming soon",
             image: "assets/images/vst_wraithgate.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
@@ -652,13 +652,13 @@ function spawnDataBug() {
             
             // <-- custom icons -->
             glyphs = [
-                'assets/images/sglogo.png',
+
                 'assets/images/icon2.png',
                 'assets/images/icon3.png',
                 'assets/images/icon4.png',
                 'assets/images/icon5.png',
                 'assets/images/icon6.png',
-                'assets/images/icon7.png',
+                'assets/images/icon7.png'
 
             ];
             
