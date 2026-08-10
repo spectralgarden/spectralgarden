@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SPECTRAL GARDEN // LABS</title>
-     <link rel="stylesheet" href="style.css">
-
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="light-theme">
 
@@ -65,7 +63,11 @@
 
     <!-- Vintage GUI Desktop Environment -->
     <div id="desktop">
-        <!-- Draggable Window: Terms of Service -->
+        
+        <!-- Large Background Wallpaper Logo -->
+        <div class="wallpaper-logo">SPECTRAL GARDEN</div>
+
+        <!-- Terms of Service Window -->
         <div id="tos-window" class="window" style="top: 20%; left: 35%; width: 440px; display: none;">
             <div class="window-header">
                 <span class="window-title">C:\SYS\TERMS_OF_SERVICE.TXT</span>
@@ -73,7 +75,7 @@
             </div>
             <div class="window-body">
                 <h3>SPECTRAL GARDEN // TERMS OF SERVICE</h3>
-                <div class="app-data-box" style="height: 160px; line-height: 1.4;">
+                <div class="app-data-box" style="height: 160px; line-height: 1.4; overflow-y: auto;">
                     <strong>[ DISCLAIMER & USE AT YOUR OWN RISK ]</strong><br><br>
                     All VST plugins, software units, and applications provided through Spectral Garden are experimental digital tools. While extreme care, rigorous testing, and attention to detail have been applied to ensure stable, high-performance architecture, all downloads and modules are provided <strong>"AS IS"</strong> without warranty of any kind.<br><br>
                     Use of these VST units and software applications is strictly <strong>at your own risk</strong>. The creator assumes no liability for audio hardware clipping, data corruption, DAW crashes, or unexpected sonic anomalies.<br><br>
@@ -85,31 +87,6 @@
                     <button class="retro-btn nav-btn" onclick="closeWindow('tos-window')">ACKNOWLEDGE</button>
                 </div>
             </div>
-        </div>
-        <!-- Large Background Wallpaper Logo -->
-        <div class="wallpaper-logo">SPECTRAL GARDEN</div>
-
-        <!-- DESKTOP ICONS REMOVED/COMMENTED OUT PER REQUEST -->
-        <!-- All execution handled cleanly via the [ VOID ] start menu -->
-        <div class="desktop-icons" style="display: none;">
-            <!-- 
-            <div class="icon" onclick="openWindow('vst-window')">
-                <div class="icon-pic">🔊</div>
-                <div class="icon-label">vst_rack.exe</div>
-            </div>
-            <div class="icon" onclick="openWindow('games-window')">
-                <div class="icon-pic">👾</div>
-                <div class="icon-label">arcade.exe</div>
-            </div>
-            <div class="icon" onclick="openWindow('apps-window')">
-                <div class="icon-pic">🛠️</div>
-                <div class="icon-label">toolbox.exe</div>
-            </div>
-            <div class="icon" onclick="openWindow('music-window')">
-                <div class="icon-pic">💿</div>
-                <div class="icon-label">cd_player.exe</div>
-            </div>
-            -->
         </div>
 
         <!-- Admin Command Prompt Window -->
@@ -187,25 +164,6 @@
             </div>
         </div>
 
-        <!-- MUSIC WINDOW COMMENTED OUT PER REQUEST -->
-        <!--
-        <div id="music-window" class="window" style="top: 45%; left: 40%; width: 380px; display: none;">
-            <div class="window-header">
-                <span class="window-title">C:\MEDIA\PLAYER\AUDIO_TRACK.EXE</span>
-                <button class="close-btn" onclick="closeWindow('music-window')">X</button>
-            </div>
-            <div class="window-body">
-                <div class="window-preview"><img id="music-img" src="" alt="" /></div>
-                <h3>SPECTRAL AUDIO DECK</h3>
-                <div class="music-tracker-display">[ ACTIVE TRACK LOADED ]</div>
-                <div class="window-navigation">
-                    <button class="retro-btn nav-btn" onclick="navigateModule('music', 'prev')">◀ BACK</button>
-                    <button class="retro-btn nav-btn" onclick="navigateModule('music', 'next')">NEXT ▶</button>
-                </div>
-            </div>
-        </div>
-        -->
-
     </div>
 
     <!-- 90s Cyber OS Taskbar system -->
@@ -216,6 +174,7 @@
         <div class="taskbar-right">
             <!-- Terms of Service Taskbar Button -->
             <button class="retro-btn" onclick="openWindow('tos-window')" style="height: 28px; padding: 0 8px; display: flex; align-items: center; background: #eaeaea; font-size: 10px;">⚖️ TERMS</button>
+
             <!-- Lives Display Widget -->
             <div class="lives-display-box">
                 LIVES: <span id="lives-num-display">❤️❤️❤️</span>
@@ -290,7 +249,7 @@
         </div>
     </div>
 
-    <!-- [ VOID ] Panel Submenu Tree: Cleaned (Music Player and placeholders commented out) -->
+    <!-- [ VOID ] Panel Submenu Tree -->
     <div id="start-menu">
         <div class="start-menu-inner">
             <div class="start-menu-sidebar">
@@ -298,7 +257,7 @@
             </div>
             <div class="start-menu-content">
                 
-                <!-- VSTs: All 14 fully preserved -->
+                <!-- VSTs -->
                 <div class="menu-item">
                     <span>🔊 VSTs</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
@@ -319,7 +278,7 @@
                     </div>
                 </div>
 
-                <!-- GAMES: Main game active -->
+                <!-- GAMES -->
                 <div class="menu-item">
                     <span>👾 GAMES</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
@@ -327,23 +286,13 @@
                     </div>
                 </div>
 
-                <!-- APPS: Akashic Tarot active -->
+                <!-- APPS -->
                 <div class="menu-item">
                     <span>🛠️ APPS</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
                         <div class="submenu-item" onclick="loadModule('apps', 'app_a')">Akashic Tarot</div>
                     </div>
                 </div>
-
-                <!-- MUSIC PLAYER COMMENTED OUT -->
-                <!--
-                <div class="menu-item">
-                    <span>💿 MUSIC</span> <span class="menu-item-arrow">▶</span>
-                    <div class="submenu">
-                        <div class="submenu-item" onclick="loadModule('music', 'track_a')">Hypnotic Vortex Loop</div>
-                    </div>
-                </div>
-                -->
 
                 <!-- Admin Terminal Command Line Option -->
                 <div class="menu-item" onclick="openWindow('admin-prompt-window'); document.getElementById('start-menu').style.display='none';">
@@ -355,7 +304,7 @@
 
     <!-- WebGL and Logic Drivers -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="portal.js"></script>
-    <script src="app.js"></script>
+    <script src="js/portal.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
