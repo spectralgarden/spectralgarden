@@ -42,7 +42,7 @@ const moduleDatabase = {
         },
         vst_e: {
             title: "C:\\PROG\\VST_UNITS\\ETHERFORGE_HARMONICS.EXE",
-            header: "Etherforge Harmonic V1.0",
+            header: "Etherforge Harmonic V1.0.0",
             desc: "Sacred Cathedral Space & Acoustic Portal Simulator.",
             image: "assets/images/vst_etherforge.gif",
             links: [
@@ -60,7 +60,7 @@ const moduleDatabase = {
         },
         vst_g: {
             title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
-            header: "Hexchant Harmonizer",
+            header: "Hexchant Harmonizer V1.0.0",
             desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios.",
             image: "assets/images/vst_hexchant.gif",
             links: [
@@ -69,11 +69,11 @@ const moduleDatabase = {
         },
         vst_h: {
             title: "C:\\PROG\\VST_UNITS\\ISOLATED.EXE",
-            header: "Isolated v0.9",
+            header: "Isolated v1.0.0",
             desc: "An ambient noise-removal envelope shaping absolute silence into pulsing sub-bass frequencies.",
             image: "assets/images/vst_isolated.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/isolated/releases/download/isolated/isolated.zip" }
             ]
         },
         vst_i: {
@@ -106,7 +106,7 @@ const moduleDatabase = {
         vst_l: {
             title: "C:\\PROG\\VST_UNITS\\TRICKSTER.EXE",
             header: "Trickster v1.0",
-            desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies.",
+            desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies.Coming soon",
             image: "assets/images/vst_trickster.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
@@ -118,7 +118,7 @@ const moduleDatabase = {
             desc: "A brutal peak-clipper modeling severe hardware output stages with extreme tape saturation curves.",
             image: "assets/images/vst_voidbreak.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/voidbreak/releases/download/voidbreak/voidbreak.zip" }
             ]
         },
         vst_n: {
@@ -634,6 +634,7 @@ function spawnDataBug() {
     let isAlien = false;
     let isHealer = false;
     let isHarmless = false;
+    let isCustomIcon = false;
 
     if (window.gameBeaten) {
         glyphs = ['⭐', '💫', '☯️', '✙', '⛧', '𓁹', '🕯️', '🕸️', '𓄿', '🦇', '✦', '✧'];
@@ -642,54 +643,91 @@ function spawnDataBug() {
         chosenShadow = chosenColor;
         bugElement.style.fontSize = '18px';
     } else {
-        const healChance = window.bossActive ? 0.35 : 0.15;
-        const healRoll = Math.random() < healChance;
-        if (healRoll) {
-            isHealer = true;
-            glyphs = ['✦', '✙', '⚛️'];
-            chosenColor = '#00ffff';
-            chosenShadow = 'rgba(0, 255, 255, 0.9)';
+        // 10% chance to spawn one of your custom icons
+        const customIconRoll = Math.random() < 0.10;
+
+        if (customIconRoll) {
+            isCustomIcon = true;
+            isHealer = true; // Acts as a healer/relic
+            
+            // <-- custom icons -->
+            glyphs = [
+                'assets/images/sglogo.png',
+                'assets/images/icon2.png',
+                'assets/images/icon3.png',
+                'assets/images/icon4.png',
+                'assets/images/icon5.png',
+                'assets/images/icon6.png',
+                'assets/images/icon7.png',
+
+            ];
+            
+            chosenColor = '#ffffff';
+            chosenShadow = 'rgba(255, 255, 255, 0.9)';
             bugElement.className += ' healer-bug';
-            bugElement.style.fontSize = '22px';
         } else {
-            const harmlessChance = Math.max(0.05, 0.7 - (window.currentLevel - 1) * 0.3);
-            const harmlessRoll = Math.random() < harmlessChance;
-
-            if (harmlessRoll) {
-                isHarmless = true;
-                glyphs = ['🪱', '🪰', '⚙️', '💬', '✏️'];
-                chosenColor = '#668899'; 
-                chosenShadow = 'rgba(102, 136, 153, 0.5)';
-                bugElement.style.fontSize = '15px';
+            const healChance = window.bossActive ? 0.35 : 0.15;
+            const healRoll = Math.random() < healChance;
+            if (healRoll) {
+                isHealer = true;
+                glyphs = ['✦', '✙', '⚛️'];
+                chosenColor = '#00ffff';
+                chosenShadow = 'rgba(0, 255, 255, 0.9)';
+                bugElement.className += ' healer-bug';
+                bugElement.style.fontSize = '22px';
             } else {
-                const alienLimit = Math.min(0.65, 0.15 + (window.currentLevel * 0.02));
-                isAlien = Math.random() < alienLimit;
+                const harmlessChance = Math.max(0.05, 0.7 - (window.currentLevel - 1) * 0.3);
+                const harmlessRoll = Math.random() < harmlessChance;
 
-                if (isAlien) {
-                    glyphs = ['🛸', '👁️', '👿', '👽', '☄️', '☠️', '☣️'];
-                    chosenColor = '#ff3300';
-                    chosenShadow = 'rgba(255, 51, 0, 0.9)';
-                    bugElement.style.fontSize = '24px';
+                if (harmlessRoll) {
+                    isHarmless = true;
+                    glyphs = ['🪱', '🪰', '⚙️', '💬', '✏️'];
+                    chosenColor = '#668899'; 
+                    chosenShadow = 'rgba(102, 136, 153, 0.5)';
+                    bugElement.style.fontSize = '15px';
                 } else {
-                    if (window.currentLevel < 6) {
-                        glyphs = ['👾', '🕷️', '🪲', '🐜'];
-                    } else if (window.currentLevel < 15) {
-                        glyphs = ['🛸', '📡', '☄️', '🌌', '💫'];
+                    const alienLimit = Math.min(0.65, 0.15 + (window.currentLevel * 0.02));
+                    isAlien = Math.random() < alienLimit;
+
+                    if (isAlien) {
+                        glyphs = ['🛸', '👁️', '👿', '👽', '☄️', '☠️', '☣️'];
+                        chosenColor = '#ff3300';
+                        chosenShadow = 'rgba(255, 51, 0, 0.9)';
+                        bugElement.style.fontSize = '24px';
                     } else {
-                        glyphs = ['☠️', '☣', '☢', '𓁹', '⚚', '☋', '⚡', '⚙️', '⌖'];
+                        if (window.currentLevel < 6) {
+                            glyphs = ['👾', '🕷️', '🪲', '🐜'];
+                        } else if (window.currentLevel < 15) {
+                            glyphs = ['🛸', '📡', '☄️', '🌌', '💫'];
+                        } else {
+                            glyphs = ['☠️', '☣', '☢', '𓁹', '⚚', '☋', '⚡', '⚙️', '⌖'];
+                        }
+                        const isMagenta = Math.random() > 0.5;
+                        chosenColor = isMagenta ? '#ff00ff' : '#00ff66';
+                        chosenShadow = isMagenta ? 'rgba(255, 0, 255, 0.8)' : 'rgba(0, 255, 102, 0.8)';
+                        bugElement.style.fontSize = '16px';
                     }
-                    const isMagenta = Math.random() > 0.5;
-                    chosenColor = isMagenta ? '#ff00ff' : '#00ff66';
-                    chosenShadow = isMagenta ? 'rgba(255, 0, 255, 0.8)' : 'rgba(0, 255, 102, 0.8)';
-                    bugElement.style.fontSize = '16px';
                 }
             }
         }
     }
 
-    bugElement.style.color = chosenColor;
+    const chosenGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+
+    // Render image if it's a custom icon or contains a file extension
+    if (isCustomIcon || chosenGlyph.includes('.')) {
+        const img = document.createElement('img');
+        img.src = chosenGlyph;
+        img.style.width = '26px';
+        img.style.height = '26px';
+        img.style.objectFit = 'contain';
+        bugElement.appendChild(img);
+    } else {
+        bugElement.textContent = chosenGlyph;
+        bugElement.style.color = chosenColor;
+    }
+
     bugElement.style.filter = `drop-shadow(0px 0px 5px ${chosenShadow})`;
-    bugElement.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
 
     const edgeSelection = Math.floor(Math.random() * 3); 
     let x, y;
