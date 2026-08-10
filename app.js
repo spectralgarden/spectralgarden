@@ -23,12 +23,12 @@ const moduleDatabase = {
         },
         vst_c: {
             title: "C:\\PROG\\VST_UNITS\\DOWNER.EXE",
-            header: "downer v3.0",
+            header: "downer v1.0.0",
             desc: "A destructive frequency-shifter with pitch-glitch tracking feedback circuits.",
             image: "assets/images/vst_downer.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" },
-                { text: "CHANGELOG TXT", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/downer/releases/download/Realtimedecay/downer.zip" },
+                { text: "MAC and Linux coming soon", href: "#" }
             ]
         },
         vst_d: {
