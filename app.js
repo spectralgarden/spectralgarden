@@ -133,75 +133,75 @@ const moduleDatabase = {
     },
     games: {
         game_a: {
-            title: "C:\\PROG\\GAMES\\SIMULATION_X.EXE",
-            header: "SIMULATION-X (1996)",
-            desc: "A text-based paranormal investigator simulator. Untangle signals originating from coordinate 53.3498° N.",
-            image: "assets/images/game_sim_x.gif",
-            content: "STATUS: INITIALIZED\nMEMORY LEVEL: OK\nEXECUTION VECTOR: STABLE\n\nClick below to execute the primary simulator stack."
+    title: "C:\\PROG\\GAMES\\Eden's Edge.EXE",
+    header: "Eden's Edge (2027)",
+    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable.Coming soon",
+    image: "assets/images/game_sim_x.gif",
+    content: "STATUS: BOOT SEQUENCE ONLINE\nREALITY ANCHOR: UNSTABLE\nENTITY VECTOR: ACTIVE\n\nEngage Eden's Edge runtime below and enter the distortion."
         },
-        game_b: {
+        /*game_b: {
             title: "C:\\PROG\\GAMES\\RITUAL_DOOM.EXE",
             header: "RITUAL DOOM 3D",
             desc: "A software-rendered raycaster testing low-res environments against cognitive visual stress matrices.",
             image: "assets/images/game_ritual_doom.gif",
             content: "STATUS: DEGRADED\nASSETS LOADED: 12/64\nERROR: MATRIX CORRUPTION\n\nRun debug diagnostic sequence."
-        },
-        game_c: {
+        },*/
+        /*game_c: {
             title: "C:\\PROG\\GAMES\\NETRUNNER.EXE",
             header: "NETRUNNER 2099",
             desc: "Cyberdeck terminal navigator mapping corporate firewalls and high-value subnet servers.",
             image: "assets/images/game_netrunner.gif",
             content: "STATUS: INTRUSION DETECTED\nNODE TARGET: SECURE_VAULT_9\nFIREWALL DECAY: 45%"
-        },
-        game_d: {
+        },*/
+        /*game_d: {
             title: "C:\\PROG\\GAMES\\CRYPT_DESCENT.EXE",
             header: "CRYPT DESCENT",
             desc: "An algorithmic, text-based labyrinth crawl into simulated forgotten server vaults.",
             image: "assets/images/game_crypt.gif",
             content: "STATUS: FLOOR 4\nLIGHT RESOURCE: 12%\nWARNING: ENTITY DETECTED ON ADJACENT NODE"
-        },
-        game_e: {
+        },*/
+        /*game_e: {
             title: "C:\\PROG\\GAMES\\STATIC_WHISPER.EXE",
             header: "STATIC WHISPERER",
             desc: "An audio-frequency deciphering puzzle decrypting transmissions inside raw white noise.",
             image: "assets/images/game_static_whisper.gif",
             content: "STATUS: TUNING RADAR...\nCARRIER FREQ: 144.82 MHz\nSIGNAL STRENGTH: WEAK"
-        },
-        game_f: {
+        },*/
+        /*game_f: {
             title: "C:\\PROG\\GAMES\\TERM_HACK.EXE",
             header: "TERMINAL HACK",
             desc: "Time-restricted mainframe penetration testing program simulating security bypasses.",
             image: "assets/images/game_term_hack.gif",
             content: "STATUS: BYPASS ATTEMPT 1/3\nTIME REMAINING: 54 SEC\nDECRYPT KEY MATCH IN PROGRESS..."
-        },
-        game_g: {
+        },*/
+        /*game_g: {
             title: "C:\\PROG\\GAMES\\VOID_SWEEPER.EXE",
             header: "VOID SWEEPER",
             desc: "Logical deduction puzzle clearing grid vectors without puncturing localized coordinate leaks.",
             image: "assets/images/game_void_sweeper.gif",
             content: "STATUS: GRID SIZE 16x16\nLEAKS PLANTED: 40\nSECTORS CLEARED: 12"
-        },
-        game_h: {
+        },*/
+        /*game_h: {
             title: "C:\\PROG\\GAMES\\ROGUE_SIGNAL.EXE",
             header: "ROGUE SIGNAL",
             desc: "Track software telemetry spikes across dynamic coordinate tracking system grids.",
             image: "assets/images/game_rogue_signal.gif",
             content: "STATUS: TRACING...\nRELAY ID: #4489-B\nDISTANCE: 14.8 PARSECS"
-        },
-        game_i: {
+        },*/
+        /*game_i: {
             title: "C:\\PROG\\GAMES\\PSYCHIC_LINK.EXE",
             header: "PSYCHIC LINK",
             desc: "Memory evaluation protocol testing mental recall patterns against variable binary arrays.",
             image: "assets/images/game_psychic_link.gif",
             content: "STATUS: MATCH TEST RUNNING\nROUND: 3/10\nCONGRUENCE RATIO: 82.4%"
-        },
-        game_j: {
+        },*/
+        /*game_j: {
             title: "C:\\PROG\\GAMES\\MATRIX_RUNNER.EXE",
             header: "MATRIX RUNNER",
             desc: "Vector-style wireframe movement simulator testing hardware geometric processing rendering limits.",
             image: "assets/images/game_matrix_runner.gif",
             content: "STATUS: SIMULATING...\nRENDERING ENGINE: VECTOR_CORE_V1\nFPS: 60 [STABLE]"
-        }
+        }*/
     },
    apps: {
         app_a: {
