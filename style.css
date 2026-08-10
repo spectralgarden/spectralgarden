@@ -1273,3 +1273,9 @@ body.bomb-burst-flash::after {
     font-size: 11px;
     overflow-y: auto;
 }
+/* Fix text alignment and padding for the Terms of Service box */
+#tos-window .app-data-box {
+    text-align: left;
+    padding: 14px;
+    line-height: 1.5;
+}
