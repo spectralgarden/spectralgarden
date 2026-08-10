@@ -20,7 +20,7 @@ A retro‑futuristic 90s OS browser environment fused with an interactive 3D arc
   Dynamic loaders for experimental VST units, arcade simulators, and the Akashic Tarot web application.
 
 - **Admin & Progression System:**  
-  Local high‑score matrices (`localStorage`), customizable XP thresholds, level‑transition banners, and a cheat/skip command console (`admin69_skip_to_[1-32]`).
+  Local high‑score matrices (`localStorage`), customizable XP thresholds, level‑transition banners, and a cheat/skip command console.
 
 ---
 
