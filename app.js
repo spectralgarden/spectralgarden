@@ -24,10 +24,10 @@ const moduleDatabase = {
         vst_c: {
             title: "C:\\PROG\\VST_UNITS\\DOWNER.EXE",
             header: "downer v1.0.0",
-            desc: "A destructive frequency-shifter with pitch-glitch tracking feedback circuits.",
+            desc: "Real‑time decay. Rain‑soaked memory. Tape‑stop gravity. A spectral audio decay processor for ambient sound design.",
             image: "assets/images/vst_downer.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/downer/releases/download/Realtimedecay/downer.zip" },
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/downer/releases/download/downer/downer.zip" },
                 { text: "MAC and Linux coming soon", href: "#" }
             ]
         },
@@ -51,11 +51,11 @@ const moduleDatabase = {
         },
         vst_f: {
             title: "C:\\PROG\\VST_UNITS\\FORSAKEN.EXE",
-            header: "forsaken v1.4",
-            desc: "Spectral formant filter mapping haunting vocal frequencies to any basic audio input stream.",
+            header: "forsaken v1.0.0",
+            desc: "Spectral formant filter Forsaken is an astral vocal processor, but can be used for almost anything, designed for darkwave, witch house, ambient, cinematic, and experimental vocal manipulation. Built with JUCE 8.0.14, it combines analogue‑style warmth, reverse grain engines, cathedral‑scale decay, and void‑filtered ambience to transform clean vocals into unstable, supernatural soundscapes.",
             image: "assets/images/vst_forsaken.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/forsaken/releases/download/forsaken/forsaken.zip" }
             ]
         },
         vst_g: {
