@@ -17,11 +17,11 @@ body {
     overflow: hidden;
     height: 100vh;
     width: 100vw;
-    cursor: url('../assets/images/star_cursor.png') 32 2, auto;
+    cursor: url('assets/images/star_cursor.png') 32 2, auto;
 }
 
 a, button, .retro-btn, .close-btn, .icon, .start-btn, .submenu-item, .menu-item, input, .window-header {
-    cursor: url('../assets/images/star_cursor.png') 32 2, pointer !important;
+    cursor: url('assets/images/star_cursor.png') 32 2, pointer !important;
 }
 
 body.bomb-armed, body.bomb-armed * {
