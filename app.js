@@ -13,12 +13,12 @@ const moduleDatabase = {
         },
         vst_b: {
             title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.EXE",
-            header: "CrescentQ v2.1",
-            desc: "A parametric solid-state equalizer featuring dynamic band curves mapped to simulated lunar phase cycles.",
+            header: "CrescentQ v1.0.0",
+            desc: "CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping.",
             image: "assets/images/vst_crescent_q.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" },
-                { text: "USER MANUAL PDF", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/CrescentQ/releases/download/CRESCENTQ/CrescentQ.zip" },
+               
             ]
         },
         vst_c: {
@@ -97,10 +97,10 @@ const moduleDatabase = {
         vst_k: {
             title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.EXE",
             header: "Spectral Wraith",
-            desc: "A frequency-domain vocoder isolating and shifting ghost harmonics in real time.",
+            desc: "Wraithgate Vocoder is a high-performance, real-time spectral morphing processor designed for Windows VST3 hosts. It bridges the frequency characteristics of an incoming Modulator (traditionally a vocal or speech source) with a Carrier (internal synthesized waves or an external sidechained instrument) through a highly optimized 32-band filterbank, enhanced by a unique Spectral Ghost Engine..",
             image: "assets/images/vst_spectral_wraith.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Wraithgate-Vocoder/releases/download/WraithgateVocoder/Wraithgate.Vocoder.zip" }
             ]
         },
         vst_l: {
@@ -135,7 +135,7 @@ const moduleDatabase = {
         game_a: {
     title: "C:\\PROG\\GAMES\\Eden's Edge.EXE",
     header: "Eden's Edge (2027)",
-    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable.Coming soon",
+    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable.Coming soon in 2027",
     image: "assets/images/game_sim_x.gif",
     content: "STATUS: BOOT SEQUENCE ONLINE\nREALITY ANCHOR: UNSTABLE\nENTITY VECTOR: ACTIVE\n\nEngage Eden's Edge runtime below and enter the distortion."
         },
