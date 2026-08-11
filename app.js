@@ -60,10 +60,10 @@ const moduleDatabase = {
         vst_g: {
             title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
             header: "Hexchant Harmonizer V1.0.0",
-            desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios. (Coming soon)",
+            desc: "An occult vocal harmonizer, spectral vocoder & text-to-speech chant engine for VST3      Hexchant Harmonizer turns any voice — live or typed — into layered ritual harmony. It combines an 8-voice harmonizer, a 32-band spectral vocoder, a built-in text-to-speech spell casting engine, a Ghost spectral delay, and a Formant Sculptor with tube saturation and cathedral reverb, all wrapped in an animated coven-themed interface.",
             image: "assets/images/vst_hexchant.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Hexchant-Harmonizer/releases/download/HexchantHarmonizer/hexchant.harmonizer.zip" }
             ]
         },
         vst_h: {
