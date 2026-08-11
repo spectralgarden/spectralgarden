@@ -1,7 +1,7 @@
 // Local Database holding dynamic specs for apps, vsts, games, and music
 const moduleDatabase = {
     vst: {
-        vst_a: {
+        /*vst_a: {
             title: "C:\\PROG\\VST_UNITS\\ARCANE_BITS.EXE",
             header: "arcane bits v1.0",
             desc: "Arcane Bits is a coven‑styled micro‑sampling instrument that captures tiny slices of audio (50–500ms), transforms them using granular synthesis, spectral resynthesis, rune‑based modulation, and micro‑phrase looping, and allows the user to perform these slices as playable instruments. COMING SOON",
@@ -9,7 +9,7 @@ const moduleDatabase = {
             links: [
                 { text: "DOWNLOAD DLL (64-BIT)", href: "#" },
             ]
-        },
+        },*/
         vst_b: {
             title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.EXE",
             header: "CrescentQ v1.0.0",
@@ -87,7 +87,7 @@ const moduleDatabase = {
         vst_j: {
             title: "C:\\PROG\\VST_UNITS\\SORROW_STORM.EXE",
             header: "Sorrow Storm",
-            desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain. Coming soon",
+            desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain. An ambient shoegaze reverb & fuzz plugin for VST3. Sorrow Storm is a mood-drenched effects processor built for dream-pop, shoegaze, and ambient production. It combines a saturating fuzz stage with a modulated four-tap feedback reverb, built-in shimmer pitch-shifting, and 30 hand-tuned presets — wrapped in a custom-animated, glitch-titled interface",
             image: "assets/images/vst_sorrow_storm.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/sorrowstorm/releases/download/sorrowstorm/sorrow.storm.zip" }
@@ -108,7 +108,7 @@ const moduleDatabase = {
             desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies. Coming soon",
             image: "assets/images/vst_trickster.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+               /* { text: "DOWNLOAD VST3", href: "#" }*/
             ]
         },
         vst_m: {
