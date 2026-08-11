@@ -124,8 +124,8 @@ const moduleDatabase = {
         vst_n: {
             title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.EXE",
             header: "Spectre Wraith",
-            desc: "A vintage 32-band vocoder engine blending internal carrier waves with analog microphone modulations.Coming soon",
-            image: "assets/images/vst_wraithgate.gif",
+            desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
+            image: "assets/images/vst_spectral_wraith.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
             ]

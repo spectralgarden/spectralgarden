@@ -1,5 +1,5 @@
 /* ========================================================================== */
-/* SPECTRAL GARDEN // LABS - Brutalist Clean Light Theme (White, Black, Red)  */
+/* SPECTRAL GARDEN // - Brutalist Clean Light Theme (White, Black, Red)  */
 /* ========================================================================== */
 
 * {
@@ -322,7 +322,7 @@ body.bomb-burst-flash::after {
     justify-content: space-between;
 }
 
-.game-terminal-box, .app-data-box {
+.game-terminal-box {
     background-color: #eaeaea;
     border: 1px solid #111111;
     color: #111111;
@@ -1262,28 +1262,89 @@ body.bomb-burst-flash::after {
         font-size: 9px;
     }
 }
+
 /* ========================================================================== */
-/* Terms of Service Box Tweaks                                                */
+/* Clean Left-Alignment & Styling for App / Terms Data Boxes                  */
 /* ========================================================================== */
-#tos-window .app-data-box {
-    background-color: #ffffff;
-    color: #111111;
+.app-data-box {
+    background-color: #eaeaea;
     border: 1px solid #111111;
-    padding: 10px;
-    font-size: 11px;
+    color: #111111;
+    font-family: monospace;
+    padding: 12px;
+    height: 140px;
     overflow-y: auto;
-}
-/* Fix text alignment and padding for the Terms of Service box */
-#tos-window .app-data-box {
-    text-align: left;
-    padding: 14px;
+    white-space: pre-wrap;
+    font-size: 11px;
+    text-align: left !important;
     line-height: 1.5;
 }
+
+#tos-window .app-data-box {
+    background-color: #ffffff;
+    height: 160px;
+}
+
 .app-data-box a {
     color: #cc0033;
     text-decoration: underline;
 }
+
 .app-data-box a:hover {
+    background-color: #111111;
+    color: #ffffff;
+    text-decoration: none;
+}
+/* ========================================================================== */
+/* Contact Box Clean Left Alignment Fix                                       */
+/* ========================================================================== */
+.contact-box {
+    background-color: #eaeaea;
+    border: 1px solid #111111;
+    color: #111111;
+    font-family: monospace;
+    padding: 14px;
+    height: auto;
+    overflow-y: auto;
+    white-space: normal !important;
+    text-align: left !important;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.contact-box a {
+    color: #cc0033;
+    text-decoration: underline;
+}
+
+.contact-box a:hover {
+    background-color: #111111;
+    color: #ffffff;
+    text-decoration: none;
+}
+/* ========================================================================== */
+/* Terms Box Clean Left Alignment Fix                                         */
+/* ========================================================================== */
+.terms-box {
+    background-color: #ffffff;
+    border: 1px solid #111111;
+    color: #111111;
+    font-family: monospace;
+    padding: 14px;
+    height: 160px;
+    overflow-y: auto;
+    white-space: normal !important;
+    text-align: left !important;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.terms-box a {
+    color: #cc0033;
+    text-decoration: underline;
+}
+
+.terms-box a:hover {
     background-color: #111111;
     color: #ffffff;
     text-decoration: none;
