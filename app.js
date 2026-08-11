@@ -13,7 +13,7 @@ const moduleDatabase = {
         vst_b: {
             title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.EXE",
             header: "CrescentQ v1.0.0",
-            desc: "CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping.",
+            desc: "CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping. CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping. It features switchable minimum‑phase and linear‑phase architectures, per‑band Mid/Side routing, multi‑stage oversampling, and real‑time FFT visualization. The engine is optimized for low‑latency operation while offering advanced phase‑coherent processing for critical audio work. ",
             image: "assets/images/vst_crescent_q.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/CrescentQ/releases/download/CRESCENTQ/CrescentQ.zip" },
@@ -23,7 +23,7 @@ const moduleDatabase = {
         vst_c: {
             title: "C:\\PROG\\VST_UNITS\\DOWNER.EXE",
             header: "downer v1.0.0",
-            desc: "Real‑time decay. Rain‑soaked memory. Tape‑stop gravity. A spectral audio decay processor for ambient sound design.",
+            desc: "Real‑time decay. Rain‑soaked memory. Tape‑stop gravity. A spectral audio decay processor for ambient sound design.downer is a real-time creative audio effect designed to recreate the characteristics of chopped & screwed taped eceleration, rhythmic stuttering, and atmospheric, low-fidelity environments. Inspired by legacy console configuration menus and vintage tape degradation, the system combines: A latency-free dual-tap pitch processor An independent vocal formant filter bank A host-synchronized stutter (chop) engine A dynamic, physical-modeling rain generator that automatically gates according to the input signal's envelope to prevent background static when audio is paused.",
             image: "assets/images/vst_downer.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/downer/releases/download/downer/downer.zip" },
@@ -33,7 +33,7 @@ const moduleDatabase = {
         vst_d: {
             title: "C:\\PROG\\VST_UNITS\\ECHOFIELD_RELIQUARY.EXE",
             header: "Echofield Reliquary V1.0.0",
-            desc: "Ambient cathedral reverb & delay‑matrix synthesizer for evolving, spectral spaces",
+            desc: "Ambient cathedral reverb & delay‑matrix synthesizer for evolving, spectral spaces. Echofield Reliquary is an ambient reverberation and delay-matrix synthesizer designed to evoke the warm, dusty, and slightly eerie atmosphere of a forgotten cathedral. Combining visual aesthetics reminiscent of stained-glass altars with a modern DSP console, the plugin serves as a creative sound-design tool for generating organic, evolving spaces and modulated echoes.",
             image: "assets/images/vst_echofield.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Echofield-Reliquary/releases/download/Echofield_Reliquary/echofield.reliquary.zip" }
@@ -42,7 +42,7 @@ const moduleDatabase = {
         vst_e: {
             title: "C:\\PROG\\VST_UNITS\\ETHERFORGE_HARMONICS.EXE",
             header: "Etherforge Harmonic V1.0.0",
-            desc: "Sacred Cathedral Space & Acoustic Portal Simulator.",
+            desc: "Sacred Cathedral Space & Acoustic Portal Simulator.ETHERFORGE HARMONICS is a hybrid spectral‑processing audio plugin combining real‑time  partial analysis, non‑linear harmonic excitation, and additive resynthesis inside a dark, industrial UI framework. It analyzes incoming audio at the harmonic level and provides precise control over tonal balance, spectral coloration, and harmonic structure.",
             image: "assets/images/vst_etherforge.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/ETHERFORGE-HARMONICS/releases/download/ETHERFORGE_HARMONICS/ETHERFORGE.HARMONICS.zip" }
@@ -60,7 +60,7 @@ const moduleDatabase = {
         vst_g: {
             title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
             header: "Hexchant Harmonizer V1.0.0",
-            desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios. Coming soon",
+            desc: "Splits mono inputs into microtonal chord clusters based on custom geometric ratios. (Coming soon)",
             image: "assets/images/vst_hexchant.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "#" }
@@ -69,7 +69,7 @@ const moduleDatabase = {
         vst_h: {
             title: "C:\\PROG\\VST_UNITS\\ISOLATED.EXE",
             header: "Isolated v1.0.0",
-            desc: "An ambient noise-removal envelope shaping absolute silence into pulsing sub-bass frequencies.",
+            desc: "An ambient noise-removal envelope shaping absolute silence into pulsing sub-bass frequencies.*Advanced Multi-Band Drum Isolation & Frequency Sweep Processor***Isolated** is a specialized real-time audio plugin designed for surgical drum separation, transient management, and dynamic frequency sweeping. Powered by multi-stage transient splitters (TSS) and specialized channel frequency cross-overs, it allows producers to independently isolate, mix, and shape individual drum elements (Kick, Snare, Hats, Percussion, and Other) from a full stereo mix. ",
             image: "assets/images/vst_isolated.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/isolated/releases/download/isolated/isolated.zip" }
@@ -114,7 +114,7 @@ const moduleDatabase = {
         vst_m: {
             title: "C:\\PROG\\VST_UNITS\\VOIDBREAK.EXE",
             header: "Voidbreak v2.0",
-            desc: "A brutal peak-clipper modeling severe hardware output stages with extreme tape saturation curves.",
+            desc: "A brutal peak-clipper modeling severe hardware output stages with extreme tape saturation curves. Voidbreak is an experimental astral character‑effect audio processor designedfor darkwave, witch house, ambient, cinematic, and industrial sound design.It models heavy output degradation, magnetic tape saturation curves, warp‑driftinstability, reverse‑memory distortion, smear‑delay coloration, and spectralpresence shaping.",
             image: "assets/images/vst_voidbreak.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/voidbreak/releases/download/voidbreak/voidbreak.zip" }
@@ -134,7 +134,7 @@ const moduleDatabase = {
         game_a: {
     title: "C:\\PROG\\GAMES\\Eden's Edge.EXE",
     header: "Eden's Edge (2027)",
-    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable.Coming soon in 2027",
+    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable. (Coming soon in 2027)",
     image: "assets/images/game_sim_x.gif",
     content: "STATUS: BOOT SEQUENCE ONLINE\nREALITY ANCHOR: UNSTABLE\nENTITY VECTOR: ACTIVE\n\nEngage Eden's Edge runtime below and enter the distortion."
         },
