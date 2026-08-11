@@ -129,9 +129,9 @@ body.bomb-burst-flash::after {
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: "Courier New", Courier, monospace;
-    font-size: clamp(2.5rem, 8vw, 6.5rem);
+    font-size: clamp(2rem, 7vw, 5.5rem);
     font-weight: 900;
-    letter-spacing: 18px;
+    letter-spacing: 12px;
     text-align: center;
     text-transform: uppercase;
     white-space: nowrap;
@@ -143,6 +143,43 @@ body.bomb-burst-flash::after {
         3px 0px 0px rgba(0, 0, 0, 0.06),
         0px 0px 15px rgba(0, 0, 0, 0.05);
     animation: wallpaper-pulse 8s ease-in-out infinite;
+    
+    /* Flex container layout to line up text and image seamlessly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Controls spacing between SPECTRAL, the logo, and GARDEN */
+}
+
+.wallpaper-inline-logo {
+    width: 65px;  /* Scaled slightly for a clean text balance */
+    height: 68px;
+    object-fit: contain;
+    opacity: 0.18; /* Starts much softer and less bold */
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.03));
+    animation: inline-logo-pulse 8s ease-in-out infinite;
+}
+
+@keyframes inline-logo-pulse {
+    0%, 100% {
+        opacity: 0.15;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.30; /* Fades gently up to match the text pulse weight */
+        transform: scale(1.02);
+    }
+}
+
+@keyframes wallpaper-pulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
 }
 
 @keyframes wallpaper-pulse {
@@ -1348,4 +1385,24 @@ body.bomb-burst-flash::after {
     background-color: #111111;
     color: #ffffff;
     text-decoration: none;
+}
+/* Background Image Watermark Styling */
+.background-logo-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1; /* Sits behind windows (z-index 10) but above the canvas */
+    opacity: 0.12; /* Adjust this to make it more subtle or prominent (0.05 to 0.25) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.background-logo-watermark img {
+    width: 108px;
+    height: 111px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(204, 0, 51, 0.2));
 }

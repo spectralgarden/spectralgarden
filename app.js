@@ -4,11 +4,10 @@ const moduleDatabase = {
         vst_a: {
             title: "C:\\PROG\\VST_UNITS\\ARCANE_BITS.EXE",
             header: "arcane bits v1.0",
-            desc: "An experimental 8-bit signal decimator mimicking vintage physical digital-analog converter logic. COMING SOON",
+            desc: "Arcane Bits is a coven‑styled micro‑sampling instrument that captures tiny slices of audio (50–500ms), transforms them using granular synthesis, spectral resynthesis, rune‑based modulation, and micro‑phrase looping, and allows the user to perform these slices as playable instruments. COMING SOON",
             image: "assets/images/vst_arcane_bits.gif",
             links: [
                 { text: "DOWNLOAD DLL (64-BIT)", href: "#" },
-                { text: "DOWNLOAD AU COMPONENT", href: "#" }
             ]
         },
         vst_b: {
@@ -91,7 +90,7 @@ const moduleDatabase = {
             desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain. Coming soon",
             image: "assets/images/vst_sorrow_storm.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/sorrowstorm/releases/download/sorrowstorm/sorrow.storm.zip" }
             ]
         },
         vst_k: {
@@ -127,7 +126,7 @@ const moduleDatabase = {
             desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
             image: "assets/images/vst_spectral_wraith.gif",
             links: [
-                { text: "DOWNLOAD VST3", href: "#" }
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/SPECTRAL-WRAITH/releases/download/spectralwraith/spectral.wraith.zip" }
             ]
         }
     },

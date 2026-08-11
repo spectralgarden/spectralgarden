@@ -117,7 +117,7 @@ function initPortal() {
 }
 
 function createStarfieldBackground() {
-    const starCount = 350;
+    const starCount = 400;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const scales = new Float32Array(starCount);
@@ -133,11 +133,11 @@ function createStarfieldBackground() {
     geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
 
     const material = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.12,
+        color: 0xff00aa,           // Electric neon cyan/blue glow (or try 0xff00aa for neon magenta)
+        size: 0.20,                // Sized up slightly to enhance the glowing point effect
         transparent: true,
-        opacity: 0.6,
-        blending: THREE.AdditiveBlending
+        opacity: 0.85,             // Strong, vivid opacity
+        blending: THREE.AdditiveBlending // Makes the particles look like glowing light sources
     });
 
     starFieldMesh = new THREE.Points(geometry, material);
@@ -740,7 +740,7 @@ function animate() {
     }
 
     if (starFieldMesh) {
-        starFieldMesh.material.opacity = 0.4 + Math.sin(Date.now() * 0.002) * 0.2;
+        starFieldMesh.material.opacity = 0.65 + Math.sin(Date.now() * 0.002) * 0.25;
         starFieldMesh.rotation.z += 0.0002;
     }
 
