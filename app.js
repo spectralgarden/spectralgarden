@@ -1,15 +1,15 @@
 // Local Database holding dynamic specs for apps, vsts, games, and music
 const moduleDatabase = {
     vst: {
-        /*vst_a: {
-            title: "C:\\PROG\\VST_UNITS\\ARCANE_BITS.EXE",
-            header: "arcane bits v1.0",
-            desc: "Arcane Bits is a coven‑styled micro‑sampling instrument that captures tiny slices of audio (50–500ms), transforms them using granular synthesis, spectral resynthesis, rune‑based modulation, and micro‑phrase looping, and allows the user to perform these slices as playable instruments. COMING SOON",
-            image: "assets/images/vst_arcane_bits.gif",
+        vst_a: {
+            title: "C:\\PROG\\VST_UNITS\\ARCANE_GAIN.EXE",
+            header: "ArcaneGain v1.0",
+            desc: "Arcane Gain is a lightweight, zero-latency, CPU-efficient gain/trim utility plugin designed to be the simplest, cleanest, and most reliable utility tool in the Spectral Garden ecosystem. It provides precise gain staging, transparent soft-clipping saturation, combined peak/RMS metering, and sample-accurate auto-gain compensation. Extremely low memory and CPU footprint. Built-in live CPU usage monitor. Scalable UI options (100%, 125%, 150%, 200%).",
+            image: "assets/images/vst_arcanegain.gif",
             links: [
-                { text: "DOWNLOAD DLL (64-BIT)", href: "#" },
+                { text: "DOWNLOAD DLL (64-BIT)", href: "https://github.com/spectralgarden/ArcaneGain/releases/download/arcanegain/ArcaneGain.zip" },
             ]
-        },*/
+        },
         vst_b: {
             title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.EXE",
             header: "CrescentQ v1.0.0",
@@ -127,6 +127,26 @@ const moduleDatabase = {
             image: "assets/images/vst_spectral_wraith.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/SPECTRAL-WRAITH/releases/download/spectralwraith/spectral.wraith.zip" }
+            ]
+        
+    },
+     vst_p: {
+            title: "C:\\PROG\\VST_UNITS\\AETHER_BLOOM.EXE",
+            header: "AetherBloom",
+            desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
+            image: "assets/images/vst_aether_bloom.gif",
+            links: [
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/AetherBloom/releases/download/AetherBloom/Aether.Bloom.zip" }
+            ]
+        
+    },
+    vst_p: {
+            title: "C:\\PROG\\VST_UNITS\\HOLLOW_LIGHT.EXE",
+            header: "Hollow Light",
+            desc: "A shoegaze reverb and tape-delay hybrid designed to evoke loneliness, regret, distance, and ghostly melancholy.* **Hollowlight** is a zero-latency (excluding reverb tail), lightweight VST3 audio plugin engineered for lush, washed-out guitars, haunting vocal pads, and distant, tape-warbled echoes.",
+            image: "assets/images/vst_hollow_light.gif",
+            links: [
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/HollowLight/releases/download/hollowlight/Hollow.Light.zip" }
             ]
         }
     },
