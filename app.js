@@ -61,7 +61,7 @@ const moduleDatabase = {
             title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
             header: "Hexchant Harmonizer V1.0.0",
             desc: "An occult vocal harmonizer, spectral vocoder & text-to-speech chant engine for VST3      Hexchant Harmonizer turns any voice — live or typed — into layered ritual harmony. It combines an 8-voice harmonizer, a 32-band spectral vocoder, a built-in text-to-speech spell casting engine, a Ghost spectral delay, and a Formant Sculptor with tube saturation and cathedral reverb, all wrapped in an animated coven-themed interface.",
-            image: "assets/images/vst_hexchant.gif",
+            image: "assets/images/vst_hexchant_harmonizer.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Hexchant-Harmonizer/releases/download/HexchantHarmonizer/hexchant.harmonizer.zip" }
             ]
@@ -140,7 +140,7 @@ const moduleDatabase = {
             ]
         
     },
-    vst_p: {
+    vst_q: {
             title: "C:\\PROG\\VST_UNITS\\HOLLOW_LIGHT.EXE",
             header: "Hollow Light",
             desc: "A shoegaze reverb and tape-delay hybrid designed to evoke loneliness, regret, distance, and ghostly melancholy.* **Hollowlight** is a zero-latency (excluding reverb tail), lightweight VST3 audio plugin engineered for lush, washed-out guitars, haunting vocal pads, and distant, tape-warbled echoes.",
