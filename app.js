@@ -130,7 +130,7 @@ const moduleDatabase = {
             ]
         
     },
-     vst_p: {
+     vst_o: {
             title: "C:\\PROG\\VST_UNITS\\AETHER_BLOOM.EXE",
             header: "AetherBloom",
             desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
@@ -140,7 +140,7 @@ const moduleDatabase = {
             ]
         
     },
-    vst_q: {
+    vst_p: {
             title: "C:\\PROG\\VST_UNITS\\HOLLOW_LIGHT.EXE",
             header: "Hollow Light",
             desc: "A shoegaze reverb and tape-delay hybrid designed to evoke loneliness, regret, distance, and ghostly melancholy.* **Hollowlight** is a zero-latency (excluding reverb tail), lightweight VST3 audio plugin engineered for lush, washed-out guitars, haunting vocal pads, and distant, tape-warbled echoes.",
