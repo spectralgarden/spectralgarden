@@ -318,6 +318,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+// --- MOBILE MULTI-TAP ENERGY GESTURE SYSTEM ---
+let lastTapTime = 0;
+let tapCount = 0;
+let tapTimer = null;
+
+document.addEventListener('touchend', (e) => {
+    // Ignore taps if the user is clicking UI elements, windows, taskbars, or menus
+    if (
+        e.target.closest('#taskbar') || 
+        e.target.closest('.window') || 
+        e.target.closest('#start-menu') ||
+        e.target.closest('button') ||
+        e.target.closest('a')
+    ) {
+        return;
+    }
+
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+
+    // Clear previous timeout if tapping rapidly
+    if (tapTimer) clearTimeout(tapTimer);
+
+    if (tapLength < 350 && tapLength > 0) {
+        tapCount++;
+    } else {
+        tapCount = 1;
+    }
+
+    lastTapTime = currentTime;
+
+    // Evaluate taps after a brief micro-delay to catch double vs triple-tap accurately
+    tapTimer = setTimeout(() => {
+        if (tapCount === 2) {
+            // DOUBLE-TAP TRIGGER -> Pulse/Push Aura (Costs 10 Energy)
+            e.preventDefault();
+            castAuraWave('push');
+        } else if (tapCount >= 3) {
+            // TRIPLE-TAP TRIGGER -> Damage Blast Aura (Costs 20 Energy)
+            e.preventDefault();
+            castAuraWave('damage');
+        }
+        tapCount = 0;
+    }, 300);
+});
 });
 
 function toggleHelpSubmenu(event) {
