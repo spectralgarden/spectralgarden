@@ -1407,60 +1407,64 @@ body.bomb-burst-flash::after {
     filter: drop-shadow(0 0 10px rgba(204, 0, 51, 0.2));
 }
 /* ========================================================================== */
-/* Mobile Taskbar Overflow & Responsive Adjustments                          */
+/* Mobile Taskbar Optimization & Compact Scaling                              */
 /* ========================================================================== */
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 768px) {
+    #taskbar {
+        padding: 0 4px;
+        gap: 4px;
+        justify-content: space-between;
+    }
+
+    /* Fix the VOID start button size on mobile so it isn't massive */
+    .start-btn {
+        padding: 2px 8px !important;
+        font-size: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        white-space: nowrap !important;
+    }
+    
+    .start-btn img {
+        width: 11px !important;
+        height: 11px !important;
+        margin-right: 2px !important;
+    }
+
     .taskbar-right {
         gap: 3px;
-        max-width: 75%;
-        overflow-x: auto;
-        justify-content: flex-end;
-    }
-    .xp-container, .energy-container, .shield-container {
-        display: none; /* Hide heavy multi-bars on medium/small mobile screens to save space */
-    }
-}
-
-/* Mobile Taskbar Toggle Button & Drawer */
-#mobile-taskbar-toggle {
-    display: none;
-    background: #eaeaea;
-    border: 1px solid #111111;
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 11px;
-    padding: 0 8px;
-    height: 28px;
-    align-items: center;
-    color: #111111;
-}
-
-#mobile-taskbar-drawer {
-    display: none;
-    position: fixed;
-    bottom: 42px;
-    right: 5px;
-    background: #ffffff;
-    border: 2px solid #111111;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.8);
-    padding: 8px;
-    z-index: 10005;
-    flex-direction: column;
-    gap: 6px;
-}
-
-@media screen and (max-width: 768px) {
-    #mobile-taskbar-toggle {
+        max-width: 80%;
         display: flex;
+        align-items: center;
+        overflow: visible; /* Prevent clipping bugs */
     }
-    /* Hide non-essential static widgets from main bar when screen is narrow */
+
+    /* Hide full status widgets on mobile to prevent overlapping, they live in the drawer instead */
     .taskbar-right > .retro-btn:not(#mobile-taskbar-toggle),
     .taskbar-right > .lives-display-box,
     .taskbar-right > .level-display-box,
     .taskbar-right > .xp-container,
     .taskbar-right > .energy-container,
-    .taskbar-right > .shield-container {
+    .taskbar-right > .shield-container,
+    .taskbar-right > #help-submenu-container,
+    .taskbar-right > #bug-submenu-container,
+    .taskbar-right > #system-clock {
         display: none !important;
+    }
+
+    /* Show the mobile menu drawer toggle button */
+    #mobile-taskbar-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        height: 28px;
+        padding: 0 8px;
+        background: #eaeaea;
+        border: 1px solid #111111;
+        font-family: monospace;
+        font-weight: bold;
+        font-size: 10px;
+        color: #111111;
     }
 }

@@ -292,94 +292,10 @@
     <img src="assets/images/favicon.png" alt="" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; filter: brightness(0) invert(1);"> [ VOID ]
 </button>
         <div class="taskbar-right">
-            <!-- Mobile Taskbar Toggle Menu Button -->
-            <button id="mobile-taskbar-toggle" onclick="toggleMobileTaskbarDrawer(event)">📂 MENU</button>
-            
-            <!-- Mobile Overflow Drawer -->
-            <div id="mobile-taskbar-drawer">
-                <button class="retro-btn" onclick="openWindow('tos-window'); toggleMobileTaskbarDrawer(event);" style="width:100%; text-align:left; background: #eaeaea; font-size: 10px;">⚖️ TERMS</button>
-                <button class="retro-btn" onclick="openWindow('contact-window'); toggleMobileTaskbarDrawer(event);" style="width:100%; text-align:left; background: #eaeaea; font-size: 10px;">✉️ CONTACT</button>
-                <div style="font-size: 10px; font-weight:bold; padding:2px 0;">❤️ <span id="drawer-lives-num">❤️❤️❤️</span></div>
-                <div style="font-size: 10px; font-weight:bold; padding:2px 0;">LVL: <span id="drawer-level-num">1</span>/32</div>
-            </div>
-
             <!-- Terms of Service Taskbar Button -->
             <button class="retro-btn" onclick="openWindow('tos-window')" style="height: 28px; padding: 0 8px; display: flex; align-items: center; background: #eaeaea; font-size: 10px;">⚖️ TERMS</button>
             <!-- Contact Taskbar Button -->
             <button class="retro-btn" onclick="openWindow('contact-window')" style="height: 28px; padding: 0 8px; display: flex; align-items: center; background: #eaeaea; font-size: 10px;">✉️ CONTACT</button>
-            
-            <!-- Lives Display Widget -->
-            <div class="lives-display-box">
-                LIVES: <span id="lives-num-display">❤️❤️❤️</span>
-            </div>
-
-            <!-- Level Display Widget -->
-            <div class="level-display-box">
-                LVL: <span id="level-num-display">1</span>/32
-            </div>
-
-            <!-- Experience Load Bar -->
-            <div class="xp-container">
-                <div class="xp-label">
-                    <span>XP</span>
-                    <span id="xp-text">0/2000</span>
-                </div>
-                <div class="xp-bar-outer">
-                    <div id="xp-bar-inner" class="xp-bar-inner"></div>
-                </div>
-            </div>
-
-            <!-- Energy Reserve Bar -->
-            <div class="energy-container">
-                <div class="energy-label">
-                    <span>ENERGY</span>
-                    <span id="energy-text">100%</span>
-                </div>
-                <div class="energy-bar-outer">
-                    <div id="energy-bar-inner" class="energy-bar-inner"></div>
-                </div>
-            </div>
-
-            <!-- Health / Data Shield progress bar -->
-            <div class="shield-container">
-                <div class="shield-label">
-                    <span>DATA_SHIELD</span>
-                    <span id="shield-text">100%</span>
-                </div>
-                <div class="shield-bar-outer">
-                    <div id="shield-bar-inner" class="shield-bar-inner"></div>
-                </div>
-            </div>
-
-            <!-- How To Play Flush Taskbar Popup -->
-            <div id="help-submenu-container">
-                <button id="help-submenu-trigger" class="retro-btn" onclick="toggleHelpSubmenu(event)">? HOW TO PLAY</button>
-                <div id="help-submenu">
-                    <div class="help-content-inner">
-                        <div class="help-title">[ FIELD MANUAL & SPELLS ]</div>
-                        <p>• <b>SLINGSHOT:</b> Click & drag core, release to fling, but don't hold on too long.</p>
-                        <p>• <b>DATABUGS:</b> Survive the onslaught of data bugs while collecting items to assist you, make it to level 32 and push for a highest score!.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Bug Tray Access Submenu -->
-            <div id="bug-submenu-container">
-                <button id="bug-submenu-trigger" class="retro-btn" onclick="toggleBugSubmenu(event)">◀</button>
-                <div id="bug-submenu">
-                    <div class="bug-counter-container">
-                        <span class="bug-submenu-icon">👾</span>
-                        <div class="bug-stats-grid">
-                            <div>ORB HP: <span id="orb-hp-display">100</span>%</div>
-                            <div>KILLS: <span id="bug-counter">0</span></div>
-                            <div>HIGH : <span id="bug-highscore">0</span></div>
-                        </div>
-                        <span class="retro-tooltip-text">Data Bug Registry</span>
-                    </div>
-                </div>
-            </div>
-            <div id="system-clock">--:-- --</div>
-        </div>
             
             <!-- Lives Display Widget -->
             <div class="lives-display-box">
