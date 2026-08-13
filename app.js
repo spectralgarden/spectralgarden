@@ -717,7 +717,7 @@ function spawnDataBug() {
                         bugElement.style.fontSize = '24px';
                     } else {
                         if (window.currentLevel < 6) {
-                            glyphs = ['👾', '🕷️', '🪲', '🐜'];
+                            glyphs = ['assets/images/sprites/sprites_1.png', '🕷️', '🪲', '🐜'];
                         } else if (window.currentLevel < 15) {
                             glyphs = ['🛸', '📡', '☄️', '🌌', '💫'];
                         } else {
