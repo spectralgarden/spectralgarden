@@ -158,69 +158,7 @@ const moduleDatabase = {
     image: "assets/images/game_sim_x.gif",
     content: "STATUS: BOOT SEQUENCE ONLINE\nREALITY ANCHOR: UNSTABLE\nENTITY VECTOR: ACTIVE\n\nEngage Eden's Edge runtime below and enter the distortion."
         },
-        /*game_b: {
-            title: "C:\\PROG\\GAMES\\RITUAL_DOOM.EXE",
-            header: "RITUAL DOOM 3D",
-            desc: "A software-rendered raycaster testing low-res environments against cognitive visual stress matrices.",
-            image: "assets/images/game_ritual_doom.gif",
-            content: "STATUS: DEGRADED\nASSETS LOADED: 12/64\nERROR: MATRIX CORRUPTION\n\nRun debug diagnostic sequence."
-        },*/
-        /*game_c: {
-            title: "C:\\PROG\\GAMES\\NETRUNNER.EXE",
-            header: "NETRUNNER 2099",
-            desc: "Cyberdeck terminal navigator mapping corporate firewalls and high-value subnet servers.",
-            image: "assets/images/game_netrunner.gif",
-            content: "STATUS: INTRUSION DETECTED\nNODE TARGET: SECURE_VAULT_9\nFIREWALL DECAY: 45%"
-        },*/
-        /*game_d: {
-            title: "C:\\PROG\\GAMES\\CRYPT_DESCENT.EXE",
-            header: "CRYPT DESCENT",
-            desc: "An algorithmic, text-based labyrinth crawl into simulated forgotten server vaults.",
-            image: "assets/images/game_crypt.gif",
-            content: "STATUS: FLOOR 4\nLIGHT RESOURCE: 12%\nWARNING: ENTITY DETECTED ON ADJACENT NODE"
-        },*/
-        /*game_e: {
-            title: "C:\\PROG\\GAMES\\STATIC_WHISPER.EXE",
-            header: "STATIC WHISPERER",
-            desc: "An audio-frequency deciphering puzzle decrypting transmissions inside raw white noise.",
-            image: "assets/images/game_static_whisper.gif",
-            content: "STATUS: TUNING RADAR...\nCARRIER FREQ: 144.82 MHz\nSIGNAL STRENGTH: WEAK"
-        },*/
-        /*game_f: {
-            title: "C:\\PROG\\GAMES\\TERM_HACK.EXE",
-            header: "TERMINAL HACK",
-            desc: "Time-restricted mainframe penetration testing program simulating security bypasses.",
-            image: "assets/images/game_term_hack.gif",
-            content: "STATUS: BYPASS ATTEMPT 1/3\nTIME REMAINING: 54 SEC\nDECRYPT KEY MATCH IN PROGRESS..."
-        },*/
-        /*game_g: {
-            title: "C:\\PROG\\GAMES\\VOID_SWEEPER.EXE",
-            header: "VOID SWEEPER",
-            desc: "Logical deduction puzzle clearing grid vectors without puncturing localized coordinate leaks.",
-            image: "assets/images/game_void_sweeper.gif",
-            content: "STATUS: GRID SIZE 16x16\nLEAKS PLANTED: 40\nSECTORS CLEARED: 12"
-        },*/
-        /*game_h: {
-            title: "C:\\PROG\\GAMES\\ROGUE_SIGNAL.EXE",
-            header: "ROGUE SIGNAL",
-            desc: "Track software telemetry spikes across dynamic coordinate tracking system grids.",
-            image: "assets/images/game_rogue_signal.gif",
-            content: "STATUS: TRACING...\nRELAY ID: #4489-B\nDISTANCE: 14.8 PARSECS"
-        },*/
-        /*game_i: {
-            title: "C:\\PROG\\GAMES\\PSYCHIC_LINK.EXE",
-            header: "PSYCHIC LINK",
-            desc: "Memory evaluation protocol testing mental recall patterns against variable binary arrays.",
-            image: "assets/images/game_psychic_link.gif",
-            content: "STATUS: MATCH TEST RUNNING\nROUND: 3/10\nCONGRUENCE RATIO: 82.4%"
-        },*/
-        /*game_j: {
-            title: "C:\\PROG\\GAMES\\MATRIX_RUNNER.EXE",
-            header: "MATRIX RUNNER",
-            desc: "Vector-style wireframe movement simulator testing hardware geometric processing rendering limits.",
-            image: "assets/images/game_matrix_runner.gif",
-            content: "STATUS: SIMULATING...\nRENDERING ENGINE: VECTOR_CORE_V1\nFPS: 60 [STABLE]"
-        }*/
+       
     },
    apps: {
         app_a: {
@@ -239,143 +177,10 @@ const moduleDatabase = {
                      "🌐 <strong>LIVE PORTAL:</strong><br>" 
                      /*"<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"*/
         },
-        /*app_b: {
-            title: "C:\\PROG\\APPS\\SPECTROGRAM.EXE",
-            header: "PULSE SPECTROGRAM",
-            desc: "Real-time frequency tracking utility analyzing underlying carrier signals.",
-            image: "assets/images/app_spectrogram.gif",
-            content: "FREQ TRACKING ACTIVE\n[|||||||||||||||||||||||] 12.4Hz\n[||||||||||||           ] 4.1Hz"
-        },*/
-        /*app_c: {
-            title: "C:\\PROG\\APPS\\SHREDDER.EXE",
-            header: "FILE SHREDDER",
-            desc: "Destructive digital deletion utility utilizing high-entropy randomized dummy data overwrites.",
-            image: "assets/images/app_shredder.gif",
-            content: "ALGORITHM: DOD 5220.22-M\nTARGET: TEMP_SESSION_LOG.DAT\nSTATUS: IN PROGRESS [88%]"
-        },*/
-        /*app_d: {
-            title: "C:\\PROG\\APPS\\SIG_GEN.EXE",
-            header: "SIGNAL GENERATOR",
-            desc: "Generates static reference wave frequencies, custom sweep waves, and pure white noise files.",
-            image: "assets/images/app_sig_gen.gif",
-            content: "WAVEFORM: SINE\nOUTPUT FREQ: 440.00 Hz\nAMPLITUDE: -12.0 dB"
-        },*/
-        /*app_e: {
-            title: "C:\\PROG\\APPS\\DECRYPTOR.EXE",
-            header: "DECRYPTOR PRO",
-            desc: "Decodes structured system logs encoded with customized alphanumeric shift mechanics.",
-            image: "assets/images/app_decryptor.gif",
-            content: "ALGORITHM: ROT13 + BASE64\nCIPHER: UVNfSjN4X0xVMg==\nDECRYPTED: SYS_KEY_99"
-        },*/
-        /*app_f: {
-            title: "C:\\PROG\\APPS\\MEM_INSPECT.EXE",
-            header: "MEM INSPECTOR",
-            desc: "Inspect active RAM block addresses and virtual system hardware registry partitions.",
-            image: "assets/images/app_mem_inspect.gif",
-            content: "RAM ACTIVE: 512 KB\nHEAP ALLOCATION: 256 KB\nFREE ADDR: 0x0F44BB"
-        },*/
-        /*app_g: {
-            title: "C:\\PROG\\APPS\\PAINTER.EXE",
-            header: "VECTOR PAINTER",
-            desc: "Draw mathematical coordinate lines and wireframe models on virtual display adapters.",
-            image: "assets/images/app_painter.gif",
-            content: "CANVAS RESOLUTION: 320x240\nPOINTS PLOTTED: 8\nVECTOR REFRESH: ON"
-        },*/
-        /*app_h: {
-            title: "C:\\PROG\\APPS\\NODE_MAP.EXE",
-            header: "NODE MAPPER",
-            desc: "Traces topological layouts of local network relays and interconnected virtual routers.",
-            image: "assets/images/app_node_map.gif",
-            content: "HOPS DETECTED: 4\nLATENCY: 12ms\nGATEWAY: 192.168.1.254"
-        },*/
-        /*app_i: {
-            title: "C:\\PROG\\APPS\\LOG_VIEW.EXE",
-            header: "LOG VIEWER",
-            desc: "Read real-time background records and security tracking system indicators.",
-            image: "assets/images/app_log_view.gif",
-            content: "02:14:10 - RECV [SYS_PING]\n02:14:15 - OK [HANDSHAKE]\n02:14:22 - ALERT: ENCRYPT SCAN"
-        },*/
-        /*app_j: {
-            title: "C:\\PROG\\APPS\\CLOCK_SYNC.EXE",
-            header: "CLOCK SYNC",
-            desc: "NTP protocol alignment system matching global regional systems to network clocks.",
-            image: "assets/images/app_clock_sync.gif",
-            content: "SERVER: TIME.VOID.NTP\nVARIANCE: -0.0024s\nSTATUS: DRIFT CORRECTED"
-        }*/
+        
     },
-    music: {
-        track_a: {
-            title: "C:\\MEDIA\\PLAYER\\AMBIENT_DRONE.MP3",
-            header: "BLACK AMBIENT SYSTEM DRONE",
-            desc: "Constant low-frequency sine-wave output tracking geographic coordinate variance.",
-            image: "assets/images/track_ambient.gif",
-            player: "TRACK_01_DRONE.MP3 [04:20 / 99:99]"
-        },
-        track_b: {
-            title: "C:\\MEDIA\\PLAYER\\HYPNOTIC_VORTEX.MP3",
-            header: "HYPNOTIC VORTEX LOOP",
-            desc: "Sub-harmonic rhythmic pulses aligned to standard CRT screen refresh intervals.",
-            image: "assets/images/track_vortex.gif",
-            player: "TRACK_02_VORTEX.MP3 [12:11 / 15:00]"
-        },
-        track_c: {
-            title: "C:\\MEDIA\\PLAYER\\SPECTRAL_ECHO.MP3",
-            header: "SPECTRAL ECHOES",
-            desc: "Analog soundscape featuring heavy cassette tape hiss emulation.",
-            image: "assets/images/track_spectral.gif",
-            player: "TRACK_03_ECHO.MP3 [03:45 / 06:12]"
-        },
-        track_d: {
-            title: "C:\\MEDIA\\PLAYER\\DARK_PULSE.MP3",
-            header: "DARK NET PULSE",
-            desc: "Rhythmic industrial distortion combined with mechanical clock signals.",
-            image: "assets/images/track_dark_pulse.gif",
-            player: "TRACK_04_PULSE.MP3 [05:01 / 07:30]"
-        },
-        track_e: {
-            title: "C:\\MEDIA\\PLAYER\\ETHER_WHISPERS.MP3",
-            header: "ETHER WHISPERS",
-            desc: "A combination of low-pass modulated shortwave static bursts.",
-            image: "assets/images/track_ether_whispers.gif",
-            player: "TRACK_05_WHISPERS.MP3 [08:14 / 12:00]"
-        },
-        track_f: {
-            title: "C:\\MEDIA\\PLAYER\\SUB_CORE.MP3",
-            header: "SUBTERRANEAN CORE",
-            desc: "Deep atmospheric synthesizer sweeps coupled with seismic signal vibrations.",
-            image: "assets/images/track_sub_core.gif",
-            player: "TRACK_06_CORE.MP3 [10:00 / 20:00]"
-        },
-        track_g: {
-            title: "C:\\MEDIA\\PLAYER\\COSMIC_WAVE.MP3",
-            header: "COSMIC MICRO WAVE",
-            desc: "Simulated interstellar signal tracking space-frequency waveforms.",
-            image: "assets/images/track_cosmic_wave.gif",
-            player: "TRACK_07_COSMIC.MP3 [06:40 / 08:50]"
-        },
-        track_h: {
-            title: "C:\\MEDIA\\PLAYER\\GLITCH_SUITE.MP3",
-            header: "GLITCH SUITE NO. 9",
-            desc: "Microtonal digital audio feedback fragments organized in structural math patterns.",
-            image: "assets/images/track_glitch.gif",
-            player: "TRACK_08_GLITCH.MP3 [02:30 / 03:15]"
-        },
-        track_i: {
-            title: "C:\\MEDIA\\PLAYER\\CYBER_SLUMBER.MP3",
-            header: "CYBERNETIC SLUMBER",
-            desc: "Warm slow-tempo oscillator movements mimicking biological sleep states.",
-            image: "assets/images/track_cyber_slumber.gif",
-            player: "TRACK_09_SLUMBER.MP3 [15:22 / 30:00]"
-        },
-        track_j: {
-            title: "C:\\MEDIA\\PLAYER\\PHANTOM_CARRIER.MP3",
-            header: "PHANTOM CARRIER",
-            desc: "An endless loop tracking low-frequency analog hum lines.",
-            image: "assets/images/track_phantom.gif",
-            player: "TRACK_10_PHANTOM.MP3 [99:99 / 99:99]"
-        }
-    }
-};
+       
+}; 
 
 const currentActiveKeys = {
     vst: 'vst_a',
@@ -658,7 +463,7 @@ function spawnDataBug() {
     let isCustomIcon = false;
 
     if (window.gameBeaten) {
-        glyphs = ['⭐', '💫', '☯️', '✙', '⛧', '𓁹', '🕯️', '🕸️', '𓄿', '🦇', '✦', '✧'];
+        glyphs = ['assets/images/items/2_item_sprite.png','⭐', '💫', 'assets/images/items/4_item_sprite.png', '✙', '⛧', '𓁹', '🕯️', '🕸️', 'assets/images/items/3_item_sprite.png', '🦇', '✦', '✧'];
         const colors = ['#00ffff', '#ffd700', '#ff00ff', '#e0b0ff', '#ffffff'];
         chosenColor = colors[Math.floor(Math.random() * colors.length)];
         chosenShadow = chosenColor;
@@ -711,7 +516,7 @@ function spawnDataBug() {
                     isAlien = Math.random() < alienLimit;
 
                     if (isAlien) {
-                        glyphs = ['"assets/images/sprites/sprites_1.png"', 'assets/images/sprites/sprites_2.png', 'assets/images/sprites/sprites_7.png', 'assets/images/sprites/sprites_6.png', 'assets/images/sprites/sprites_3.png', 'assets/images/sprites/sprites_4.png', 'assets/images/sprites/sprites_5.png'];
+                        glyphs = ['assets/images/sprites/sprites_1.png', 'assets/images/sprites/sprites_2.png', 'assets/images/sprites/sprites_7.png', 'assets/images/sprites/sprites_6.png', 'assets/images/sprites/sprites_3.png', 'assets/images/sprites/sprites_4.png', 'assets/images/sprites/sprites_5.png'];
                         chosenColor = '#ff3300';
                         chosenShadow = 'rgba(255, 51, 0, 0.9)';
                         bugElement.style.fontSize = '24px';
@@ -719,7 +524,7 @@ function spawnDataBug() {
                         if (window.currentLevel < 6) {
                             glyphs = ['assets/images/sprites/sprites_1.png', '🕷️', '🪲', '🐜'];
                         } else if (window.currentLevel < 15) {
-                            glyphs = ['🛸', '📡', '☄️', '🌌', '💫'];
+                            glyphs = ['assets/images/sprites/sprites_10.png','assets/images/sprites/sprites_11.png',];
                         } else {
                             glyphs = ['☠️', '☣', '☢', '𓁹', '⚚', '☋', '⚡', '⚙️', '⌖'];
                         }
@@ -739,8 +544,8 @@ function spawnDataBug() {
     if (isCustomIcon || chosenGlyph.includes('.')) {
         const img = document.createElement('img');
         img.src = chosenGlyph;
-        img.style.width = '26px';
-        img.style.height = '26px';
+        img.style.width = '46px';
+        img.style.height = '46px';
         img.style.objectFit = 'contain';
         bugElement.appendChild(img);
     } else {
@@ -797,6 +602,7 @@ function handlePowerUpSpawning() {
     if (window.gameBeaten) return;
 
     const spawnThreshold = window.bossActive ? 350 : 250;
+
     if (Math.random() * 10000 < spawnThreshold && !window.activePowerUpItem) {
         const safeCoords = getSafeSpawnCoords();
 
@@ -804,38 +610,74 @@ function handlePowerUpSpawning() {
         itemElement.className = 'retro-powerup';
 
         let itemType = window.nextPowerUpType;
+
+        // Boss mode overrides
         if (window.bossActive) {
             itemType = Math.random() > 0.4 ? 'health_potion' : 'fighter';
         }
 
+        // Helper: render emoji or image
+        const renderIcon = (icon) => {
+            if (icon.includes('.')) {
+                return `<img src="${icon}" style="width:32px;height:32px;object-fit:contain;">`;
+            }
+            return `<span>${icon}</span>`;
+        };
+
+        // Power-up definitions
         if (itemType === 'fighter') {
-            itemElement.innerHTML = `<span>⚡</span><span>[F-SYS]</span>`;
+            itemElement.innerHTML = `
+                ${renderIcon('assets/images/sprites/healers/space/1_sprites_space.png')}
+                <span>[F-SYS]</span>
+            `;
             window.nextPowerUpType = 'tornado';
+
         } else if (itemType === 'tornado') {
-            itemElement.innerHTML = `<span>🌀</span><span>[V-TEX]</span>`;
+            itemElement.innerHTML = `
+                ${renderIcon('assets/images/specials/2_special_sprite.png')}
+                <span>[V-TEX]</span>
+            `;
             window.nextPowerUpType = 'cluster_bomb';
+
         } else if (itemType === 'cluster_bomb') {
-            itemElement.innerHTML = `<span>💣</span><span>[BOMB]</span>`;
-            itemElement.className += ' bomb-powerup';
+            itemElement.innerHTML = `
+                ${renderIcon('💣')}
+                <span>[BOMB]</span>
+            `;
+            itemElement.classList.add('bomb-powerup');
             window.nextPowerUpType = 'extra_life';
+
         } else if (itemType === 'extra_life') {
-            itemElement.innerHTML = `<span>🖤</span><span>[+1 LIFE]</span>`;
-            itemElement.className += ' extra-life';
+            itemElement.innerHTML = `
+                ${renderIcon('🖤')}
+                <span>[+1 LIFE]</span>
+            `;
+            itemElement.classList.add('extra-life');
             window.nextPowerUpType = 'health_potion';
+
         } else if (itemType === 'health_potion') {
-            itemElement.innerHTML = `<span>🧪</span><span>[HEAL]</span>`;
-            itemElement.className += ' health-potion';
+            itemElement.innerHTML = `
+                ${renderIcon('🧪')}
+                <span>[HEAL]</span>
+            `;
+            itemElement.classList.add('health-potion');
             window.nextPowerUpType = 'energy_cell';
+
         } else if (itemType === 'energy_cell') {
-            itemElement.innerHTML = `<span>🔋</span><span>[CELL]</span>`;
-            itemElement.className += ' energy-cell';
+            itemElement.innerHTML = `
+                ${renderIcon('🔋')}
+                <span>[CELL]</span>
+            `;
+            itemElement.classList.add('energy-cell');
             window.nextPowerUpType = 'fighter';
         }
-        
+
+        // Positioning
         itemElement.style.left = (safeCoords.x - 50) + 'px';
         itemElement.style.top = (safeCoords.y - 20) + 'px';
         document.body.appendChild(itemElement);
 
+        // Track active item
         window.activePowerUpItem = {
             element: itemElement,
             x: safeCoords.x,
@@ -843,6 +685,8 @@ function handlePowerUpSpawning() {
             type: itemType
         };
     }
+
+
 }
 
 function collectPowerUp() {
@@ -881,7 +725,14 @@ function deployFighters() {
         const drone = document.createElement('div');
         drone.className = 'fighter-orb';
         
-        const startX = -50;
+        const droneImg = document.createElement('img');
+        droneImg.src = 'assets/images/sprites/healers/space/1_sprites_space.png';
+        droneImg.style.width = '36px';
+        droneImg.style.height = '36px';
+        droneImg.style.objectFit = 'contain';
+        drone.appendChild(droneImg);
+
+        const startX = -60;
         const startY = (viewHeight / (count + 1)) * (i + 1);
         
         drone.style.left = '0px';
@@ -914,14 +765,44 @@ function deployTornado() {
     const ring3 = document.createElement('div');
     ring3.className = 'spiral-ring ring-3';
 
+    // Central core image or icon layout
     const symbol = document.createElement('div');
     symbol.className = 'vortex-symbol';
-    symbol.textContent = '🌀';
+
+    const img = document.createElement('img');
+    img.src = 'assets/images/specials/1_special_sprite.png';
+    img.style.width = '42px';
+    img.style.height = '42px';
+    img.style.objectFit = 'contain';
+    img.style.filter = 'drop-shadow(0 0 8px #ffffff)';
+    symbol.appendChild(img);
 
     inner.appendChild(ring1);
     inner.appendChild(ring2);
     inner.appendChild(ring3);
     inner.appendChild(symbol);
+
+    // Dynamic orbiting wind shards / debris elements
+    const debrisIcons = ['⚡', '✦', '▲', 'ø', '✧', '♦'];
+    for (let i = 0; i < 6; i++) {
+        const debris = document.createElement('div');
+        debris.className = 'vortex-debris';
+        debris.textContent = debrisIcons[Math.floor(Math.random() * debrisIcons.length)];
+        
+        // Randomize initial orbital positioning distances and coloring
+        const angle = (i / 6) * Math.PI * 2;
+        const distance = 55 + Math.random() * 45;
+        const dX = Math.cos(angle) * distance;
+        const dY = Math.sin(angle) * distance;
+        
+        debris.style.left = `calc(50% + ${dX}px)`;
+        debris.style.top = `calc(50% + ${dY}px)`;
+        debris.style.color = Math.random() > 0.5 ? '#00ffff' : '#ff00ff';
+        debris.style.textShadow = '0 0 6px currentColor';
+        
+        inner.appendChild(debris);
+    }
+
     wrapper.appendChild(inner);
 
     const startX = window.innerWidth / 2;
@@ -941,6 +822,8 @@ function deployTornado() {
         lifeFrames: 450
     };
 }
+
+
 
 function armClusterBomb() {
     window.isClusterBombArmed = true;
@@ -1232,20 +1115,29 @@ function triggerOrbExplosion() {
     const centerX = window.orbScreenX || (window.innerWidth / 2);
     const centerY = window.orbScreenY || ((window.innerHeight - 40) / 2);
 
-    createExplosionParticles(centerX, centerY, '#ff00ff');
-    createExplosionParticles(centerX, centerY, '#00ff66');
-    createExplosionParticles(centerX, centerY, '#00a8ff');
-    createExplosionParticles(centerX, centerY, '#ff3300');
+    const colors = [
+        "#ff00ff",
+        "#00ff66",
+        "#00a8ff",
+        "#ff3300"
+    ];
 
-    playOverloadSound();
+    colors.forEach((color, i) => {
+        setTimeout(() => {
+            createExplosionParticles(centerX, centerY, color);
 
-    window.orbEnergy = 100;
-    window.currentLevelXP = Math.max(0, window.currentLevelXP - 200);
-    updateXPDisplay();
-    updateEnergyDisplay();
+            // Optional extra hook if defined
+            const radius = 40 + Math.random() * 60;
+            const intensity = 0.6 + Math.random() * 0.4;
 
-    if (typeof window.killAndRespawnOrb === 'function') {
-        window.killAndRespawnOrb();
+            if (typeof window.explosionExtras === 'function') {
+                window.explosionExtras(centerX, centerY, { radius, intensity });
+            }
+        }, i * 80);
+    });
+
+    if (typeof pulseOrbGlow === 'function') {
+        pulseOrbGlow(centerX, centerY);
     }
 }
 
@@ -1368,7 +1260,7 @@ function triggerBossFight() {
     window.bossY = 180;
     window.bossIsCharging = false;
 
-    const bossSymbols = ['☬', '👁️', '☢️', '⚛️', '☣️', '🌀', '✠', '👾', '⚡', '🪐'];
+    const bossSymbols = ['☬', '👁️', '☢️', '⚛️', '☣️', 'assets/images/boss/1_boss.png', '✠', '👾', '⚡', '🪐'];
     const chosenSymbol = bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
     
     const bossTitles = [
@@ -1386,9 +1278,22 @@ function triggerBossFight() {
     window.bossVX = (Math.random() > 0.5 ? 1 : -1) * (1.2 + Math.random() * 0.8) * speedMultiplier;
     window.bossVY = (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 0.6) * speedMultiplier;
 
+    // --- FIX: CREATE bossElement FIRST before modifying it ---
     bossElement = document.createElement('div');
     bossElement.className = 'boss-entity';
-    bossElement.textContent = chosenSymbol;
+    
+    if (chosenSymbol.includes('.')) {
+        const img = document.createElement('img');
+        img.src = chosenSymbol;
+        img.style.width = '64px';
+        img.style.height = '64px';
+        img.style.objectFit = 'contain';
+        bossElement.appendChild(img);
+    } else {
+        bossElement.textContent = chosenSymbol;
+    }
+    // ---------------------------------------------------------
+
     bossElement.style.filter = `hue-rotate(${randomHue}deg) drop-shadow(0 0 20px rgba(255, 51, 0, 0.9))`;
     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
     document.body.appendChild(bossElement);

@@ -371,7 +371,7 @@
         </div>
     </div>
 
-    <!-- [ VOID ] Panel Submenu Tree -->
+    <!--  VOID  Panel Submenu Tree -->
     <div id="start-menu">
         <div class="start-menu-inner">
             <div class="start-menu-sidebar">
@@ -416,6 +416,16 @@
                     <div class="submenu">
                         <div class="submenu-item" onclick="loadModule('apps', 'app_a')">Akashic Tarot</div>
                     </div>
+                </div>
+
+                <!-- Terms Menu Item -->
+                <div class="menu-item" onclick="openWindow('tos-window'); document.getElementById('start-menu').style.display='none';">
+                    <span>⚖️ Terms of Service</span>
+                </div>
+
+                <!-- Contact Menu Item -->
+                <div class="menu-item" onclick="openWindow('contact-window'); document.getElementById('start-menu').style.display='none';">
+                    <span>✉️ Contact Operator</span>
                 </div>
 
                 <!-- Admin Terminal Command Line Option -->

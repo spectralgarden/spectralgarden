@@ -1468,3 +1468,156 @@ body.bomb-burst-flash::after {
         color: #111111;
     }
 }
+/* --- SPECTRAL TORNADO / V-TEX STYLING --- */
+.spiral-vortex-wrapper {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    pointer-events: none;
+    z-index: 90;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8));
+    animation: vortexHoverPulse 2s ease-in-out infinite alternate;
+}
+
+.spiral-vortex-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    animation: vortexGlobalSpin 1.2s linear infinite;
+}
+
+.spiral-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px dashed rgba(0, 255, 255, 0.4);
+}
+
+.spiral-ring.ring-1 {
+    width: 80px;
+    height: 80px;
+    border-color: #00ffff;
+    border-width: 3px;
+    box-shadow: inset 0 0 15px rgba(0,255,255,0.6), 0 0 15px rgba(0,255,255,0.6);
+    animation: ringSpinCounter 0.8s linear infinite;
+}
+
+.spiral-ring.ring-2 {
+    width: 150px;
+    height: 150px;
+    border-color: #ff00ff;
+    border-style: dotted;
+    border-width: 4px;
+    box-shadow: inset 0 0 20px rgba(255,0,255,0.5), 0 0 20px rgba(255,0,255,0.5);
+    animation: ringSpinClockwise 1.6s linear infinite;
+}
+
+.spiral-ring.ring-3 {
+    width: 220px;
+    height: 220px;
+    border-color: #00ff66;
+    border-width: 1px;
+    box-shadow: 0 0 25px rgba(0,255,102,0.4);
+    animation: ringSpinCounter 2.5s linear infinite;
+}
+
+.vortex-symbol {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(0,255,255,0.8) 0%, rgba(10,10,10,0.9) 80%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px #00ffff;
+    animation: corePulse 0.4s ease-in-out infinite alternate;
+}
+
+.vortex-debris {
+    position: absolute;
+    font-size: 12px;
+    pointer-events: none;
+    animation: debrisOrbit 1s linear infinite;
+}
+
+@keyframes vortexGlobalSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes ringSpinClockwise {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.05); }
+    100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+}
+
+@keyframes ringSpinCounter {
+    0% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+    50% { transform: translate(-50%, -50%) rotate(180deg) scale(0.95); }
+    100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+}
+
+@keyframes corePulse {
+    0% { transform: translate(-50%, -50%) scale(0.85); box-shadow: 0 0 10px #00ffff; }
+    100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 30px #ff00ff; }
+}
+
+@keyframes vortexHoverPulse {
+    0% { filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6)); }
+    100% { filter: drop-shadow(0 0 25px rgba(255, 0, 255, 0.9)); }
+}
+/* --- UPGRADED F-SYS FIGHTER DRONES --- */
+.fighter-orb {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 85;
+    filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.9));
+}
+
+/* Engine Exhaust Thruster Glow */
+.fighter-orb::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent, #00ffff, #ffffff);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ffff;
+    animation: thrusterFlicker 0.1s ease-in-out infinite alternate;
+}
+
+/* Targeting Reticle Ring */
+.fighter-orb::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 1px dashed rgba(0, 255, 255, 0.5);
+    border-radius: 50%;
+    animation: droneReticleSpin 3s linear infinite;
+}
+
+@keyframes thrusterFlicker {
+    0% { width: 10px; opacity: 0.6; }
+    100% { width: 18px; opacity: 1; }
+}
+
+@keyframes droneReticleSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
