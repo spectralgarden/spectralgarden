@@ -480,11 +480,11 @@ function spawnDataBug() {
             glyphs = [
 
                 'assets/images/icon2.png',
-                'assets/images/icon3.png',
-                'assets/images/icon4.png',
-                'assets/images/icon5.png',
-                'assets/images/icon6.png',
-                'assets/images/icon7.png'
+                'assets/images/items/2_item_sprite.png',
+                'assets/images/sprites/healers/1_sprites_healer.png',
+                'assets/images/collect/1_item_collect.png',
+                'assets/images/items/4_item_sprite.png',
+                'assets/images/items/3_item_sprite.png'
 
             ];
             
