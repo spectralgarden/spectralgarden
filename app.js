@@ -641,7 +641,7 @@ function handlePowerUpSpawning() {
 
         } else if (itemType === 'cluster_bomb') {
             itemElement.innerHTML = `
-                ${renderIcon('💣')}
+                ${renderIcon('assets/images/items/1_item_sprite.png')}
                 <span>[BOMB]</span>
             `;
             itemElement.classList.add('bomb-powerup');
@@ -649,7 +649,7 @@ function handlePowerUpSpawning() {
 
         } else if (itemType === 'extra_life') {
             itemElement.innerHTML = `
-                ${renderIcon('🖤')}
+                ${renderIcon('assets/images/collect/2_item_collect.png')}
                 <span>[+1 LIFE]</span>
             `;
             itemElement.classList.add('extra-life');
@@ -1260,7 +1260,7 @@ function triggerBossFight() {
     window.bossY = 180;
     window.bossIsCharging = false;
 
-    const bossSymbols = ['☬', '👁️', '☢️', '⚛️', '☣️', 'assets/images/boss/1_boss.png', '✠', '👾', '⚡', '🪐'];
+    const bossSymbols = ['assets/images/boss/2_boss.png', 'assets/images/boss/3_boss.png', 'assets/images/boss/4_boss.png', 'assets/images/boss/5_boss.png', 'assets/images/boss/6_boss.png', 'assets/images/boss/1_boss.png', 'assets/images/boss/7_boss.png', 'assets/images/boss/8_boss.png', '⚡', '🪐'];
     const chosenSymbol = bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
     
     const bossTitles = [
