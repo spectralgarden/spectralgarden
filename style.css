@@ -1406,3 +1406,61 @@ body.bomb-burst-flash::after {
     object-fit: contain;
     filter: drop-shadow(0 0 10px rgba(204, 0, 51, 0.2));
 }
+/* ========================================================================== */
+/* Mobile Taskbar Overflow & Responsive Adjustments                          */
+/* ========================================================================== */
+
+@media screen and (max-width: 1024px) {
+    .taskbar-right {
+        gap: 3px;
+        max-width: 75%;
+        overflow-x: auto;
+        justify-content: flex-end;
+    }
+    .xp-container, .energy-container, .shield-container {
+        display: none; /* Hide heavy multi-bars on medium/small mobile screens to save space */
+    }
+}
+
+/* Mobile Taskbar Toggle Button & Drawer */
+#mobile-taskbar-toggle {
+    display: none;
+    background: #eaeaea;
+    border: 1px solid #111111;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 0 8px;
+    height: 28px;
+    align-items: center;
+    color: #111111;
+}
+
+#mobile-taskbar-drawer {
+    display: none;
+    position: fixed;
+    bottom: 42px;
+    right: 5px;
+    background: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.8);
+    padding: 8px;
+    z-index: 10005;
+    flex-direction: column;
+    gap: 6px;
+}
+
+@media screen and (max-width: 768px) {
+    #mobile-taskbar-toggle {
+        display: flex;
+    }
+    /* Hide non-essential static widgets from main bar when screen is narrow */
+    .taskbar-right > .retro-btn:not(#mobile-taskbar-toggle),
+    .taskbar-right > .lives-display-box,
+    .taskbar-right > .level-display-box,
+    .taskbar-right > .xp-container,
+    .taskbar-right > .energy-container,
+    .taskbar-right > .shield-container {
+        display: none !important;
+    }
+}

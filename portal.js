@@ -72,8 +72,8 @@ function initPortal() {
     sacredGeometryGroup = new THREE.Group();
     scene.add(sacredGeometryGroup);
 
-    // Add a solid invisible hit sphere so the ENTIRE body/rings area is fully interactive (no dead space)
-    const hitGeo = new THREE.SphereGeometry(7.0, 16, 16);
+    // Expanded invisible hit sphere for easier mobile grabbing
+    const hitGeo = new THREE.SphereGeometry(11.5, 16, 16);
     const hitMat = new THREE.MeshBasicMaterial({ visible: false });
     invisibleHitbox = new THREE.Mesh(hitGeo, hitMat);
     sacredGeometryGroup.add(invisibleHitbox);
