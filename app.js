@@ -711,7 +711,7 @@ function spawnDataBug() {
                     isAlien = Math.random() < alienLimit;
 
                     if (isAlien) {
-                        glyphs = ['🛸', '👁️', '👿', '👽', '☄️', '☠️', '☣️'];
+                        glyphs = ['"assets/images/sprites/sprites_1.png"', 'assets/images/sprites/sprites_2.png', 'assets/images/sprites/sprites_7.png', 'assets/images/sprites/sprites_6.png', 'assets/images/sprites/sprites_3.png', 'assets/images/sprites/sprites_4.png', 'assets/images/sprites/sprites_5.png'];
                         chosenColor = '#ff3300';
                         chosenShadow = 'rgba(255, 51, 0, 0.9)';
                         bugElement.style.fontSize = '24px';
