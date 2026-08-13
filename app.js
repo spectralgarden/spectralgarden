@@ -318,13 +318,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-// --- MOBILE MULTI-TAP ENERGY GESTURE SYSTEM ---
-let lastTapTime = 0;
+
+});// --- ROBUST MOBILE MULTI-TAP ENERGY SYSTEM ---
 let tapCount = 0;
 let tapTimer = null;
 
-document.addEventListener('touchend', (e) => {
-    // Ignore taps if the user is clicking UI elements, windows, taskbars, or menus
+document.addEventListener('touchstart', (e) => {
+    // Check if the user is tapping inside a window, menu, or button
     if (
         e.target.closest('#taskbar') || 
         e.target.closest('.window') || 
@@ -332,38 +332,24 @@ document.addEventListener('touchend', (e) => {
         e.target.closest('button') ||
         e.target.closest('a')
     ) {
-        return;
+        return; // Let normal UI clicks happen
     }
 
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTime;
+    tapCount++;
 
-    // Clear previous timeout if tapping rapidly
     if (tapTimer) clearTimeout(tapTimer);
 
-    if (tapLength < 350 && tapLength > 0) {
-        tapCount++;
-    } else {
-        tapCount = 1;
-    }
-
-    lastTapTime = currentTime;
-
-    // Evaluate taps after a brief micro-delay to catch double vs triple-tap accurately
     tapTimer = setTimeout(() => {
         if (tapCount === 2) {
-            // DOUBLE-TAP TRIGGER -> Pulse/Push Aura (Costs 10 Energy)
-            e.preventDefault();
+            // DOUBLE-TAP -> Pulse / Push Aura (10 Energy)
             castAuraWave('push');
         } else if (tapCount >= 3) {
-            // TRIPLE-TAP TRIGGER -> Damage Blast Aura (Costs 20 Energy)
-            e.preventDefault();
+            // TRIPLE-TAP -> Damage Blast Aura (20 Energy)
             castAuraWave('damage');
         }
-        tapCount = 0;
-    }, 300);
-});
-});
+        tapCount = 0; // Reset counter after evaluation window ends
+    }, 320); // 320ms window to catch multi-taps
+}, { passive: true });
 
 function toggleHelpSubmenu(event) {
     event.stopPropagation();
@@ -1029,8 +1015,14 @@ function loseLifeOrTriggerGameOver() {
     updateLivesDisplay();
 
     if (window.playerLives > 0) {
+        // --- FIX: Instantly restore health pool upon losing a life so it doesn't lock at 0 ---
+        window.orbHP = 100;
+        updateHPDisplay();
+        
         triggerOrbExplosion();
     } else {
+        window.orbHP = 0; // Ensure it stays 0 on game over
+        updateHPDisplay();
         triggerGameOverLeaderboardModal();
     }
 }
@@ -1167,23 +1159,17 @@ function triggerOrbExplosion() {
         "#ff3300"
     ];
 
+    // Fire multi-colored particle bursts from the orb's center
     colors.forEach((color, i) => {
         setTimeout(() => {
             createExplosionParticles(centerX, centerY, color);
-
-            // Optional extra hook if defined
-            const radius = 40 + Math.random() * 60;
-            const intensity = 0.6 + Math.random() * 0.4;
-
-            if (typeof window.explosionExtras === 'function') {
-                window.explosionExtras(centerX, centerY, { radius, intensity });
-            }
         }, i * 80);
     });
 
-    if (typeof pulseOrbGlow === 'function') {
-        pulseOrbGlow(centerX, centerY);
-    }
+    // Flash/pulse the damage or screen overlay so the player sees the hit effect
+    triggerDamageFlashOverlay(50);
+    playOverloadSound();
+
 }
 
 function triggerGameOverLeaderboardModal() {
