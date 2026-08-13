@@ -229,13 +229,15 @@ const moduleDatabase = {
             desc: "A ritual-coded search guide for the Akashic Tarot deck. Built as a static web portal using HTML, CSS, and JavaScript.",
             image: "assets/images/tarot_preview.gif",
             content: "--- AKASHIC TAROT SYSTEM SPECS ---<br><br>" +
-                     "✨ <strong>FEATURES:</strong><br>" +
+                     "🌐 <strong>LIVE PORTAL:</strong><br>" +
+                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"+ 
+                    "✨ <strong>FEATURES:</strong><br>" +
                      "• Search: Instantly locates & highlights cards.<br>" +
                      "• Random Draw: Simulates a digital pull.<br>" +
                      "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
                      "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" +
-                     "🌐 <strong>LIVE PORTAL:</strong><br>" +
-                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"
+                     "🌐 <strong>LIVE PORTAL:</strong><br>" 
+                     /*"<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"*/
         },
         /*app_b: {
             title: "C:\\PROG\\APPS\\SPECTROGRAM.EXE",
