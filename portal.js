@@ -133,10 +133,10 @@ function createStarfieldBackground() {
     geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
 
     const material = new THREE.PointsMaterial({
-        color: 0xff00aa,           // Electric neon cyan/blue glow (or try 0xff00aa for neon magenta)
-        size: 0.20,                // Sized up slightly to enhance the glowing point effect
+        color: 0x16000E,           // black
+        size: 0.15,                // Sized up slightly to enhance the glowing point effect
         transparent: true,
-        opacity: 0.85,             // Strong, vivid opacity
+        opacity: 0.95,             // Strong, vivid opacity
         blending: THREE.AdditiveBlending // Makes the particles look like glowing light sources
     });
 
@@ -195,13 +195,13 @@ function evolveOrbForLevel(level) {
         }
         return;
     }
-
-    let innerColor = 0xff00ff;
+// orb color
+    let innerColor = 0x000000;
     let ringColor = 0x00ff66;
     let dualColor = 0x00a8ff;
 
     if (level >= 5 && level < 12) {
-        innerColor = 0xff3300; ringColor = 0x00a8ff; dualColor = 0xff00ff;
+        innerColor = 0xff3300; ringColor = 0x000000; dualColor = 0xff00ff;
     } else if (level >= 12 && level < 20) {
         innerColor = 0x00ff66; ringColor = 0xff00ff; dualColor = 0x00ffff;
     } else if (level >= 20) {
