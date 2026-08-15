@@ -2,7 +2,7 @@
 const moduleDatabase = {
     vst: {
         vst_a: {
-            title: "C:\\PROG\\VST_UNITS\\ARCANE_GAIN.EXE",
+            title: "C:\\PROG\\VST_UNITS\\ARCANE_GAIN.VST3",
             header: "ArcaneGain v1.0",
             desc: "Arcane Gain is a lightweight, zero-latency, CPU-efficient gain/trim utility plugin designed to be the simplest, cleanest, and most reliable utility tool in the Spectral Garden ecosystem. It provides precise gain staging, transparent soft-clipping saturation, combined peak/RMS metering, and sample-accurate auto-gain compensation. Extremely low memory and CPU footprint. Built-in live CPU usage monitor. Scalable UI options (100%, 125%, 150%, 200%).",
             image: "assets/images/vst_arcanegain.gif",
@@ -11,7 +11,7 @@ const moduleDatabase = {
             ]
         },
         vst_b: {
-            title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.EXE",
+            title: "C:\\PROG\\VST_UNITS\\CRESCENT_Q.VST3",
             header: "CrescentQ v1.0.0",
             desc: "CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping. CrescentQ is a high‑precision 24‑band parametric equalizer designed for mixing, mastering, and surgical spectral shaping. It features switchable minimum‑phase and linear‑phase architectures, per‑band Mid/Side routing, multi‑stage oversampling, and real‑time FFT visualization. The engine is optimized for low‑latency operation while offering advanced phase‑coherent processing for critical audio work. ",
             image: "assets/images/vst_crescent_q.gif",
@@ -21,7 +21,7 @@ const moduleDatabase = {
             ]
         },
         vst_c: {
-            title: "C:\\PROG\\VST_UNITS\\DOWNER.EXE",
+            title: "C:\\PROG\\VST_UNITS\\DOWNER.VST3",
             header: "downer v1.0.0",
             desc: "Real‑time decay. Rain‑soaked memory. Tape‑stop gravity. A spectral audio decay processor for ambient sound design.downer is a real-time creative audio effect designed to recreate the characteristics of chopped & screwed taped eceleration, rhythmic stuttering, and atmospheric, low-fidelity environments. Inspired by legacy console configuration menus and vintage tape degradation, the system combines: A latency-free dual-tap pitch processor An independent vocal formant filter bank A host-synchronized stutter (chop) engine A dynamic, physical-modeling rain generator that automatically gates according to the input signal's envelope to prevent background static when audio is paused.",
             image: "assets/images/vst_downer.gif",
@@ -31,7 +31,7 @@ const moduleDatabase = {
             ]
         },
         vst_d: {
-            title: "C:\\PROG\\VST_UNITS\\ECHOFIELD_RELIQUARY.EXE",
+            title: "C:\\PROG\\VST_UNITS\\ECHOFIELD_RELIQUARY.VST3",
             header: "Echofield Reliquary V1.0.0",
             desc: "Ambient cathedral reverb & delay‑matrix for evolving, spectral spaces. Echofield Reliquary is an ambient reverberation and delay-matrix synthesizer designed to evoke the warm, dusty, and slightly eerie atmosphere of a forgotten cathedral. Combining visual aesthetics reminiscent of stained-glass altars with a modern DSP console, the plugin serves as a creative sound-design tool for generating organic, evolving spaces and modulated echoes.",
             image: "assets/images/vst_echofield.gif",
@@ -40,7 +40,7 @@ const moduleDatabase = {
             ]
         },
         vst_e: {
-            title: "C:\\PROG\\VST_UNITS\\ETHERFORGE_HARMONICS.EXE",
+            title: "C:\\PROG\\VST_UNITS\\ETHERFORGE_HARMONICS.VST3",
             header: "Etherforge Harmonic V1.0.0",
             desc: "Sacred Cathedral Space & Acoustic Portal Simulator.ETHERFORGE HARMONICS is a hybrid spectral‑processing audio plugin combining real‑time  partial analysis, non‑linear harmonic excitation, and additive resynthesis inside a dark, industrial UI framework. It analyzes incoming audio at the harmonic level and provides precise control over tonal balance, spectral coloration, and harmonic structure.",
             image: "assets/images/vst_etherforge.gif",
@@ -49,7 +49,7 @@ const moduleDatabase = {
             ]
         },
         vst_f: {
-            title: "C:\\PROG\\VST_UNITS\\FORSAKEN.EXE",
+            title: "C:\\PROG\\VST_UNITS\\FORSAKEN.VST3",
             header: "forsaken v1.0.0",
             desc: "Spectral formant filter Forsaken is an astral vocal processor, but can be used for almost anything, designed for darkwave, witch house, ambient, cinematic, and experimental vocal manipulation. Built with JUCE 8.0.14, it combines analogue‑style warmth, reverse grain engines, cathedral‑scale decay, and void‑filtered ambience to transform clean vocals into unstable, supernatural soundscapes.",
             image: "assets/images/vst_forsaken.gif",
@@ -58,7 +58,7 @@ const moduleDatabase = {
             ]
         },
         vst_g: {
-            title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.EXE",
+            title: "C:\\PROG\\VST_UNITS\\HEXCHANT_HARMONIZER.VST3",
             header: "Hexchant Harmonizer V1.0.0",
             desc: "An occult vocal harmonizer, spectral vocoder & text-to-speech chant engine for VST3      Hexchant Harmonizer turns any voice — live or typed — into layered ritual harmony. It combines an 8-voice harmonizer, a 32-band spectral vocoder, a built-in text-to-speech spell casting engine, a Ghost spectral delay, and a Formant Sculptor with tube saturation and cathedral reverb, all wrapped in an animated coven-themed interface.",
             image: "assets/images/vst_hexchant_harmonizer.gif",
@@ -67,7 +67,7 @@ const moduleDatabase = {
             ]
         },
         vst_h: {
-            title: "C:\\PROG\\VST_UNITS\\ISOLATED.EXE",
+            title: "C:\\PROG\\VST_UNITS\\ISOLATED.VST3",
             header: "Isolated v1.0.0",
             desc: "An ambient noise-removal envelope shaping absolute silence into pulsing sub-bass frequencies.*Advanced Multi-Band Drum Isolation & Frequency Sweep Processor***Isolated** is a specialized real-time audio plugin designed for surgical drum separation, transient management, and dynamic frequency sweeping. Powered by multi-stage transient splitters (TSS) and specialized channel frequency cross-overs, it allows producers to independently isolate, mix, and shape individual drum elements (Kick, Snare, Hats, Percussion, and Other) from a full stereo mix. ",
             image: "assets/images/vst_isolated.gif",
@@ -76,7 +76,7 @@ const moduleDatabase = {
             ]
         },
         vst_i: {
-            title: "C:\\PROG\\VST_UNITS\\SERPENTINE.EXE",
+            title: "C:\\PROG\\VST_UNITS\\SERPENTINE.VST3",
             header: "Serpentine v1.0.0",
             desc: "Serpentine is a three‑band dynamics processor and waveshaping saturator It providesanalog‑style saturation, multi‑stage dynamics control, and flexible crossover management using Linkwitz‑Riley filters and phase‑aligned reconstruction",
             image: "assets/images/vst_serpentine.gif",
@@ -85,7 +85,7 @@ const moduleDatabase = {
             ]
         },
         vst_j: {
-            title: "C:\\PROG\\VST_UNITS\\SORROW_STORM.EXE",
+            title: "C:\\PROG\\VST_UNITS\\SORROW_STORM.VST3",
             header: "Sorrow Storm",
             desc: "Generates static sheets of dynamic high-frequency hiss that simulate cold, falling rain. An ambient shoegaze reverb & fuzz plugin for VST3. Sorrow Storm is a mood-drenched effects processor built for dream-pop, shoegaze, and ambient production. It combines a saturating fuzz stage with a modulated four-tap feedback reverb, built-in shimmer pitch-shifting, and 30 hand-tuned presets — wrapped in a custom-animated, glitch-titled interface",
             image: "assets/images/vst_sorrow_storm.gif",
@@ -94,7 +94,7 @@ const moduleDatabase = {
             ]
         },
         vst_k: {
-            title: "C:\\PROG\\VST_UNITS\\WRAITHGATE_VOCODER.EXE",
+            title: "C:\\PROG\\VST_UNITS\\WRAITHGATE_VOCODER.VST3",
             header: "Wraithgate Vocoder v1.0.0",
             desc: "Wraithgate Vocoder is a high-performance, real-time spectral morphing processor designed for Windows VST3 hosts. It bridges the frequency characteristics of an incoming Modulator (traditionally a vocal or speech source) with a Carrier (internal synthesized waves or an external sidechained instrument) through a highly optimized 32-band filterbank, enhanced by a unique Spectral Ghost Engine..",
             image: "assets/images/vst_wraithgate_vocoder.gif",
@@ -103,7 +103,7 @@ const moduleDatabase = {
             ]
         },
         vst_l: {
-            title: "C:\\PROG\\VST_UNITS\\TRICKSTER.EXE",
+            title: "C:\\PROG\\VST_UNITS\\TRICKSTER.VST3",
             header: "Trickster v1.0",
             desc: "Modulated audio delay loop engine featuring randomized memory-read jitter anomalies. Coming soon",
             image: "assets/images/vst_trickster.gif",
@@ -112,7 +112,7 @@ const moduleDatabase = {
             ]
         },
         vst_m: {
-            title: "C:\\PROG\\VST_UNITS\\VOIDBREAK.EXE",
+            title: "C:\\PROG\\VST_UNITS\\VOIDBREAK.VST3",
             header: "Voidbreak v2.0",
             desc: "A brutal peak-clipper modeling severe hardware output stages with extreme tape saturation curves. Voidbreak is an experimental astral character‑effect audio processor designedfor darkwave, witch house, ambient, cinematic, and industrial sound design.It models heavy output degradation, magnetic tape saturation curves, warp‑driftinstability, reverse‑memory distortion, smear‑delay coloration, and spectralpresence shaping.",
             image: "assets/images/vst_voidbreak.gif",
@@ -121,7 +121,7 @@ const moduleDatabase = {
             ]
         },
         vst_n: {
-            title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.EXE",
+            title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.VST3",
             header: "Spectre Wraith",
             desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
             image: "assets/images/vst_spectral_wraith.gif",
@@ -131,7 +131,7 @@ const moduleDatabase = {
         
     },
      vst_o: {
-            title: "C:\\PROG\\VST_UNITS\\AETHER_BLOOM.EXE",
+            title: "C:\\PROG\\VST_UNITS\\AETHER_BLOOM.VST3",
             header: "AetherBloom",
             desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
             image: "assets/images/vst_aether_bloom.gif",
@@ -141,7 +141,7 @@ const moduleDatabase = {
         
     },
     vst_p: {
-            title: "C:\\PROG\\VST_UNITS\\HOLLOW_LIGHT.EXE",
+            title: "C:\\PROG\\VST_UNITS\\HOLLOW_LIGHT.VST3",
             header: "Hollow Light",
             desc: "A shoegaze reverb and tape-delay hybrid designed to evoke loneliness, regret, distance, and ghostly melancholy.* **Hollowlight** is a zero-latency (excluding reverb tail), lightweight VST3 audio plugin engineered for lush, washed-out guitars, haunting vocal pads, and distant, tape-warbled echoes.",
             image: "assets/images/vst_hollow_light.gif",
