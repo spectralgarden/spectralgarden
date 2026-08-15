@@ -494,7 +494,7 @@ function spawnDataBug() {
     let isCustomIcon = false;
 
     if (window.gameBeaten) {
-        glyphs = ['assets/images/items/2_item_sprite.png','⭐', '💫', 'assets/images/items/4_item_sprite.png', '✙', '⛧', '𓁹', '🕯️', '🕸️', 'assets/images/items/3_item_sprite.png', '🦇', '✦', '✧'];
+        glyphs = ['assets/images/items/2_item_sprite.png','assets/images/soft/1.jpg', 'assets/images/soft/2.jpg', 'assets/images/items/4_item_sprite.png', 'assets/images/soft/3.jpg', '⛧', 'assets/images/soft/4.jpg', '🕸️', 'assets/images/items/3_item_sprite.png', '✦', '✧'];
         const colors = ['#00ffff', '#ffd700', '#ff00ff', '#e0b0ff', '#ffffff'];
         chosenColor = colors[Math.floor(Math.random() * colors.length)];
         chosenShadow = chosenColor;
@@ -527,7 +527,7 @@ function spawnDataBug() {
             const healRoll = Math.random() < healChance;
             if (healRoll) {
                 isHealer = true;
-                glyphs = ['✦', '✙', '⚛️'];
+                glyphs = ['✦', '✙', ''];
                 chosenColor = '#00ffff';
                 chosenShadow = 'rgba(0, 255, 255, 0.9)';
                 bugElement.className += ' healer-bug';
@@ -538,7 +538,7 @@ function spawnDataBug() {
 
                 if (harmlessRoll) {
                     isHarmless = true;
-                    glyphs = ['🪱', '🪰', '⚙️', '💬', '✏️'];
+                    glyphs = ['assets/images/junk/1_junk.png', '🪰', '⚙️', 'assets/images/junk/2_junk.png', 'assets/images/junk/3_junk.png', 'assets/images/junk/4_junk.png'];
                     chosenColor = '#668899'; 
                     chosenShadow = 'rgba(102, 136, 153, 0.5)';
                     bugElement.style.fontSize = '15px';
@@ -750,33 +750,65 @@ window.collectPowerUp = collectPowerUp;
 
 function deployFighters() {
     const viewHeight = window.innerHeight - 40;
-    const count = 3;
+    
+    // Define 3 unique fighter archetypes
+    const fighterArchetypes = [
+        {
+            name: "STRIKER-α",
+            img: "assets/images/sprites/healers/space/1_sprites_space.png",
+            glowColor: "#00ffff", // Cyan
+            fireRate: 350,
+            speedY: 0.5
+        },
+        {
+            name: "INTERCEPTOR-β",
+            img: "assets/images/sprites/healers/space/2_sprites_space.png", // Or fallback to another sprite path if available
+            glowColor: "#ff00ff", // Magenta
+            fireRate: 250,        // Faster fire rate
+            speedY: -0.6          // Weaves differently
+        },
+        {
+            name: "HEAVY-γ",
+            img: "assets/images/sprites/healers/space/3_sprites_space.png", // Or fallback asset
+            glowColor: "#ff9900", // Amber / Gold
+            fireRate: 600,        // Slower, heavier impact
+            speedY: 0.0           // Straight line flight
+        }
+    ];
 
-    for (let i = 0; i < count; i++) {
-        const drone = document.createElement('div');
-        drone.className = 'fighter-orb';
+    for (let i = 0; i < 3; i++) {
+        const droneEl = document.createElement('div');
+        droneEl.className = `fighter-drone-unit drone-type-${i + 1}`;
         
-        const droneImg = document.createElement('img');
-        droneImg.src = 'assets/images/sprites/healers/space/1_sprites_space.png';
-        droneImg.style.width = '36px';
-        droneImg.style.height = '36px';
-        droneImg.style.objectFit = 'contain';
-        drone.appendChild(droneImg);
+        // Grab configuration based on index (or randomize it)
+        const archetype = fighterArchetypes[i % fighterArchetypes.length];
 
-        const startX = -60;
-        const startY = (viewHeight / (count + 1)) * (i + 1);
+        // Fallback safety check: if a specific index image doesn't exist yet, reuse the default or map cleanly
+        const spriteSrc = archetype.img || 'assets/images/sprites/healers/space/1_sprites_space.png';
+
+        droneEl.innerHTML = `
+            <div class="drone-energy-ring" style="border-color: ${archetype.glowColor};"></div>
+            <img src="${spriteSrc}" class="drone-img" style="filter: drop-shadow(0 0 8px ${archetype.glowColor});">
+            <div class="drone-core-glow" style="background: radial-gradient(circle, ${archetype.glowColor} 0%, rgba(0,0,0,0) 70%);"></div>
+            <span class="drone-tag">${archetype.name}</span>
+        `;
+
+        const startX = -70 - (i * 45); // Stagger their entry formations horizontally
+        const startY = (viewHeight / 4) * (i + 1);
         
-        drone.style.left = '0px';
-        drone.style.top = '0px';
-        drone.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
-        document.body.appendChild(drone);
+        droneEl.style.left = '0px';
+        droneEl.style.top = '0px';
+        droneEl.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
+        document.body.appendChild(droneEl);
 
         window.activeFighters.push({
-            element: drone,
+            element: droneEl,
             x: startX,
             y: startY,
-            vx: 3.5 + Math.random() * 1.5,
-            vy: (Math.random() - 0.5) * 0.8,
+            vx: 3.0 + (Math.random() * 1.0),
+            vy: archetype.speedY,
+            fireRate: archetype.fireRate,
+            glowColor: archetype.glowColor,
             lastFireTime: 0
         });
     }
@@ -1194,21 +1226,46 @@ function submitScoreToLeaderboard() {
     localStorage.setItem('spectral_garden_lb', JSON.stringify(scores));
     renderLeaderboardList();
 
-    // --- FIX: Reset all game states back to Level 1 and clean up bosses ---
+    // --- FIX: CLEAR ALL EXISTING SPRITES/BUGS FROM THE BOARD ---
+    if (window.dataBugs && window.dataBugs.length > 0) {
+        window.dataBugs.forEach(bug => {
+            if (bug && bug.element) {
+                bug.element.remove();
+            }
+        });
+        window.dataBugs = []; // Empty the array completely
+    }
+
+    // Also clean up any active power-up items left on screen
+    if (window.activePowerUpItem && window.activePowerUpItem.element) {
+        window.activePowerUpItem.element.remove();
+        window.activePowerUpItem = null;
+    }
+
+    // Clean up active tornadoes or fighters if any are lingering
+    if (window.activeTornado && window.activeTornado.element) {
+        window.activeTornado.element.remove();
+        window.activeTornado = null;
+    }
+    if (window.activeFighters && window.activeFighters.length > 0) {
+        window.activeFighters.forEach(f => { if (f && f.element) f.element.remove(); });
+        window.activeFighters = [];
+    }
+    // -------------------------------------------------------------
+
+    // --- Reset all game states back to Level 1 and clean up bosses ---
     window.playerLives = 3;
     window.bugEliminationCount = 0;
-    window.currentLevel = 1;                  // <-- Resets level back to 1
+    window.currentLevel = 1;                  
     window.currentLevelXP = 0;
-    window.xpNeededForNextLevel = 3000;       // <-- Reset XP requirement for Level 1
+    window.xpNeededForNextLevel = 3000;       
     window.orbHP = 100;
     window.orbEnergy = 100;
     window.gameBeaten = false;
 
-    // Clean up any active boss elements and HUD elements left over
     if (typeof cleanupBossFight === 'function') {
         cleanupBossFight();
     }
-    // ---------------------------------------------------------------------
 
     const modal = document.getElementById('gameover-modal');
     if (modal) modal.style.display = 'none';
@@ -1224,8 +1281,7 @@ function submitScoreToLeaderboard() {
     if (typeof evolveOrbForLevel === 'function') {
         evolveOrbForLevel(1);
     }
-}
-window.submitScoreToLeaderboard = submitScoreToLeaderboard;
+}window.submitScoreToLeaderboard = submitScoreToLeaderboard;
 
 function renderLeaderboardList() {
     const listEl = document.getElementById('leaderboard-list');
@@ -1291,7 +1347,20 @@ function triggerBossFight() {
     window.bossY = 180;
     window.bossIsCharging = false;
 
-    const bossSymbols = ['assets/images/boss/2_boss.png', 'assets/images/boss/3_boss.png', 'assets/images/boss/4_boss.png', 'assets/images/boss/5_boss.png', 'assets/images/boss/6_boss.png', 'assets/images/boss/1_boss.png', 'assets/images/boss/7_boss.png', 'assets/images/boss/8_boss.png', '⚡', '🪐'];
+    const bossSymbols = [
+        'assets/images/boss/2_boss.png', 
+        'assets/images/boss/3_boss.png', 
+        'assets/images/boss/4_boss.png', 
+        'assets/images/boss/10_boss.png', 
+        'assets/images/boss/6_boss.png', 
+        'assets/images/boss/1_boss.png', 
+        'assets/images/boss/11_boss.png', 
+        'assets/images/boss/9_boss.png', 
+        'assets/images/boss/12_boss.png',
+        'assets/images/boss/13_boss.png',
+        '⚡', 
+        '🪐'
+    ];
     const chosenSymbol = bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
     
     const bossTitles = [
@@ -1309,16 +1378,24 @@ function triggerBossFight() {
     window.bossVX = (Math.random() > 0.5 ? 1 : -1) * (1.2 + Math.random() * 0.8) * speedMultiplier;
     window.bossVY = (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 0.6) * speedMultiplier;
 
-    // --- FIX: CREATE bossElement FIRST before modifying it ---
+    // --- CREATE BOSS ELEMENT FIRST ---
     bossElement = document.createElement('div');
     bossElement.className = 'boss-entity';
     
+    // --- FIX: CHECK FOR IMAGE EXTENSION OR RENDER PROPERLY ---
     if (chosenSymbol.includes('.')) {
         const img = document.createElement('img');
         img.src = chosenSymbol;
-        img.style.width = '64px';
-        img.style.height = '64px';
+        img.style.width = '72px';
+        img.style.height = '72px';
         img.style.objectFit = 'contain';
+        
+        // Fallback safety if the image file fails to load
+        img.onerror = function() {
+            this.onerror = null;
+            this.replaceWith(document.createTextNode('👾'));
+        };
+        
         bossElement.appendChild(img);
     } else {
         bossElement.textContent = chosenSymbol;
@@ -1548,9 +1625,9 @@ function updateGameplayLoop() {
             }
         }
 
-        if (target && (now - drone.lastFireTime > 350)) {
+        if (target && (now - drone.lastFireTime > drone.fireRate)) {
             drone.lastFireTime = now;
-            fireLaser(drone.x, drone.y, target);
+            fireLaser(drone.x, drone.y, target, drone.glowColor); // Optional: pass color to laser
         }
 
         if (drone.x > viewWidth + 60) {
@@ -1761,9 +1838,11 @@ function updateGameplayLoop() {
     requestAnimationFrame(updateGameplayLoop);
 }
 
-function fireLaser(fromX, fromY, bugTarget) {
+function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
     const laser = document.createElement('div');
     laser.className = 'laser-beam';
+    laser.style.backgroundColor = color;
+    laser.style.boxShadow = `0 0 8px ${color}`;
     document.body.appendChild(laser);
 
     const dx = bugTarget.x - fromX;
