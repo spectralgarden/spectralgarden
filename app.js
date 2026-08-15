@@ -33,7 +33,7 @@ const moduleDatabase = {
         vst_d: {
             title: "C:\\PROG\\VST_UNITS\\ECHOFIELD_RELIQUARY.EXE",
             header: "Echofield Reliquary V1.0.0",
-            desc: "Ambient cathedral reverb & delay‑matrix synthesizer for evolving, spectral spaces. Echofield Reliquary is an ambient reverberation and delay-matrix synthesizer designed to evoke the warm, dusty, and slightly eerie atmosphere of a forgotten cathedral. Combining visual aesthetics reminiscent of stained-glass altars with a modern DSP console, the plugin serves as a creative sound-design tool for generating organic, evolving spaces and modulated echoes.",
+            desc: "Ambient cathedral reverb & delay‑matrix for evolving, spectral spaces. Echofield Reliquary is an ambient reverberation and delay-matrix synthesizer designed to evoke the warm, dusty, and slightly eerie atmosphere of a forgotten cathedral. Combining visual aesthetics reminiscent of stained-glass altars with a modern DSP console, the plugin serves as a creative sound-design tool for generating organic, evolving spaces and modulated echoes.",
             image: "assets/images/vst_echofield.gif",
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/Echofield-Reliquary/releases/download/Echofield_Reliquary/echofield.reliquary.zip" }
