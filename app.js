@@ -7,7 +7,7 @@ const moduleDatabase = {
             desc: "Arcane Gain is a lightweight, zero-latency, CPU-efficient gain/trim utility plugin designed to be the simplest, cleanest, and most reliable utility tool in the Spectral Garden ecosystem. It provides precise gain staging, transparent soft-clipping saturation, combined peak/RMS metering, and sample-accurate auto-gain compensation. Extremely low memory and CPU footprint. Built-in live CPU usage monitor. Scalable UI options (100%, 125%, 150%, 200%).",
             image: "assets/images/vst_arcanegain.gif",
             links: [
-                { text: "DOWNLOAD DLL (64-BIT)", href: "https://github.com/spectralgarden/ArcaneGain/releases/download/arcanegain/ArcaneGain.zip" },
+                { text: "DOWNLOAD VST3 (64-BIT)", href: "https://github.com/spectralgarden/ArcaneGain/releases/download/arcanegain/ArcaneGain.zip" },
             ]
         },
         vst_b: {
@@ -173,9 +173,7 @@ const moduleDatabase = {
                      "• Search: Instantly locates & highlights cards.<br>" +
                      "• Random Draw: Simulates a digital pull.<br>" +
                      "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
-                     "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" +
-                     "🌐 <strong>LIVE PORTAL:</strong><br>" 
-                     /*"<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"*/
+                     "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" 
         },
         
     },
