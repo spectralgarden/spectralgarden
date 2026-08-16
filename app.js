@@ -492,7 +492,7 @@ function spawnDataBug() {
     let isCustomIcon = false;
 
     if (window.gameBeaten) {
-        glyphs = ['assets/images/items/2_item_sprite.png','assets/images/soft/1.jpg', 'assets/images/soft/2.jpg', 'assets/images/items/4_item_sprite.png', 'assets/images/soft/3.jpg', '⛧', 'assets/images/soft/4.jpg', '🕸️', 'assets/images/items/3_item_sprite.png', '✦', '✧'];
+        glyphs = ['assets/images/items/2_item_sprite.png','assets/images/soft/1.png', 'assets/images/soft/2.png', 'assets/images/items/4_item_sprite.png', 'assets/images/soft/3.png', '⛧', 'assets/images/soft/4.png', '🕸️', 'assets/images/items/3_item_sprite.png', '✦', '✧'];
         const colors = ['#00ffff', '#ffd700', '#ff00ff', '#e0b0ff', '#ffffff'];
         chosenColor = colors[Math.floor(Math.random() * colors.length)];
         chosenShadow = chosenColor;
@@ -1044,16 +1044,44 @@ function loseLifeOrTriggerGameOver() {
     window.playerLives--;
     updateLivesDisplay();
 
+    // Grab the exact 2D screen coordinate calculated by Three.js tracker
+    const deathX = window.orbScreenX || window.innerWidth / 2;
+    const deathY = window.orbScreenY || (window.innerHeight - 40) / 2;
+
     if (window.playerLives > 0) {
-        // --- FIX: Instantly restore health pool upon losing a life so it doesn't lock at 0 ---
-        window.orbHP = 100;
+        // 1. Fire multi-colored particle bursts at the orb's exact position
+        createExplosionParticles(deathX, deathY, '#ff0033');
+        createExplosionParticles(deathX, deathY, '#ff00ff');
+        
+        triggerDamageFlashOverlay(50);
+        playOverloadSound();
+
+        // 2. Invoke your built-in Three.js death/respawn sequence
+        if (typeof killAndRespawnOrb === 'function') {
+            killAndRespawnOrb();
+        } else {
+            // Fallback if function name differs
+            window.orbHP = 100;
+            updateHPDisplay();
+        }
+    } else {
+        window.orbHP = 0;
         updateHPDisplay();
         
-        triggerOrbExplosion();
-    } else {
-        window.orbHP = 0; // Ensure it stays 0 on game over
-        updateHPDisplay();
-        triggerGameOverLeaderboardModal();
+        // Final death explosion burst
+        createExplosionParticles(deathX, deathY, '#ff0033');
+        triggerDamageFlashOverlay(80);
+        playOverloadSound();
+
+        // Pause/Hide the geometry group if available
+        if (typeof sacredGeometryGroup !== 'undefined' && sacredGeometryGroup) {
+            sacredGeometryGroup.visible = false;
+        }
+
+        // Delay leaderboard modal so the explosion particles render first
+        setTimeout(() => {
+            triggerGameOverLeaderboardModal();
+        }, 500);
     }
 }
 
