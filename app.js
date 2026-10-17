@@ -168,7 +168,7 @@ const moduleDatabase = {
             image: "assets/images/tarot_preview.png",
             content: "--- AKASHIC TAROT SYSTEM SPECS ---<br><br>" +
                      "🌐 <strong>LIVE PORTAL:</strong><br>" +
-                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"+ 
+                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #8b5cf6; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"+ 
                     "✨ <strong>FEATURES:</strong><br>" +
                      "• Search: Instantly locates & highlights cards.<br>" +
                      "• Random Draw: Simulates a digital pull.<br>" +
@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menu && menu.style.display === 'block') {
             if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
                 menu.style.display = 'none';
+                startBtn.classList.remove('is-open');
             }
         }
 
@@ -634,7 +635,9 @@ function toggleStartMenu(event) {
     playUISound();
     const menu = document.getElementById('start-menu');
     if (menu) {
-        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        const isOpening = menu.style.display !== 'block';
+        menu.style.display = isOpening ? 'block' : 'none';
+        document.querySelector('.start-btn')?.classList.toggle('is-open', isOpening);
     }
 }
 
@@ -720,8 +723,8 @@ function spawnDataBug() {
 
                     if (isAlien) {
                         glyphs = ['assets/images/sprites/sprites_1.png', 'assets/images/sprites/sprites_2.png', 'assets/images/sprites/sprites_7.png', 'assets/images/sprites/sprites_6.png', 'assets/images/sprites/sprites_3.png', 'assets/images/sprites/sprites_4.png', 'assets/images/sprites/sprites_5.png'];
-                        chosenColor = '#ff3300';
-                        chosenShadow = 'rgba(255, 51, 0, 0.9)';
+                        chosenColor = '#a855f7';
+                        chosenShadow = 'rgba(168, 85, 247, 0.9)';
                         bugElement.style.fontSize = '24px';
                     } else {
                         if (window.currentLevel < 6) {
@@ -819,59 +822,50 @@ function handlePowerUpSpawning() {
             itemType = Math.random() > 0.4 ? 'health_potion' : 'fighter';
         }
 
+        const powerUpStyles = {
+            fighter: ['fighter-powerup', 'Fighter drone'],
+            tornado: ['tornado-powerup', 'Vortex power-up'],
+            cluster_bomb: ['bomb-powerup', 'Cluster bomb'],
+            extra_life: ['extra-life', 'Extra life'],
+            health_potion: ['health-potion', 'Health potion'],
+            energy_cell: ['energy-cell', 'Energy cell']
+        };
+        const [powerUpClass, powerUpLabel] = powerUpStyles[itemType];
+        itemElement.classList.add(powerUpClass);
+        itemElement.setAttribute('aria-label', powerUpLabel);
+        itemElement.setAttribute('role', 'img');
+
         // Helper: render emoji or image
         const renderIcon = (icon) => {
             if (icon.includes('.')) {
-                return `<img src="${icon}" style="width:32px;height:32px;object-fit:contain;">`;
+                return `<img src="${icon}" alt="" style="width:32px;height:32px;object-fit:contain;">`;
             }
-            return `<span>${icon}</span>`;
+            return `<span aria-hidden="true">${icon}</span>`;
         };
 
         // Power-up definitions
         if (itemType === 'fighter') {
-            itemElement.innerHTML = `
-                ${renderIcon('assets/images/sprites/healers/space/1_sprites_space.png')}
-                <span>[F-SYS]</span>
-            `;
+            itemElement.innerHTML = renderIcon('assets/images/sprites/healers/space/1_sprites_space.png');
             window.nextPowerUpType = 'tornado';
 
         } else if (itemType === 'tornado') {
-            itemElement.innerHTML = `
-                ${renderIcon('assets/images/specials/2_special_sprite.png')}
-                <span>[V-TEX]</span>
-            `;
+            itemElement.innerHTML = renderIcon('assets/images/specials/2_special_sprite.png');
             window.nextPowerUpType = 'cluster_bomb';
 
         } else if (itemType === 'cluster_bomb') {
-            itemElement.innerHTML = `
-                ${renderIcon('assets/images/items/1_item_sprite.png')}
-                <span>[BOMB]</span>
-            `;
-            itemElement.classList.add('bomb-powerup');
+            itemElement.innerHTML = renderIcon('assets/images/items/1_item_sprite.png');
             window.nextPowerUpType = 'extra_life';
 
         } else if (itemType === 'extra_life') {
-            itemElement.innerHTML = `
-                ${renderIcon('assets/images/collect/2_item_collect.png')}
-                <span>[+1 LIFE]</span>
-            `;
-            itemElement.classList.add('extra-life');
+            itemElement.innerHTML = renderIcon('assets/images/collect/2_item_collect.png');
             window.nextPowerUpType = 'health_potion';
 
         } else if (itemType === 'health_potion') {
-            itemElement.innerHTML = `
-                ${renderIcon('🧪')}
-                <span>[HEAL]</span>
-            `;
-            itemElement.classList.add('health-potion');
+            itemElement.innerHTML = renderIcon('🧪');
             window.nextPowerUpType = 'energy_cell';
 
         } else if (itemType === 'energy_cell') {
-            itemElement.innerHTML = `
-                ${renderIcon('🔋')}
-                <span>[CELL]</span>
-            `;
-            itemElement.classList.add('energy-cell');
+            itemElement.innerHTML = renderIcon('🔋');
             window.nextPowerUpType = 'fighter';
         }
 
@@ -909,7 +903,7 @@ function collectPowerUp() {
         updateLivesDisplay();
         const sX = window.orbScreenX || window.innerWidth / 2;
         const sY = window.orbScreenY || (window.innerHeight - 40) / 2;
-        createExplosionParticles(sX, sY, '#ff0033');
+        createExplosionParticles(sX, sY, '#8b5cf6');
     } else if (type === 'fighter') {
         deployFighters();
     } else if (type === 'tornado') {
@@ -926,25 +920,22 @@ function deployFighters() {
     // Define 3 unique fighter archetypes
     const fighterArchetypes = [
         {
-            name: "STRIKER-α",
             img: "assets/images/sprites/healers/space/1_sprites_space.png",
-            glowColor: "#00ffff", // Cyan
+            glowColor: "#22d3ee",
             fireRate: 350,
             speedY: 0.5
         },
         {
-            name: "INTERCEPTOR-β",
-            img: "assets/images/sprites/healers/space/2_sprites_space.png", // Or fallback to another sprite path if available
-            glowColor: "#ff00ff", // Magenta
-            fireRate: 250,        // Faster fire rate
-            speedY: -0.6          // Weaves differently
+            img: "assets/images/sprites/healers/space/2_sprites_space.png",
+            glowColor: "#d946ef",
+            fireRate: 250,
+            speedY: -0.6
         },
         {
-            name: "HEAVY-γ",
-            img: "assets/images/sprites/healers/space/3_sprites_space.png", // Or fallback asset
-            glowColor: "#ff9900", // Amber / Gold
-            fireRate: 600,        // Slower, heavier impact
-            speedY: 0.0           // Straight line flight
+            img: "assets/images/sprites/healers/space/3_sprites_space.png",
+            glowColor: "#a855f7",
+            fireRate: 600,
+            speedY: 0.0
         }
     ];
 
@@ -959,11 +950,11 @@ function deployFighters() {
         const spriteSrc = archetype.img || 'assets/images/sprites/healers/space/1_sprites_space.png';
 
         droneEl.innerHTML = `
-            <div class="drone-energy-ring" style="border-color: ${archetype.glowColor};"></div>
-            <img src="${spriteSrc}" class="drone-img" style="filter: drop-shadow(0 0 8px ${archetype.glowColor});">
+            <div class="drone-engine"></div>
             <div class="drone-core-glow" style="background: radial-gradient(circle, ${archetype.glowColor} 0%, rgba(0,0,0,0) 70%);"></div>
-            <span class="drone-tag">${archetype.name}</span>
+            <img src="${spriteSrc}" class="drone-img" alt="">
         `;
+        droneEl.style.setProperty('--drone-glow', archetype.glowColor);
 
         const startX = -70 - (i * 45); // Stagger their entry formations horizontally
         const startY = (viewHeight / 4) * (i + 1);
@@ -981,6 +972,7 @@ function deployFighters() {
             vy: archetype.speedY,
             fireRate: archetype.fireRate,
             glowColor: archetype.glowColor,
+            lastTrailTime: 0,
             lastFireTime: 0
         });
     }
@@ -1159,7 +1151,7 @@ function updateHPDisplay() {
     const hpDisplay = document.getElementById('orb-hp-display');
     if (hpDisplay) {
         hpDisplay.textContent = Math.max(0, window.orbHP);
-        hpDisplay.style.color = window.orbHP > 60 ? '#ff0033' : (window.orbHP > 25 ? '#ffcc00' : '#ff3300');
+        hpDisplay.style.color = window.orbHP > 60 ? '#8b5cf6' : (window.orbHP > 25 ? '#ffcc00' : '#a855f7');
     }
     const shieldText = document.getElementById('shield-text');
     if (shieldText) shieldText.textContent = Math.max(0, window.orbHP) + '%';
@@ -1167,7 +1159,7 @@ function updateHPDisplay() {
     const shieldBar = document.getElementById('shield-bar-inner');
     if (shieldBar) {
         shieldBar.style.width = Math.max(0, window.orbHP) + '%';
-        shieldBar.style.backgroundColor = window.orbHP > 60 ? '#00a8ff' : (window.orbHP > 25 ? '#ffcc00' : '#ff3300');
+        shieldBar.style.backgroundColor = window.orbHP > 60 ? '#00a8ff' : (window.orbHP > 25 ? '#ffcc00' : '#a855f7');
     }
 }
 
@@ -1203,17 +1195,17 @@ function triggerDamageFlashOverlay(amount) {
     const overlay = document.getElementById('damage-overlay');
     if (!overlay || amount <= 0) return;
 
-    let chosenColor = 'rgba(255,0,0,0.25)';
+    let chosenColor = 'rgba(139,92,246,0.25)';
     let transitionDuration = 120;
 
     if (amount < 5) {
-        chosenColor = 'rgba(255, 120, 120, 0.15)'; 
+        chosenColor = 'rgba(192, 132, 252, 0.15)'; 
         transitionDuration = 90;
     } else if (amount < 25) {
-        chosenColor = 'rgba(255, 0, 0, 0.35)';      
+        chosenColor = 'rgba(139, 92, 246, 0.35)';      
         transitionDuration = 140;
     } else {
-        chosenColor = 'rgba(139, 0, 0, 0.75)';      
+        chosenColor = 'rgba(76, 29, 149, 0.75)';      
         transitionDuration = 260;
     }
 
@@ -1265,7 +1257,7 @@ function loseLifeOrTriggerGameOver() {
 
     if (window.playerLives > 0) {
         // 1. Fire multi-colored particle bursts at the orb's exact position
-        createExplosionParticles(deathX, deathY, '#ff0033');
+        createExplosionParticles(deathX, deathY, '#8b5cf6');
         createExplosionParticles(deathX, deathY, '#ff00ff');
         
         triggerDamageFlashOverlay(50);
@@ -1284,7 +1276,7 @@ function loseLifeOrTriggerGameOver() {
         updateHPDisplay();
         
         // Final death explosion burst
-        createExplosionParticles(deathX, deathY, '#ff0033');
+        createExplosionParticles(deathX, deathY, '#8b5cf6');
         triggerDamageFlashOverlay(80);
         playOverloadSound();
 
@@ -1427,7 +1419,7 @@ function triggerOrbExplosion() {
         "#ff00ff",
         "#00ff66",
         "#00a8ff",
-        "#ff3300"
+        "#a855f7"
     ];
 
     // Fire multi-colored particle bursts from the orb's center
@@ -1641,7 +1633,7 @@ function triggerBossFight() {
     }
     // ---------------------------------------------------------
 
-    bossElement.style.filter = `hue-rotate(${randomHue}deg) drop-shadow(0 0 20px rgba(255, 51, 0, 0.9))`;
+    bossElement.style.filter = `hue-rotate(${randomHue}deg) drop-shadow(0 0 20px rgba(168, 85, 247, 0.9))`;
     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
     document.body.appendChild(bossElement);
 
@@ -1676,7 +1668,7 @@ function damageBoss(amount) {
     window.bossHP = Math.max(0, window.bossHP - amount);
     updateBossHUD();
 
-    createExplosionParticles(window.bossX + 50, window.bossY + 50, '#ff3300');
+    createExplosionParticles(window.bossX + 50, window.bossY + 50, '#a855f7');
     playExplosionSound();
 
     if (window.bossHP <= 0) {
@@ -1687,7 +1679,7 @@ function damageBoss(amount) {
 function defeatBoss() {
     for (let i = 0; i < 5; i++) {
         setTimeout(() => {
-            createExplosionParticles(window.bossX + 30 + Math.random() * 40, window.bossY + 30 + Math.random() * 40, '#ff3300');
+            createExplosionParticles(window.bossX + 30 + Math.random() * 40, window.bossY + 30 + Math.random() * 40, '#a855f7');
             playExplosionSound();
         }, i * 150);
     }
@@ -1886,6 +1878,20 @@ function updateGameplayLoop() {
 
         drone.element.style.transform = `translate3d(${drone.x}px, ${drone.y}px, 0)`;
 
+        if (now - drone.lastTrailTime > 55) {
+            drone.lastTrailTime = now;
+            const trail = document.createElement('span');
+            trail.className = 'fighter-trail-particle';
+            trail.textContent = Math.random() > 0.5 ? '✦' : '·';
+            trail.style.color = drone.glowColor;
+            trail.style.left = `${drone.x - 13}px`;
+            trail.style.top = `${drone.y + 16 + (Math.random() - 0.5) * 12}px`;
+            trail.style.setProperty('--trail-drift', `${(Math.random() - 0.5) * 22}px`);
+            trail.style.setProperty('--trail-scale', `${0.6 + Math.random() * 0.7}`);
+            trail.addEventListener('animationend', () => trail.remove(), { once: true });
+            document.body.appendChild(trail);
+        }
+
         let target = null;
         let minDist = 280;
 
@@ -2022,7 +2028,7 @@ function updateGameplayLoop() {
                     if (slideStepCount >= slideTicks) {
                         clearInterval(slideInterval);
                         window.bossIsCharging = false;
-                        if (bossElement) bossElement.style.borderColor = '#ff3300';
+                        if (bossElement) bossElement.style.borderColor = '#a855f7';
                         lastBossChargeTime = Date.now();
                     }
                 }, 20);
@@ -2116,7 +2122,7 @@ function updateGameplayLoop() {
         const distToOrb = Math.hypot(proj.x - orbX, proj.y - orbY);
 
         if (distToOrb < collisionRadius + 8) {
-            createExplosionParticles(proj.x, proj.y, '#ff3300');
+            createExplosionParticles(proj.x, proj.y, '#a855f7');
             proj.element.remove();
             bossProjectiles.splice(p, 1);
 
@@ -2165,7 +2171,7 @@ function explodeBug(bugId) {
         restoreHP(25);
     }
 
-    const particleColor = bugObj.isHealer ? '#00ffff' : (bugObj.isAlien ? '#ff3300' : (bugObj.isMagenta ? '#ff00ff' : (bugObj.isHarmless ? '#668899' : '#00ff66')));
+    const particleColor = bugObj.isHealer ? '#00ffff' : (bugObj.isAlien ? '#a855f7' : (bugObj.isMagenta ? '#ff00ff' : (bugObj.isHarmless ? '#668899' : '#00ff66')));
 
     createExplosionParticles(bugObj.x, bugObj.y, particleColor);
     playExplosionSound();
@@ -2630,7 +2636,7 @@ function submitAdminCommand(event) {
             }
         } else {
             const errLvl = document.createElement('div');
-            errLvl.style.color = '#ff0033';
+            errLvl.style.color = '#8b5cf6';
             errLvl.textContent = `>> ERROR: TARGET LEVEL MUST BE BETWEEN 1 AND 32`;
             outputEl.appendChild(errLvl);
         }
@@ -2641,7 +2647,7 @@ function submitAdminCommand(event) {
         outputEl.appendChild(helpLine);
     } else {
         const errLine = document.createElement('div');
-        errLine.style.color = '#ff0033';
+        errLine.style.color = '#8b5cf6';
         errLine.textContent = `>> UNKNOWN COMMAND "${val}". TYPE 'help' FOR PROTOCOLS.`;
         outputEl.appendChild(errLine);
     }
