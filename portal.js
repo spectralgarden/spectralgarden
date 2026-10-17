@@ -532,25 +532,31 @@ window.rotateFrequencies = rotateFrequencies;
 
 const tempWorldVector = new THREE.Vector3();
 
+function updateOrbCoreLogo() {
+    const orbLogo = document.getElementById('orb-core-logo');
+    if (!orbLogo || !sacredGeometryGroup || !camera) return null;
+
+    sacredGeometryGroup.getWorldPosition(tempWorldVector);
+    const projectedCoord = tempWorldVector.project(camera);
+    const screenX = (projectedCoord.x * 0.5 + 0.5) * window.innerWidth;
+    const screenY = (-projectedCoord.y * 0.5 + 0.5) * window.innerHeight;
+    const logoSize = 34 * (sacredGeometryGroup.scale.x / zoomScale);
+
+    orbLogo.style.left = `${screenX}px`;
+    orbLogo.style.top = `${screenY}px`;
+    orbLogo.style.width = `${logoSize}px`;
+    orbLogo.style.height = `${logoSize}px`;
+    orbLogo.style.display = sacredGeometryGroup.visible ? 'block' : 'none';
+
+    return { screenX, screenY };
+}
+
 function checkOrbBugCollisions() {
     if (!sacredGeometryGroup || !camera || isRespawning || window.isGamePaused || window.gamePaused) return;
 
-    sacredGeometryGroup.getWorldPosition(tempWorldVector);
-
-    const projectedCoord = tempWorldVector.project(camera);
-
-    const screenX = (projectedCoord.x * 0.5 + 0.5) * window.innerWidth;
-    const screenY = (-projectedCoord.y * 0.5 + 0.5) * window.innerHeight;
-
-    const orbLogo = document.getElementById('orb-core-logo');
-    if (orbLogo) {
-        const logoSize = 34 * (sacredGeometryGroup.scale.x / zoomScale);
-        orbLogo.style.left = `${screenX}px`;
-        orbLogo.style.top = `${screenY}px`;
-        orbLogo.style.width = `${logoSize}px`;
-        orbLogo.style.height = `${logoSize}px`;
-        orbLogo.style.display = sacredGeometryGroup.visible ? 'block' : 'none';
-    }
+    const orbPosition = updateOrbCoreLogo();
+    if (!orbPosition) return;
+    const { screenX, screenY } = orbPosition;
 
     // Strict boundary safeguard blocking any top-left [0,0] artifacts from rendering or interacting
     if (screenX < 40 && screenY < 40) return;
@@ -737,6 +743,8 @@ window.killAndRespawnOrb = killAndRespawnOrb;
 
 function animate() {
     requestAnimationFrame(animate);
+
+    updateOrbCoreLogo();
 
     if (window.isGamePaused || window.gamePaused) {
         renderer.render(scene, camera);
