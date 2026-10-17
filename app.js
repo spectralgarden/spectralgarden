@@ -250,6 +250,17 @@ window.showcaseWindowId = null;
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
 
+function setStartMenuOpen(isOpen) {
+    const menu = document.getElementById('start-menu');
+    const startButton = document.querySelector('.start-btn');
+    if (menu) menu.style.display = isOpen ? 'block' : 'none';
+    if (startButton) startButton.classList.toggle('is-open', isOpen);
+}
+
+function closeStartMenu() {
+    setStartMenuOpen(false);
+}
+
 function initializeWallpaperWordmark() {
     const wordmark = document.querySelector('.wallpaper-logo');
     if (!wordmark) return;
@@ -316,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLivesDisplay();
     const bugCounterEl = document.getElementById('bug-counter');
     if (bugCounterEl) bugCounterEl.textContent = window.bugEliminationCount;
+    updateKillsDisplay();
     
     const bugHighscoreEl = document.getElementById('bug-highscore');
     if (bugHighscoreEl) bugHighscoreEl.textContent = window.bugHighScore;
@@ -351,8 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startBtn = document.querySelector('.start-btn');
         if (menu && menu.style.display === 'block') {
             if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
-                menu.style.display = 'none';
-                startBtn.classList.remove('is-open');
+                closeStartMenu();
             }
         }
 
@@ -663,9 +674,7 @@ function toggleStartMenu(event) {
     playUISound();
     const menu = document.getElementById('start-menu');
     if (menu) {
-        const isOpening = menu.style.display !== 'block';
-        menu.style.display = isOpening ? 'block' : 'none';
-        document.querySelector('.start-btn')?.classList.toggle('is-open', isOpening);
+        setStartMenuOpen(menu.style.display !== 'block');
     }
 }
 
@@ -1180,6 +1189,11 @@ function updateLivesDisplay() {
     }
 }
 
+function updateKillsDisplay() {
+    const killsDisplay = document.getElementById('toolbar-kills-count');
+    if (killsDisplay) killsDisplay.textContent = window.bugEliminationCount;
+}
+
 function updateLevelDisplay() {
     const lvlDisplay = document.getElementById('level-num-display');
     if (lvlDisplay) lvlDisplay.textContent = window.currentLevel;
@@ -1292,6 +1306,7 @@ function loseLifeOrTriggerGameOver() {
     } else {
         window.orbHP = 0;
         updateHPDisplay();
+        window.gamePaused = true;
         
         // Final death explosion burst
         createExplosionParticles(deathX, deathY, '#8b5cf6');
@@ -1462,6 +1477,49 @@ function triggerGameOverLeaderboardModal() {
     renderLeaderboardList();
 }
 
+function clearGameBoard() {
+    if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+    if (showcaseAllyTimer) clearTimeout(showcaseAllyTimer);
+    spawnIntervalTimer = null;
+    showcaseAllyTimer = null;
+
+    window.dataBugs.forEach(bug => bug?.element?.remove());
+    window.dataBugs = [];
+    window.activePowerUpItem?.element?.remove();
+    window.activePowerUpItem = null;
+    window.activeShowcaseAlly?.element?.remove();
+    window.activeShowcaseAlly = null;
+    window.activeTornado?.element?.remove();
+    window.activeTornado = null;
+    window.activeFighters.forEach(fighter => fighter?.element?.remove());
+    window.activeFighters = [];
+
+    if (typeof cleanupBossFight === 'function') cleanupBossFight();
+    if (typeof window.clearOrbTrailGhosts === 'function') window.clearOrbTrailGhosts();
+
+    document.querySelectorAll([
+        '.data-bug',
+        '.retro-powerup',
+        '.showcase-ally',
+        '.fighter-drone-unit',
+        '.fighter-trail-particle',
+        '.fighter-orb',
+        '.spiral-vortex-wrapper',
+        '.boss-entity',
+        '.boss-projectile',
+        '.boss-charge-line',
+        '.laser-beam',
+        '.bug-particle',
+        '.aura-wave',
+        '.aoe-explosion',
+        '.sparkle-trail',
+        '#bomb-arm-prompt',
+        '#bomb-aim-indicator'
+    ].join(',')).forEach(element => element.remove());
+
+    bossProjectiles = [];
+}
+
 function submitScoreToLeaderboard() {
     const nameInput = document.getElementById('leaderboard-name-input');
     const nickname = (nameInput && nameInput.value.trim()) ? nameInput.value.trim().toUpperCase() : 'ANONYMOUS';
@@ -1475,61 +1533,52 @@ function submitScoreToLeaderboard() {
     localStorage.setItem('spectral_garden_lb', JSON.stringify(scores));
     renderLeaderboardList();
 
-    // --- FIX: CLEAR ALL EXISTING SPRITES/BUGS FROM THE BOARD ---
-    if (window.dataBugs && window.dataBugs.length > 0) {
-        window.dataBugs.forEach(bug => {
-            if (bug && bug.element) {
-                bug.element.remove();
-            }
-        });
-        window.dataBugs = []; // Empty the array completely
-    }
-
-    // Also clean up any active power-up items left on screen
-    if (window.activePowerUpItem && window.activePowerUpItem.element) {
-        window.activePowerUpItem.element.remove();
-        window.activePowerUpItem = null;
-    }
-
-    // Clean up active tornadoes or fighters if any are lingering
-    if (window.activeTornado && window.activeTornado.element) {
-        window.activeTornado.element.remove();
-        window.activeTornado = null;
-    }
-    if (window.activeFighters && window.activeFighters.length > 0) {
-        window.activeFighters.forEach(f => { if (f && f.element) f.element.remove(); });
-        window.activeFighters = [];
-    }
-    // -------------------------------------------------------------
+    clearGameBoard();
 
     // --- Reset all game states back to Level 1 and clean up bosses ---
     window.playerLives = 3;
     window.bugEliminationCount = 0;
     window.currentLevel = 1;                  
     window.currentLevelXP = 0;
-    window.xpNeededForNextLevel = 3000;       
+    window.xpNeededForNextLevel = 2000;       
     window.orbHP = 100;
     window.orbEnergy = 100;
     window.gameBeaten = false;
-
-    if (typeof cleanupBossFight === 'function') {
-        cleanupBossFight();
-    }
+    window.gamePaused = false;
+    window.gamePausedForShowcase = false;
+    window.isClusterBombArmed = false;
+    window.nextPowerUpType = 'fighter';
+    window.showcaseWindowId = null;
+    document.body.classList.remove('orb-exploding', 'orb-damaged', 'bomb-armed', 'bomb-burst-flash', 'showcase-burst-flash');
+    if (window.orbExplosionTimeout) clearTimeout(window.orbExplosionTimeout);
+    if (window.orbDamagePulseTimeout) clearTimeout(window.orbDamagePulseTimeout);
+    if (window.damageFlashTimeout) clearTimeout(window.damageFlashTimeout);
+    window.orbExplosionTimeout = null;
+    window.orbDamagePulseTimeout = null;
+    window.damageFlashTimeout = null;
+    const damageOverlay = document.getElementById('damage-overlay');
+    if (damageOverlay) damageOverlay.style.opacity = '0';
 
     const modal = document.getElementById('gameover-modal');
     if (modal) modal.style.display = 'none';
 
     updateLivesDisplay();
+    updateKillsDisplay();
     updateHPDisplay();
     updateLevelDisplay();
     updateXPDisplay();
     updateEnergyDisplay();
-    reinitSpawnInterval();
 
     // Re-evolve the visual orb back to Level 1 geometries
     if (typeof evolveOrbForLevel === 'function') {
         evolveOrbForLevel(1);
     }
+    if (typeof window.resetOrbForNewGame === 'function') {
+        window.resetOrbForNewGame();
+    }
+
+    reinitSpawnInterval();
+    scheduleShowcaseAlly();
 }window.submitScoreToLeaderboard = submitScoreToLeaderboard;
 
 function renderLeaderboardList() {
@@ -2211,6 +2260,7 @@ function explodeBug(bugId) {
 
     const bugCounterEl = document.getElementById('bug-counter');
     if (bugCounterEl) bugCounterEl.textContent = window.bugEliminationCount;
+    updateKillsDisplay();
 }
 window.explodeBug = explodeBug;
 
@@ -2516,8 +2566,7 @@ function loadModule(category, key) {
         openWindow('music-window');
     }
 
-    const menu = document.getElementById('start-menu');
-    if (menu) menu.style.display = 'none';
+    closeStartMenu();
 }
 
 function openAppPage(key) {
