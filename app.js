@@ -985,13 +985,6 @@ function deployTornado() {
     const inner = document.createElement('div');
     inner.className = 'spiral-vortex-inner';
 
-    const ring1 = document.createElement('div');
-    ring1.className = 'spiral-ring ring-1';
-    const ring2 = document.createElement('div');
-    ring2.className = 'spiral-ring ring-2';
-    const ring3 = document.createElement('div');
-    ring3.className = 'spiral-ring ring-3';
-
     // Central core image or icon layout
     const symbol = document.createElement('div');
     symbol.className = 'vortex-symbol';
@@ -1004,29 +997,18 @@ function deployTornado() {
     img.style.filter = 'drop-shadow(0 0 8px #ffffff)';
     symbol.appendChild(img);
 
-    inner.appendChild(ring1);
-    inner.appendChild(ring2);
-    inner.appendChild(ring3);
     inner.appendChild(symbol);
 
-    // Dynamic orbiting wind shards / debris elements
-    const debrisIcons = ['⚡', '✦', '▲', 'ø', '✧', '♦'];
-    for (let i = 0; i < 6; i++) {
+    const debrisIcons = ['✦', '✧', '·', '✦', '✧', '·', '✦', '✧'];
+    for (let i = 0; i < debrisIcons.length; i++) {
         const debris = document.createElement('div');
         debris.className = 'vortex-debris';
         debris.textContent = debrisIcons[Math.floor(Math.random() * debrisIcons.length)];
-        
-        // Randomize initial orbital positioning distances and coloring
-        const angle = (i / 6) * Math.PI * 2;
-        const distance = 55 + Math.random() * 45;
-        const dX = Math.cos(angle) * distance;
-        const dY = Math.sin(angle) * distance;
-        
-        debris.style.left = `calc(50% + ${dX}px)`;
-        debris.style.top = `calc(50% + ${dY}px)`;
-        debris.style.color = Math.random() > 0.5 ? '#00ffff' : '#ff00ff';
-        debris.style.textShadow = '0 0 6px currentColor';
-        
+        debris.style.setProperty('--orbit-angle', `${(i / debrisIcons.length) * 360}deg`);
+        debris.style.setProperty('--orbit-radius', `${48 + Math.random() * 42}px`);
+        debris.style.setProperty('--orbit-duration', `${1.1 + Math.random() * 0.8}s`);
+        debris.style.setProperty('--orbit-color', Math.random() > 0.5 ? '#22d3ee' : '#d946ef');
+        debris.style.animationDelay = `${-Math.random()}s`;
         inner.appendChild(debris);
     }
 
