@@ -245,6 +245,7 @@ window.nextPowerUpType = 'fighter';
 window.gamePaused = false;
 window.gamePausedForShowcase = false;
 window.activeShowcaseAlly = null;
+window.showcaseWindowId = null;
 
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
@@ -306,6 +307,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 e.stopPropagation();
                 detonateClusterBomb(e.clientX, e.clientY);
+                return;
+            }
+        }
+
+        if (window.showcaseWindowId) {
+            const showcaseWindow = document.getElementById(window.showcaseWindowId);
+            if (showcaseWindow && !showcaseWindow.contains(e.target)) {
+                closeWindow(window.showcaseWindowId);
                 return;
             }
         }
@@ -506,6 +515,12 @@ function openShowcaseAlly(category, key, element) {
         ally.element.remove();
         window.activeShowcaseAlly = null;
     }
+    const windowId = category === 'vst' ? 'vst-window' : 'apps-window';
+    const showcaseWindow = document.getElementById(windowId);
+    if (!showcaseWindow) return;
+    document.body.appendChild(showcaseWindow);
+    showcaseWindow.classList.add('showcase-window');
+    window.showcaseWindowId = windowId;
     window.gamePaused = true;
     window.gamePausedForShowcase = true;
     loadModule(category, key);
@@ -1224,6 +1239,14 @@ function takeDamage(amount) {
     updateHPDisplay();
 
     triggerDamageFlashOverlay(finalDamage);
+    document.body.classList.remove('orb-damaged');
+    void document.body.offsetWidth;
+    document.body.classList.add('orb-damaged');
+    if (window.orbDamagePulseTimeout) clearTimeout(window.orbDamagePulseTimeout);
+    window.orbDamagePulseTimeout = setTimeout(() => {
+        document.body.classList.remove('orb-damaged');
+        window.orbDamagePulseTimeout = null;
+    }, 850);
     playDamageTone();
 
     if (window.orbHP <= 0) {
@@ -2550,7 +2573,7 @@ function openWindow(id) {
     const win = document.getElementById(id);
     if (win) {
         win.style.display = 'flex';
-        win.style.zIndex = 101;
+        win.style.zIndex = win.classList.contains('showcase-window') ? 100020 : 101;
         centerWindowOnScreen(win);
     }
 }
@@ -2565,6 +2588,7 @@ function closeWindow(id) {
     if ((id === 'apps-window' || id === 'vst-window') && window.gamePausedForShowcase) {
         window.gamePausedForShowcase = false;
         window.gamePaused = false;
+        window.showcaseWindowId = null;
         scheduleShowcaseAlly();
     }
 }
