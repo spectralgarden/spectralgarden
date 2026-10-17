@@ -1,5 +1,5 @@
 /* ========================================================================== */
-/* SPECTRAL GARDEN // - Brutalist Clean Light Theme (White, Black, Red)  */
+/* SPECTRAL GARDEN // - Brutalist Clean Light Theme with Nebula Violet */
 /* ========================================================================== */
 
 * {
@@ -154,7 +154,7 @@ body.bomb-burst-flash::after {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(204, 0, 51, 0.15);
+    background: rgba(139, 92, 246, 0.18);
     z-index: 100008;
     pointer-events: none;
     animation: flash-decay 0.2s ease-out forwards;
@@ -173,7 +173,7 @@ body.bomb-burst-flash::after {
     z-index: 100004;
     transform: translate(-50%, -50%);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    background-color: #cc0033;
+    background-color: #8b5cf6;
 }
 
 /* CRT Screen Scanlines and Subtle Light Toning */
@@ -183,7 +183,7 @@ body.bomb-burst-flash::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.02) 50%), linear-gradient(90deg, rgba(204, 0, 0, 0.01), rgba(0, 0, 0, 0.005), rgba(0, 0, 204, 0.01));
+    background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.02) 50%), linear-gradient(90deg, rgba(139, 92, 246, 0.01), rgba(0, 0, 0, 0.005), rgba(0, 0, 204, 0.01));
     background-size: 100% 4px, 6px 100%;
     z-index: 9999;
     pointer-events: none;
@@ -214,7 +214,7 @@ body.bomb-burst-flash::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(204, 0, 51, 0);
+    background-color: rgba(139, 92, 246, 0);
     z-index: 100005;
     pointer-events: none;
     opacity: 0;
@@ -258,7 +258,7 @@ body.bomb-burst-flash::after {
     z-index: 1;
     color: rgba(0, 0, 0, 0.03);
     text-shadow: 
-        -3px 0px 0px rgba(204, 0, 51, 0.08),
+        -3px 0px 0px rgba(139, 92, 246, 0.08),
         3px 0px 0px rgba(0, 0, 0, 0.06),
         0px 0px 15px rgba(0, 0, 0, 0.05);
     animation: wallpaper-pulse 8s ease-in-out infinite;
@@ -413,7 +413,7 @@ body.orb-damaged .wallpaper-inline-logo {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #cc0033;
+    border-bottom: 2px solid #8b5cf6;
     font-size: 12px;
 }
 
@@ -425,8 +425,8 @@ body.orb-damaged .wallpaper-inline-logo {
 
 .close-btn {
     background: #111111;
-    border: 1px solid #cc0033;
-    color: #cc0033;
+    border: 1px solid #8b5cf6;
+    color: #8b5cf6;
     font-size: 11px;
     font-weight: bold;
     width: 22px;
@@ -436,12 +436,12 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .close-btn:hover {
-    background: #cc0033;
+    background: #8b5cf6;
     color: #ffffff;
 }
 
 .close-btn:active {
-    background: #880022;
+    background: #6b21a8;
 }
 
 .window-body {
@@ -470,7 +470,7 @@ body.orb-damaged .wallpaper-inline-logo {
 .retro-btn:hover {
     background: #111111;
     color: #ffffff;
-    box-shadow: 3px 3px 0px #cc0033;
+    box-shadow: 3px 3px 0px #8b5cf6;
 }
 
 .retro-btn:active {
@@ -487,6 +487,16 @@ body.orb-damaged .wallpaper-inline-logo {
 .action-bar {
     display: flex;
     gap: 8px;
+}
+
+.vst-platform-note {
+    margin-top: auto;
+    padding: 7px 9px;
+    border-left: 2px solid #a855f7;
+    background: rgba(168, 85, 247, 0.08);
+    color: #5b21b6;
+    font-size: 10px;
+    line-height: 1.4;
 }
 
 .window-navigation {
@@ -541,7 +551,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .prompt {
-    color: #cc0033;
+    color: #8b5cf6;
     margin-right: 5px;
 }
 
@@ -591,23 +601,23 @@ body.orb-damaged .wallpaper-inline-logo {
 
 .start-btn {
     background-color: #111111;
-    border: 2px solid #cc0033;
+    border: 2px solid #7cfc00;
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
     font-weight: bold;
     padding: 4px 14px;
     outline: none;
-    box-shadow: 2px 2px 0px #cc0033;
+    box-shadow: 0 0 8px rgba(124, 252, 0, 0.55), 0 0 16px rgba(124, 252, 0, 0.25);
     transition: background 0.15s;
 }
 
 .start-btn:hover {
-    background: #cc0033;
+    background: #7cfc00;
 }
 
 .start-btn:active {
-    background: #880022;
+    background: #7cfc00;
 }
 
 .taskbar-right {
@@ -631,8 +641,8 @@ body.orb-damaged .wallpaper-inline-logo {
 
 .level-display-box {
     background-color: #eaeaea;
-    border: 1px solid #cc0033;
-    color: #cc0033;
+    border: 1px solid #8b5cf6;
+    color: #8b5cf6;
     padding: 4px 10px;
     font-size: 11px;
     font-family: monospace;
@@ -644,8 +654,8 @@ body.orb-damaged .wallpaper-inline-logo {
 
 .lives-display-box {
     background-color: #eaeaea;
-    border: 1px solid #cc0033;
-    color: #cc0033;
+    border: 1px solid #8b5cf6;
+    color: #8b5cf6;
     padding: 4px 10px;
     font-size: 11px;
     font-family: monospace;
@@ -688,7 +698,7 @@ body.orb-damaged .wallpaper-inline-logo {
 .xp-bar-inner {
     width: 0%;
     height: 100%;
-    background-color: #cc0033;
+    background-color: #8b5cf6;
     transition: width 0.1s ease-out;
 }
 
@@ -762,7 +772,7 @@ body.orb-damaged .wallpaper-inline-logo {
 .shield-bar-inner {
     width: 100%;
     height: 100%;
-    background-color: #cc0033;
+    background-color: #8b5cf6;
     transition: width 0.1s ease-out;
 }
 
@@ -812,7 +822,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .help-title {
-    color: #cc0033;
+    color: #8b5cf6;
     font-weight: bold;
     border-bottom: 1px dashed #111111;
     padding-bottom: 4px;
@@ -884,7 +894,7 @@ body.orb-damaged .wallpaper-inline-logo {
 
 .gameover-content {
     background: #ffffff;
-    border: 2px solid #cc0033;
+    border: 2px solid #8b5cf6;
     box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.9);
     width: 380px;
     padding: 20px;
@@ -897,7 +907,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .gameover-header {
-    color: #cc0033;
+    color: #8b5cf6;
     font-size: 14px;
     font-weight: bold;
     letter-spacing: 2px;
@@ -942,7 +952,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .lb-title {
-    color: #cc0033;
+    color: #8b5cf6;
     font-weight: bold;
     text-align: center;
     margin-bottom: 6px;
@@ -958,7 +968,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .lb-row span:nth-child(2) {
-    color: #cc0033;
+    color: #8b5cf6;
     font-weight: bold;
 }
 
@@ -970,7 +980,7 @@ body.orb-damaged .wallpaper-inline-logo {
     transform: translateX(-50%);
     width: 320px;
     background-color: #ffffff;
-    border: 2px solid #cc0033;
+    border: 2px solid #8b5cf6;
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.8);
     padding: 10px;
     z-index: 100009;
@@ -979,7 +989,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .boss-title {
-    color: #cc0033;
+    color: #8b5cf6;
     font-weight: bold;
     font-size: 11px;
     letter-spacing: 2px;
@@ -998,7 +1008,7 @@ body.orb-damaged .wallpaper-inline-logo {
 .boss-hp-bar-inner {
     width: 100%;
     height: 100%;
-    background-color: #cc0033;
+    background-color: #8b5cf6;
     transition: width 0.1s ease;
 }
 
@@ -1013,13 +1023,13 @@ body.orb-damaged .wallpaper-inline-logo {
     width: 100px;
     height: 100px;
     background-color: #111111;
-    border: 2px solid #cc0033;
-    box-shadow: 0 0 25px rgba(204, 0, 51, 0.6);
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 48px;
-    color: #cc0033;
+    color: #8b5cf6;
     z-index: 996;
     pointer-events: none;
 }
@@ -1032,7 +1042,7 @@ body.orb-damaged .wallpaper-inline-logo {
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    color: #cc0033;
+    color: #8b5cf6;
     z-index: 995;
     pointer-events: none;
     will-change: transform;
@@ -1041,7 +1051,7 @@ body.orb-damaged .wallpaper-inline-logo {
 .boss-charge-line {
     position: absolute;
     height: 2px;
-    background-color: rgba(204, 0, 51, 0.5);
+    background-color: rgba(139, 92, 246, 0.5);
     z-index: 994;
     pointer-events: none;
     transform-origin: top left;
@@ -1086,7 +1096,7 @@ body.orb-damaged .wallpaper-inline-logo {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #cc0033;
+    color: #8b5cf6;
     font-family: monospace;
     font-size: 11px;
     font-weight: bold;
@@ -1125,7 +1135,7 @@ body.orb-damaged .wallpaper-inline-logo {
 #game-volume {
     width: 100%;
     margin: 0;
-    accent-color: #cc0033;
+    accent-color: #8b5cf6;
 }
 
 #game-mute-toggle {
@@ -1146,7 +1156,7 @@ body.orb-damaged .wallpaper-inline-logo {
     visibility: hidden;
     background-color: #111111;
     color: #ffffff;
-    border: 1px solid #cc0033;
+    border: 1px solid #8b5cf6;
     text-align: center;
     padding: 4px 8px;
     position: absolute;
@@ -1178,7 +1188,7 @@ body.orb-damaged .wallpaper-inline-logo {
 }
 
 .data-bug.healer-bug {
-    filter: drop-shadow(0px 0px 6px #cc0033) !important;
+    filter: drop-shadow(0px 0px 6px #8b5cf6) !important;
 }
 
 .showcase-ally {
@@ -1325,7 +1335,7 @@ body.showcase-burst-flash::after {
     pointer-events: none;
     z-index: 999;
     border-radius: 50%;
-    background-color: #cc0033;
+    background-color: #8b5cf6;
 }
 
 /* Collectible Power-up Node */
@@ -1348,13 +1358,13 @@ body.showcase-burst-flash::after {
 }
 
 .retro-powerup.health-potion {
-    border-color: #cc0033;
-    color: #cc0033;
+    border-color: #8b5cf6;
+    color: #8b5cf6;
 }
 
 .retro-powerup.bomb-powerup {
-    border-color: #ff6600;
-    color: #ff6600;
+    border-color: #a855f7;
+    color: #a855f7;
 }
 
 .retro-powerup.energy-cell {
@@ -1376,8 +1386,8 @@ body.showcase-burst-flash::after {
 .aura-wave.damage {
     width: 360px;
     height: 360px;
-    border: 4px solid #cc0033;
-    background: rgba(204, 0, 51, 0.05);
+    border: 4px solid #8b5cf6;
+    background: rgba(139, 92, 246, 0.05);
 }
 
 .aura-wave.knockback {
@@ -1394,9 +1404,9 @@ body.showcase-burst-flash::after {
 
 .aoe-explosion {
     position: absolute;
-    border: 3px double #cc0033;
+    border: 3px double #8b5cf6;
     border-radius: 50%;
-    background: rgba(204, 0, 51, 0.06);
+    background: rgba(139, 92, 246, 0.06);
     pointer-events: none;
     z-index: 100006;
     transform: translate(-50%, -50%) scale(0.1);
@@ -1413,7 +1423,7 @@ body.showcase-burst-flash::after {
     position: absolute;
     width: 14px;
     height: 14px;
-    background: #cc0033;
+    background: #8b5cf6;
     border: 2px solid #111111;
     border-radius: 50%;
     z-index: 998;
@@ -1424,7 +1434,7 @@ body.showcase-burst-flash::after {
 .laser-beam {
     position: absolute;
     height: 2px;
-    background: #cc0033;
+    background: #8b5cf6;
     z-index: 997;
     pointer-events: none;
     transform-origin: top left;
@@ -1463,7 +1473,7 @@ body.showcase-burst-flash::after {
 .ring-2 {
     width: 75%;
     height: 75%;
-    border-color: #cc0033;
+    border-color: #8b5cf6;
     animation: spin-counter 1.1s linear infinite;
 }
 
@@ -1476,7 +1486,7 @@ body.showcase-burst-flash::after {
 .vortex-symbol {
     font-size: 34px;
     z-index: 999;
-    color: #cc0033;
+    color: #8b5cf6;
 }
 
 @keyframes spin-clockwise {
@@ -1514,13 +1524,13 @@ body.showcase-burst-flash::after {
     text-transform: uppercase;
     letter-spacing: 14px;
     text-shadow: 
-        -3px -3px 0px #cc0033,
+        -3px -3px 0px #8b5cf6,
         3px 3px 0px #666666;
 }
 
 .level-banner-subtext {
     font-size: 13px;
-    color: #cc0033;
+    color: #8b5cf6;
     letter-spacing: 8px;
     margin-top: 15px;
     text-transform: uppercase;
@@ -1547,7 +1557,7 @@ body.showcase-burst-flash::after {
 .start-menu-sidebar {
     width: 32px;
     background: #111111;
-    border-right: 2px solid #cc0033;
+    border-right: 2px solid #8b5cf6;
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -1611,7 +1621,7 @@ body.showcase-burst-flash::after {
     max-height: 320px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #cc0033 #eaeaea;
+    scrollbar-color: #8b5cf6 #eaeaea;
 }
 
 .submenu::-webkit-scrollbar {
@@ -1624,7 +1634,7 @@ body.showcase-burst-flash::after {
 }
 
 .submenu::-webkit-scrollbar-thumb {
-    background: #cc0033;
+    background: #8b5cf6;
     border: 1px solid #111111;
 }
 
@@ -1721,7 +1731,7 @@ body.showcase-burst-flash::after {
 }
 
 .app-data-box a {
-    color: #cc0033;
+    color: #8b5cf6;
     text-decoration: underline;
 }
 
@@ -1748,7 +1758,7 @@ body.showcase-burst-flash::after {
 }
 
 .contact-box a {
-    color: #cc0033;
+    color: #8b5cf6;
     text-decoration: underline;
 }
 
@@ -1775,7 +1785,7 @@ body.showcase-burst-flash::after {
 }
 
 .terms-box a {
-    color: #cc0033;
+    color: #8b5cf6;
     text-decoration: underline;
 }
 
@@ -1802,7 +1812,7 @@ body.showcase-burst-flash::after {
     width: 108px;
     height: 111px;
     object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(204, 0, 51, 0.2));
+    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.2));
 }
 /* ========================================================================== */
 /* Mobile Taskbar Optimization & Compact Scaling                              */
@@ -2063,9 +2073,9 @@ body {
 
 /* 4. Extra Life / Heart Theme */
 .retro-powerup.extra-life {
-    border-color: #ff0055;
+    border-color: #d946ef;
     box-shadow: 0 0 12px rgba(255, 0, 85, 0.4), inset 0 0 6px rgba(255, 0, 85, 0.2);
-    color: #ff0055;
+    color: #d946ef;
 }
 
 /* 5. Health Potion Theme */
@@ -2091,8 +2101,8 @@ body {
 /* --- ADVANCED FIGHTER DRONE STYLING --- */
 .fighter-drone-unit {
     position: absolute;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2101,63 +2111,88 @@ body {
     will-change: transform;
 }
 
+.fighter-drone-unit::before {
+    content: "";
+    position: absolute;
+    width: 42px;
+    height: 27px;
+    background: var(--drone-glow);
+    clip-path: polygon(0 14%, 100% 50%, 0 86%, 24% 50%);
+    opacity: 0.72;
+    filter: drop-shadow(0 0 5px var(--drone-glow));
+    animation: droneHullPulse 0.75s ease-in-out infinite alternate;
+}
+
 .fighter-drone-unit .drone-img {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     object-fit: contain;
     position: relative;
     z-index: 2;
-    filter: drop-shadow(0 0 6px #00ffff);
+    filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 9px var(--drone-glow));
 }
 
-/* Rotating Cyan Energy Ring around the Drone */
-.fighter-drone-unit .drone-energy-ring {
+.fighter-drone-unit .drone-engine {
     position: absolute;
-    width: 42px;
-    height: 42px;
-    border: 2px dashed rgba(0, 255, 255, 0.7);
-    border-radius: 50%;
-    animation: droneRingSpin 3s linear infinite;
+    left: -13px;
+    top: 50%;
+    width: 24px;
+    height: 7px;
+    transform: translateY(-50%);
+    border-radius: 100% 0 0 100%;
+    background: linear-gradient(90deg, transparent, var(--drone-glow));
+    filter: drop-shadow(0 0 5px var(--drone-glow));
+    animation: droneEngineFlicker 0.14s steps(2, end) infinite alternate;
     z-index: 1;
 }
 
-/* Pulsing Core Glow beneath the drone */
 .fighter-drone-unit .drone-core-glow {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    background: radial-gradient(circle, rgba(0,255,255,0.9) 0%, rgba(0,100,255,0) 70%);
+    width: 34px;
+    height: 28px;
+    background: radial-gradient(ellipse, var(--drone-glow) 0%, transparent 72%);
     border-radius: 50%;
     animation: dronePulse 1s ease-in-out infinite alternate;
     z-index: 0;
-}
-
-@keyframes droneRingSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 @keyframes dronePulse {
     0% { transform: scale(0.8); opacity: 0.5; }
     100% { transform: scale(1.4); opacity: 1; }
 }
-.fighter-drone-unit .drone-tag {
-    position: absolute;
-    bottom: -14px;
-    font-family: monospace;
-    font-size: 8px;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 1px 3px;
-    border-radius: 2px;
-    white-space: nowrap;
-    letter-spacing: 0.5px;
+
+@keyframes droneHullPulse {
+    from { opacity: 0.45; transform: scale(0.92); }
+    to { opacity: 0.85; transform: scale(1.04); }
 }
 
-/* Unique Spin Speeds for each archetype ring to add variation */
-.fighter-drone-unit.drone-type-1 .drone-energy-ring { animation: droneRingSpin 3s linear infinite; }
-.fighter-drone-unit.drone-type-2 .drone-energy-ring { animation: droneRingSpin 2s linear infinite reverse; border-style: dotted; }
-.fighter-drone-unit.drone-type-3 .drone-energy-ring { animation: droneRingSpin 4s linear infinite; border-style: solid; }
+@keyframes droneEngineFlicker {
+    from { opacity: 0.55; width: 17px; }
+    to { opacity: 1; width: 25px; }
+}
+
+.fighter-trail-particle {
+    position: fixed;
+    z-index: 44;
+    pointer-events: none;
+    font-size: 11px;
+    line-height: 1;
+    text-shadow: 0 0 4px currentColor, 0 0 9px currentColor;
+    animation: fighterTrailFade 550ms ease-out forwards;
+}
+
+@keyframes fighterTrailFade {
+    from {
+        opacity: 0.95;
+        transform: translate3d(0, 0, 0) scale(var(--trail-scale));
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(calc(-20px + var(--trail-drift)), -8px, 0) scale(0.15);
+        filter: drop-shadow(0 0 0 currentColor);
+    }
+}
 
 .retro-powerup {
     position: absolute;
@@ -2180,6 +2215,155 @@ body {
 .retro-powerup.fighter-powerup { color: #00ffff; }
 .retro-powerup.tornado-powerup { color: #cc00ff; }
 .retro-powerup.bomb-powerup { color: #ff9900; }
-.retro-powerup.extra-life { color: #ff0055; }
+.retro-powerup.extra-life { color: #d946ef; }
 .retro-powerup.health-potion { color: #00ff66; }
 .retro-powerup.energy-cell { color: #ffd700; }
+
+/* Floating icon-only collectibles */
+.retro-powerup {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    font-size: 30px;
+    z-index: 998;
+    animation: powerupFloat 1.8s ease-in-out infinite alternate, powerupGlow 1.1s ease-in-out infinite alternate;
+}
+
+.retro-powerup img {
+    width: 36px !important;
+    height: 36px !important;
+    object-fit: contain;
+}
+
+.retro-powerup::before,
+.retro-powerup::after {
+    position: absolute;
+    color: currentColor;
+    pointer-events: none;
+    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+    animation: powerupSparkle 1.2s ease-in-out infinite;
+}
+
+.retro-powerup::before {
+    content: "✦";
+    top: -5px;
+    right: -2px;
+    font-size: 13px;
+}
+
+.retro-powerup::after {
+    content: "✧";
+    bottom: 0;
+    left: -4px;
+    font-size: 11px;
+    animation-delay: 0.55s;
+}
+
+.retro-powerup.fighter-powerup { color: #22d3ee; }
+.retro-powerup.tornado-powerup { color: #c084fc; }
+.retro-powerup.bomb-powerup { color: #fb923c; }
+.retro-powerup.extra-life { color: #f0abfc; }
+.retro-powerup.health-potion { color: #7cfc00; }
+.retro-powerup.energy-cell { color: #fde047; }
+
+@keyframes powerupGlow {
+    from { filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 9px currentColor); }
+    to { filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 17px currentColor); }
+}
+
+@keyframes powerupSparkle {
+    0%, 100% { opacity: 0.35; transform: scale(0.65) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(35deg); }
+}
+
+/* Neon slime-green VOID button with an animated static halo */
+.start-btn {
+    position: relative;
+    isolation: isolate;
+    border-color: #a855f7;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.55), 0 0 16px rgba(168, 85, 247, 0.25);
+}
+
+.start-btn:hover,
+.start-btn:active,
+.start-btn.is-open,
+.start-btn:focus-visible {
+    background: #7cfc00;
+    border-color: #b7ff4a;
+    color: #102000;
+    box-shadow: 0 0 8px #7cfc00, 0 0 18px rgba(124, 252, 0, 0.8), inset 0 0 10px rgba(217, 255, 166, 0.65);
+}
+
+.start-btn::before,
+.start-btn::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.start-btn::before {
+    inset: -4px;
+    border: 1px dashed rgba(192, 132, 252, 0.95);
+    box-shadow: 0 0 8px #a855f7, inset 0 0 5px rgba(168, 85, 247, 0.55);
+    opacity: 0.65;
+    animation: void-neon-static 0.32s steps(2, end) infinite;
+}
+
+.start-btn::after {
+    inset: -8px;
+    background:
+        radial-gradient(circle at 2% 25%, #e9d5ff 0 1px, transparent 2px),
+        radial-gradient(circle at 96% 18%, #a855f7 0 1px, transparent 2px),
+        radial-gradient(circle at 8% 88%, #c084fc 0 1px, transparent 2px),
+        radial-gradient(circle at 92% 78%, #e9d5ff 0 1px, transparent 2px),
+        radial-gradient(circle at 48% 0%, #a855f7 0 1px, transparent 2px),
+        radial-gradient(circle at 66% 100%, #c084fc 0 1px, transparent 2px);
+    opacity: 0.8;
+    animation: void-neon-static 0.32s steps(2, end) infinite;
+}
+
+.start-btn:hover::before,
+.start-btn:hover::after,
+.start-btn:active::before,
+.start-btn:active::after,
+.start-btn.is-open::before,
+.start-btn.is-open::after,
+.start-btn:focus-visible::before,
+.start-btn:focus-visible::after {
+    opacity: 1;
+    animation: void-neon-static 0.32s steps(2, end) infinite;
+}
+
+.start-btn:hover::before,
+.start-btn:active::before,
+.start-btn.is-open::before,
+.start-btn:focus-visible::before {
+    border-color: rgba(183, 255, 74, 0.95);
+    box-shadow: 0 0 8px #7cfc00, inset 0 0 5px rgba(124, 252, 0, 0.55);
+}
+
+.start-btn:hover::after,
+.start-btn:active::after,
+.start-btn.is-open::after,
+.start-btn:focus-visible::after {
+    background:
+        radial-gradient(circle at 2% 25%, #e1ffad 0 1px, transparent 2px),
+        radial-gradient(circle at 96% 18%, #7cfc00 0 1px, transparent 2px),
+        radial-gradient(circle at 8% 88%, #b7ff4a 0 1px, transparent 2px),
+        radial-gradient(circle at 92% 78%, #e1ffad 0 1px, transparent 2px),
+        radial-gradient(circle at 48% 0%, #7cfc00 0 1px, transparent 2px),
+        radial-gradient(circle at 66% 100%, #b7ff4a 0 1px, transparent 2px);
+}
+
+@keyframes void-neon-static {
+    0% { transform: translate(0, 0); background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+    50% { transform: translate(1px, -1px); background-position: 2px -1px, -1px 2px, 1px 2px, -2px -1px, 1px -2px, -1px 1px; }
+    100% { transform: translate(-1px, 1px); background-position: -1px 2px, 2px -1px, -2px 1px, 1px 2px, -1px 1px, 2px -2px; }
+}
