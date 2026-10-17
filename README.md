@@ -1,6 +1,6 @@
 # SPECTRAL GARDEN // LABS
 
-A retro‑futuristic 90s OS browser environment fused with an interactive 3D arcade survival game, VST plugin showcase, and digital divination tools.  
+A 90s OS browser environment fused with an interactive 3D arcade survival game, VST plugin showcase, and digital divination tools.  
 **Live view:** https://spectralgarden.github.io/spectralgarden/
 
 ---
