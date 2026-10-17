@@ -42,6 +42,7 @@ const zoomScale = 0.22;
 // Respawn lifecycle state controls
 let isRespawning = false;
 let respawnTargetScale = 0.22;
+let respawnTimer = null;
 
 // Color lerp variables
 let targetSoftColor = null;
@@ -342,6 +343,20 @@ function updateOrbTrailGhosts() {
         }
     }
 }
+
+function clearOrbTrailGhosts() {
+    orbTrailGhosts.forEach(({ mesh }) => {
+        mesh.children.forEach(child => {
+            if (child.material) {
+                if (Array.isArray(child.material)) child.material.forEach(material => material.dispose());
+                else child.material.dispose();
+            }
+        });
+        scene.remove(mesh);
+    });
+    orbTrailGhosts = [];
+}
+window.clearOrbTrailGhosts = clearOrbTrailGhosts;
 
 function updateBounds() {
     const aspect = window.innerWidth / window.innerHeight;
@@ -729,7 +744,9 @@ function killAndRespawnOrb() {
     vx = Math.cos(angle) * 0.08;
     vy = Math.sin(angle) * 0.08;
 
-    setTimeout(() => {
+    if (respawnTimer) clearTimeout(respawnTimer);
+    respawnTimer = setTimeout(() => {
+        respawnTimer = null;
         window.orbHP = 100;
         window.orbEnergy = 100;
         if (typeof window.updateHPDisplay === 'function') window.updateHPDisplay();
@@ -740,6 +757,37 @@ function killAndRespawnOrb() {
     }, 2500);
 }
 window.killAndRespawnOrb = killAndRespawnOrb;
+
+function resetOrbForNewGame() {
+    if (respawnTimer) clearTimeout(respawnTimer);
+    respawnTimer = null;
+    isRespawning = false;
+    isDraggingOrb = false;
+    isHoveringOrb = false;
+    isAimingSlingshot = false;
+    dragLimitExceeded = false;
+    if (rubberBandLine) rubberBandLine.visible = false;
+    if (trajectoryLine) trajectoryLine.visible = false;
+    clearOrbTrailGhosts();
+
+    posX = 0;
+    posY = 0;
+    const resetAngle = Math.random() * Math.PI * 2;
+    vx = Math.cos(resetAngle) * minSpeed;
+    vy = Math.sin(resetAngle) * minSpeed;
+
+    if (sacredGeometryGroup) {
+        sacredGeometryGroup.visible = true;
+        sacredGeometryGroup.position.set(0, 0, 0);
+        sacredGeometryGroup.scale.set(zoomScale, zoomScale, zoomScale);
+        updateOrbHPColors();
+    }
+
+    window.orbHP = 100;
+    window.orbEnergy = 100;
+    updateOrbCoreLogo();
+}
+window.resetOrbForNewGame = resetOrbForNewGame;
 
 function animate() {
     requestAnimationFrame(animate);
