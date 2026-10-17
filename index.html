@@ -292,6 +292,10 @@
        <button class="start-btn" onclick="toggleStartMenu(event)">
     <img src="assets/images/favicon.png" alt="" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; filter: brightness(0) invert(1);"> [ VOID ]
 </button>
+        <div class="kills-display-box" aria-label="Current kill count">
+            <span>KILLS</span>
+            <span id="toolbar-kills-count">0</span>
+        </div>
         <div class="taskbar-right">
             <!-- Terms of Service Taskbar Button -->
             <button class="retro-btn" onclick="openWindow('tos-window')" style="height: 28px; padding: 0 8px; display: flex; align-items: center; background: #eaeaea; font-size: 10px;">⚖️ TERMS</button>
@@ -426,17 +430,17 @@
                 </div>
 
                 <!-- Terms Menu Item -->
-                <div class="menu-item" onclick="openWindow('tos-window'); document.getElementById('start-menu').style.display='none';">
+                <div class="menu-item" onclick="openWindow('tos-window'); closeStartMenu();">
                     <span>⚖️ Terms of Service</span>
                 </div>
 
                 <!-- Contact Menu Item -->
-                <div class="menu-item" onclick="openWindow('contact-window'); document.getElementById('start-menu').style.display='none';">
+                <div class="menu-item" onclick="openWindow('contact-window'); closeStartMenu();">
                     <span>✉️ Contact Operator</span>
                 </div>
 
                 <!-- Admin Terminal Command Line Option -->
-                <div class="menu-item" onclick="openWindow('admin-prompt-window'); document.getElementById('start-menu').style.display='none';">
+                <div class="menu-item" onclick="openWindow('admin-prompt-window'); closeStartMenu();">
                     <span>⚡ COMMAND LINE</span>
                 </div>
             </div>
