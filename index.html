@@ -13,7 +13,7 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Spectral Garden // Audio Plugins, VST3 Tools & Indie Games">
+    <meta property="og:title" content="Spectral Garden // Audio Plugins, VST3 Tools & Metaphysical Tools and Indie Games">
     <meta property="og:description" content="Explore experimental VST3 plugins, high-precision spectral processors, analog saturators, and avant-garde game projects built by Spectral Garden.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://spectralgarden.github.io/">
@@ -21,7 +21,7 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Spectral Garden // Audio Plugins, VST3 Tools & Indie Games">
+    <meta name="twitter:title" content="Spectral Garden // Audio Plugins, VST3 Tools, Metaphysical Tools & Indie Games">
     <meta name="twitter:description" content="Explore experimental VST3 plugins, high-precision spectral processors, analog saturators, and avant-garde game projects built by Spectral Garden.">
     <meta name="twitter:image" content="assets/images/sglogo.png">
 
@@ -168,6 +168,7 @@
             <img src="assets/images/sg_logo23.png" alt="" class="wallpaper-inline-logo">
             <span>GARDEN</span>
         </div>
+        <img id="orb-core-logo" src="assets/images/sglogo.png" alt="" aria-hidden="true">
 
         <!-- Terms of Service Window -->
         <div id="tos-window" class="window" style="top: 20%; left: 35%; width: 440px; display: none;">
@@ -354,7 +355,7 @@
 
             <!-- Data Bug Tray Access Submenu -->
             <div id="bug-submenu-container">
-                <button id="bug-submenu-trigger" class="retro-btn" onclick="toggleBugSubmenu(event)">◀</button>
+                <button id="bug-submenu-trigger" class="retro-btn" onclick="toggleBugSubmenu(event)" aria-label="Open player stats and sound options" aria-controls="bug-submenu" aria-expanded="false">◀</button>
                 <div id="bug-submenu">
                     <div class="bug-counter-container">
                         <span class="bug-submenu-icon">👾</span>
@@ -363,7 +364,12 @@
                             <div>KILLS: <span id="bug-counter">0</span></div>
                             <div>HIGH : <span id="bug-highscore">0</span></div>
                         </div>
-                        <span class="retro-tooltip-text">Data Bug Registry</span>
+                        <div class="audio-controls">
+                            <label for="game-volume">VOLUME <output id="game-volume-value" for="game-volume">100%</output></label>
+                            <input id="game-volume" type="range" min="0" max="100" value="100" aria-label="Game sound volume">
+                            <button id="game-mute-toggle" class="retro-btn" type="button" aria-pressed="false">MUTE</button>
+                        </div>
+                        <span class="retro-tooltip-text">Player Stats &amp; Sound Options</span>
                     </div>
                 </div>
             </div>
@@ -378,7 +384,16 @@
                 <div class="sidebar-text">SPECTRAL GARDEN</div>
             </div>
             <div class="start-menu-content">
-                
+
+                <!-- APPS -->
+                <div class="menu-item">
+                    <span>🛠️ APPS</span> <span class="menu-item-arrow">▶</span>
+                    <div class="submenu">
+                        <div class="submenu-item" onclick="loadModule('apps', 'app_a')">Akashic Tarot</div>
+                        <div class="submenu-item" onclick="loadModule('apps', 'app_b')">Spectral Atlas</div>
+                    </div>
+                </div>
+
                 <!-- VSTs -->
                 <div class="menu-item">
                     <span>🔊 VSTs</span> <span class="menu-item-arrow">▶</span>
@@ -407,14 +422,6 @@
                     <span>👾 GAMES</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
                         <div class="submenu-item" onclick="loadModule('games', 'game_a')">Eden's Edge (Comming SOON)</div>
-                    </div>
-                </div>
-
-                <!-- APPS -->
-                <div class="menu-item">
-                    <span>🛠️ APPS</span> <span class="menu-item-arrow">▶</span>
-                    <div class="submenu">
-                        <div class="submenu-item" onclick="loadModule('apps', 'app_a')">Akashic Tarot</div>
                     </div>
                 </div>
 

@@ -121,8 +121,8 @@ const moduleDatabase = {
             ]
         },
         vst_n: {
-            title: "C:\\PROG\\VST_UNITS\\SPECTRE_WRAITH.VST3",
-            header: "Spectre Wraith",
+            title: "C:\\PROG\\VST_UNITS\\SPECTRAL_WRAITH.VST3",
+            header: "Spectral Wraith",
             desc: "Spectral Bin-Freezing • Phase Smearing • Density Gating • FFT Manipulation • Spectral Morphing • Ghost Engine • Multi-Band Processing • Real-Time Spectral Analysis",
             image: "assets/images/vst_spectral_wraith.gif",
             links: [
@@ -165,7 +165,7 @@ const moduleDatabase = {
             title: "C:\\PROG\\APPS\\AKASHIC_TAROT.EXE",
             header: "AKASHIC TAROT V2.3",
             desc: "A ritual-coded search guide for the Akashic Tarot deck. Built as a static web portal using HTML, CSS, and JavaScript.",
-            image: "assets/images/tarot_preview.gif",
+            image: "assets/images/tarot_preview.png",
             content: "--- AKASHIC TAROT SYSTEM SPECS ---<br><br>" +
                      "🌐 <strong>LIVE PORTAL:</strong><br>" +
                      "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #cc0033; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"+ 
@@ -175,7 +175,17 @@ const moduleDatabase = {
                      "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
                      "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" 
         },
-        
+        app_b: {
+            title: "C:\\PROG\\APPS\\SPECTRAL_ATLAS.EXE",
+            header: "SPECTRAL ATLAS",
+            desc: "An interactive astrocartography atlas that maps planetary lines around the world from your birth details. Explore relocation charts, planetary crossings, parans, and transits.",
+            content: "SPECTRAL ATLAS // COSMIC LOCATION MAPPING<br><br>" +
+                     "Enter your birth date, time, and location to explore personalized planetary lines across an interactive world map.<br><br>" +
+                     "FEATURES: Astrocartography lines, relocation comparisons, planetary crossings, parans, and transit maps.",
+            image: "assets/images/spectralatlasscreen.png",
+            pageUrl: "https://spectralgarden.github.io/spectralatlas/",
+            openLabel: "OPEN SPECTRAL ATLAS"
+        }
     },
        
 }; 
@@ -192,6 +202,8 @@ window.dataBugs = [];
 window.bugEliminationCount = 0;
 window.bugHighScore = parseInt(localStorage.getItem('spectral_bugs_highscore') || '0', 10);
 let bugIdCounter = 0;
+let showcaseAllyTimer = null;
+let lastShowcaseItemId = null;
 
 // Lives & Player state
 window.playerLives = 3;
@@ -230,6 +242,9 @@ window.activePowerUpItem = null;
 window.activeFighters = [];
 window.activeTornado = null;
 window.nextPowerUpType = 'fighter';
+window.gamePaused = false;
+window.gamePausedForShowcase = false;
+window.activeShowcaseAlly = null;
 
 let spawnIntervalTimer = null;
 
@@ -263,6 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
         vhs.addEventListener('ended', () => { vhs.play(); });
     }
 
+    initializeAudioControls();
+
     setInterval(updateClock, 1000);
     updateClock();
 
@@ -276,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHPDisplay();
     updateLevelDisplay();
     reinitSpawnInterval();
+    scheduleShowcaseAlly();
     updateXPDisplay();
     updateEnergyDisplay();
 
@@ -394,10 +412,148 @@ function reinitSpawnInterval() {
     
     const intervalTime = Math.max(400, 1200 - (window.currentLevel * 50));
     spawnIntervalTimer = setInterval(() => {
-        if (document.visibilityState === 'visible') {
+        if (!window.gamePaused && document.visibilityState === 'visible') {
             spawnDataBug();
         }
     }, intervalTime);
+}
+
+function scheduleShowcaseAlly(delay = 12000 + Math.random() * 18000) {
+    if (showcaseAllyTimer) clearTimeout(showcaseAllyTimer);
+    showcaseAllyTimer = setTimeout(() => {
+        showcaseAllyTimer = null;
+        if (window.gamePaused || window.activeShowcaseAlly) {
+            scheduleShowcaseAlly(1000);
+            return;
+        }
+        spawnShowcaseAlly();
+    }, delay);
+}
+
+function spawnShowcaseAlly() {
+    const products = [
+        ...Object.entries(moduleDatabase.apps)
+            .filter(([, app]) => app.image && app.header && app.desc)
+            .map(([key, product]) => ({ category: 'apps', key, product })),
+        ...Object.entries(moduleDatabase.vst)
+            .filter(([, product]) => product.image && product.header && product.desc &&
+                Array.isArray(product.links) && product.links.length > 0)
+            .map(([key, product]) => ({ category: 'vst', key, product }))
+    ];
+    if (!products.length) {
+        scheduleShowcaseAlly();
+        return;
+    }
+
+    const availableProducts = products.length > 1
+        ? products.filter(({ category, key }) => `${category}:${key}` !== lastShowcaseItemId)
+        : products;
+    const { category, key, product } = availableProducts[Math.floor(Math.random() * availableProducts.length)];
+    lastShowcaseItemId = `${category}:${key}`;
+
+    const element = document.createElement('button');
+    element.type = 'button';
+    element.className = 'showcase-ally';
+    element.setAttribute('aria-label', `Open ${category === 'vst' ? 'VST' : 'app'} ${product.header}`);
+
+    const image = document.createElement('img');
+    image.src = product.image;
+    image.alt = '';
+    image.draggable = false;
+
+    const name = document.createElement('span');
+    name.className = 'showcase-ally-name';
+    name.textContent = product.header;
+
+    const prompt = document.createElement('span');
+    prompt.className = 'showcase-ally-prompt';
+    prompt.textContent = 'CLICK ME';
+
+    element.append(image, name, prompt);
+
+    const cardHeight = 118;
+    const viewHeight = Math.max(0, window.innerHeight - 40 - cardHeight);
+    const y = 60 + Math.random() * Math.max(0, viewHeight - 60);
+    const x = -150;
+    element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    element.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        openShowcaseAlly(category, key, element);
+    });
+    document.body.appendChild(element);
+
+    window.activeShowcaseAlly = {
+        category,
+        key,
+        element,
+        x,
+        y,
+        vx: 2.5 + Math.random() * 1.7,
+        bossHit: false
+    };
+}
+
+function openShowcaseAlly(category, key, element) {
+    if (!moduleDatabase[category]?.[key]) return;
+    const ally = window.activeShowcaseAlly;
+    if (ally) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        detonateShowcaseAlly(centerX, centerY);
+        ally.element.remove();
+        window.activeShowcaseAlly = null;
+    }
+    window.gamePaused = true;
+    window.gamePausedForShowcase = true;
+    loadModule(category, key);
+}
+
+function detonateShowcaseAlly(centerX, centerY) {
+    const blastRadius = 520;
+    const burst = document.createElement('div');
+    burst.className = 'aoe-explosion showcase-ally-burst';
+    burst.style.left = `${centerX}px`;
+    burst.style.top = `${centerY}px`;
+    document.body.appendChild(burst);
+    requestAnimationFrame(() => burst.classList.add('detonated'));
+    setTimeout(() => burst.remove(), 700);
+
+    document.body.classList.add('showcase-burst-flash');
+    setTimeout(() => document.body.classList.remove('showcase-burst-flash'), 240);
+    playBombExplosionSound();
+
+    for (let i = window.dataBugs.length - 1; i >= 0; i--) {
+        const bug = window.dataBugs[i];
+        if (Math.hypot(bug.x + 12 - centerX, bug.y + 12 - centerY) <= blastRadius) {
+            explodeBug(bug.id);
+        }
+    }
+
+    if (window.bossActive && bossElement &&
+        Math.hypot(window.bossX + 50 - centerX, window.bossY + 50 - centerY) <= blastRadius + 50) {
+        damageBoss(600);
+    }
+
+    for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+        const projectile = bossProjectiles[i];
+        if (Math.hypot(projectile.x - centerX, projectile.y - centerY) <= blastRadius) {
+            projectile.element.remove();
+            bossProjectiles.splice(i, 1);
+        }
+    }
+
+    const colors = ['#ffffff', '#c084fc', '#67e8f9', '#a855f7'];
+    for (let i = 0; i < 48; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.sqrt(Math.random()) * blastRadius;
+        createExplosionParticles(
+            centerX + Math.cos(angle) * distance,
+            centerY + Math.sin(angle) * distance,
+            colors[i % colors.length]
+        );
+    }
 }
 
 function createSparkle(x, y) {
@@ -475,10 +631,12 @@ function toggleBugSubmenu(event) {
         const isVisible = submenu.style.display === 'block';
         submenu.style.display = isVisible ? 'none' : 'block';
         trigger.textContent = isVisible ? '◀' : '▶';
+        trigger.setAttribute('aria-expanded', String(!isVisible));
     }
 }
 
 function spawnDataBug() {
+    if (window.gamePaused) return;
     const maxBugsAllowed = window.gameBeaten ? 20 : (20 + (window.currentLevel * 2));
     if (window.dataBugs.length >= maxBugsAllowed) return;
 
@@ -1180,13 +1338,11 @@ window.castAuraWave = castAuraWave;
 
 function playAuraAudio(type) {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
 
         if (type === 'damage') {
             osc.type = 'sawtooth';
@@ -1570,6 +1726,11 @@ function triggerTranscendedEndState() {
 }
 
 function updateGameplayLoop() {
+    if (window.gamePaused) {
+        requestAnimationFrame(updateGameplayLoop);
+        return;
+    }
+
     const viewWidth = window.innerWidth;
     const viewHeight = window.innerHeight - 40;
 
@@ -1618,6 +1779,46 @@ function updateGameplayLoop() {
 
         bugObj.angle = Math.atan2(bugObj.vy, bugObj.vx) + Math.PI / 2 + Math.sin(Date.now() * 0.015) * 0.15;
         bugObj.element.style.transform = `translate3d(${bugObj.x}px, ${bugObj.y}px, 0) rotate(${bugObj.angle}rad)`;
+    }
+
+    if (window.activeShowcaseAlly) {
+        const ally = window.activeShowcaseAlly;
+        ally.x += ally.vx;
+        ally.element.style.transform = `translate3d(${ally.x}px, ${ally.y}px, 0)`;
+
+        const allyWidth = ally.element.offsetWidth;
+        const allyHeight = ally.element.offsetHeight;
+        for (let i = window.dataBugs.length - 1; i >= 0; i--) {
+            const bug = window.dataBugs[i];
+            const bugX = bug.x + 12;
+            const bugY = bug.y + 12;
+            if (bugX >= ally.x && bugX <= ally.x + allyWidth &&
+                bugY >= ally.y && bugY <= ally.y + allyHeight) {
+                explodeBug(bug.id);
+            }
+        }
+
+        if (window.bossActive && bossElement && !ally.bossHit &&
+            window.bossX < ally.x + allyWidth && window.bossX + 100 > ally.x &&
+            window.bossY < ally.y + allyHeight && window.bossY + 100 > ally.y) {
+            ally.bossHit = true;
+            damageBoss(250);
+        }
+
+        for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+            const projectile = bossProjectiles[i];
+            if (projectile.x >= ally.x && projectile.x <= ally.x + allyWidth &&
+                projectile.y >= ally.y && projectile.y <= ally.y + allyHeight) {
+                projectile.element.remove();
+                bossProjectiles.splice(i, 1);
+            }
+        }
+
+        if (ally.x > viewWidth + allyWidth) {
+            ally.element.remove();
+            window.activeShowcaseAlly = null;
+            scheduleShowcaseAlly();
+        }
     }
 
     const now = Date.now();
@@ -1737,6 +1938,10 @@ function updateGameplayLoop() {
 
             setTimeout(() => {
                 warningLine.remove();
+                if (window.gamePaused) {
+                    lastBossChargeTime = Date.now();
+                    return;
+                }
                 if (!window.bossActive) return;
 
                 const slideAngle = Math.atan2(orbY - (window.bossY + 50), orbX - (window.bossX + 50));
@@ -1751,6 +1956,7 @@ function updateGameplayLoop() {
                         clearInterval(slideInterval);
                         return;
                     }
+                    if (window.gamePaused) return;
                     window.bossX += (targetSlideX - window.bossX) * 0.25;
                     window.bossY += (targetSlideY - window.bossY) * 0.25;
                     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
@@ -1771,6 +1977,7 @@ function updateGameplayLoop() {
             lastBossStarRainTime = now;
             for (let s = 0; s < 8; s++) {
                 setTimeout(() => {
+                    if (window.gamePaused) return;
                     if (!window.bossActive) return;
                     const proj = document.createElement('div');
                     proj.className = 'boss-projectile';
@@ -1965,13 +2172,11 @@ function createExplosionParticles(x, y, color) {
 
 function playExplosionSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(320, audioCtx.currentTime);
@@ -1987,13 +2192,11 @@ function playExplosionSound() {
 
 function playDamageTone() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(180, audioCtx.currentTime);
@@ -2009,13 +2212,11 @@ function playDamageTone() {
 
 function playHealSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
 
         osc.type = 'sine';
         osc.frequency.setValueAtTime(600, audioCtx.currentTime);
@@ -2031,16 +2232,14 @@ function playHealSound() {
 
 function playOverloadSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const noise = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         
         osc.connect(gainNode);
         noise.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(400, audioCtx.currentTime);
@@ -2062,16 +2261,14 @@ function playOverloadSound() {
 
 function playBombExplosionSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const subOsc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
         osc.connect(gainNode);
         subOsc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
 
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(150, audioCtx.currentTime);
@@ -2088,16 +2285,14 @@ function playBombExplosionSound() {
 
 function playLevelUpSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc1 = audioCtx.createOscillator();
         const osc2 = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
         osc1.connect(gainNode);
         osc2.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
 
         osc1.type = 'sine';
         osc2.type = 'triangle';
@@ -2124,13 +2319,11 @@ function playLevelUpSound() {
 
 function playPowerupSound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
         
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(440, audioCtx.currentTime);
@@ -2199,18 +2392,27 @@ function loadModule(category, key) {
         win.querySelector('.window-header .window-title').textContent = data.title;
         win.querySelector('.window-body h3').textContent = data.header;
         win.querySelector('.window-body p').textContent = data.desc;
-        
+
         // Use innerHTML instead of textContent so <a> links become clickable
         const appBox = win.querySelector('.app-data-box');
         appBox.innerHTML = data.content;
+        if (data.pageUrl) {
+            const pageButton = document.createElement('button');
+            pageButton.className = 'retro-btn';
+            pageButton.type = 'button';
+            pageButton.textContent = data.openLabel || 'OPEN PAGE';
+            pageButton.addEventListener('click', () => openAppPage(key));
+            appBox.appendChild(pageButton);
+        }
 
         const img = win.querySelector('#app-img');
         if (img) {
-            img.src = data.image || '';
+            img.alt = `[${data.header} Preview]`;
             img.onerror = function() {
                 this.onerror = null;
                 this.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ff00' font-family='monospace'>[ ${data.header} PREVIEW ]</text></svg>`;
             };
+            img.src = data.image || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ff00' font-family='monospace'>[ ${data.header} PREVIEW ]</text></svg>`;
         }
 
         openWindow('apps-window');
@@ -2236,6 +2438,14 @@ function loadModule(category, key) {
     const menu = document.getElementById('start-menu');
     if (menu) menu.style.display = 'none';
 }
+
+function openAppPage(key) {
+    const data = moduleDatabase.apps[key];
+    if (data?.pageUrl) {
+        window.open(data.pageUrl, '_blank', 'noopener,noreferrer');
+    }
+}
+window.openAppPage = openAppPage;
 
 function navigateModule(category, direction) {
     const keys = Object.keys(moduleDatabase[category]);
@@ -2317,6 +2527,11 @@ function closeWindow(id) {
     const win = document.getElementById(id);
     if (win) {
         win.style.display = 'none';
+    }
+    if ((id === 'apps-window' || id === 'vst-window') && window.gamePausedForShowcase) {
+        window.gamePausedForShowcase = false;
+        window.gamePaused = false;
+        scheduleShowcaseAlly();
     }
 }
 
@@ -2418,15 +2633,81 @@ function submitTerminal(event) {
 }
 
 let audioCtx;
+let gameAudioGain;
+const storedAudioVolume = localStorage.getItem('spectral_game_volume');
+let gameAudioVolume = storedAudioVolume === null ? 1 : Number(storedAudioVolume);
+if (!Number.isFinite(gameAudioVolume) || gameAudioVolume < 0 || gameAudioVolume > 1) gameAudioVolume = 1;
+let gameAudioMuted = localStorage.getItem('spectral_game_muted') === 'true';
+
+function getGameAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gameAudioGain = audioCtx.createGain();
+        gameAudioGain.connect(audioCtx.destination);
+        window.audioCtx = audioCtx;
+        updateGameAudioGain();
+    }
+    return audioCtx;
+}
+
+function connectGameAudioNode(audioNode) {
+    if (!gameAudioGain) getGameAudioContext();
+    audioNode.connect(gameAudioGain);
+}
+
+function updateGameAudioGain() {
+    if (gameAudioGain && audioCtx) {
+        gameAudioGain.gain.setTargetAtTime(gameAudioMuted ? 0 : gameAudioVolume, audioCtx.currentTime, 0.015);
+    }
+}
+
+function updateAudioControls() {
+    const volumeSlider = document.getElementById('game-volume');
+    const volumeValue = document.getElementById('game-volume-value');
+    const muteButton = document.getElementById('game-mute-toggle');
+    if (volumeSlider) volumeSlider.value = String(Math.round(gameAudioVolume * 100));
+    if (volumeValue) volumeValue.textContent = `${Math.round(gameAudioVolume * 100)}%`;
+    if (muteButton) {
+        muteButton.textContent = gameAudioMuted ? 'UNMUTE' : 'MUTE';
+        muteButton.setAttribute('aria-pressed', String(gameAudioMuted));
+    }
+}
+
+function initializeAudioControls() {
+    const volumeSlider = document.getElementById('game-volume');
+    const muteButton = document.getElementById('game-mute-toggle');
+
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', () => {
+            gameAudioVolume = Number(volumeSlider.value) / 100;
+            localStorage.setItem('spectral_game_volume', String(gameAudioVolume));
+            updateAudioControls();
+            updateGameAudioGain();
+        });
+    }
+
+    if (muteButton) {
+        muteButton.addEventListener('click', () => {
+            gameAudioMuted = !gameAudioMuted;
+            localStorage.setItem('spectral_game_muted', String(gameAudioMuted));
+            updateAudioControls();
+            updateGameAudioGain();
+        });
+    }
+
+    updateAudioControls();
+}
+
+window.getGameAudioContext = getGameAudioContext;
+window.connectGameAudioNode = connectGameAudioNode;
+
 function playUISound() {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        getGameAudioContext();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        connectGameAudioNode(gainNode);
         
         osc.type = 'square';
         osc.frequency.setValueAtTime(1200, audioCtx.currentTime);

@@ -350,7 +350,7 @@ function updateBounds() {
 }
 
 function onMouseMoveVector(event) {
-    if (window.isGamePaused) return;
+    if (window.isGamePaused || window.gamePaused) return;
     mouse2D.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse2D.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -404,7 +404,8 @@ function onMouseMoveVector(event) {
 }
 
 function onMouseDown(event) {
-    if (isRespawning || window.isClusterBombArmed || window.isGamePaused) return;
+    if (isRespawning || window.isClusterBombArmed || window.isGamePaused || window.gamePaused) return;
+    if (event.target instanceof Element && event.target.closest('.showcase-ally')) return;
 
     mouse2D.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse2D.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -451,11 +452,11 @@ function onMouseUp() {
 
 function playSlingshotTwangSound() {
     try {
-        const ctx = window.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = window.getGameAudioContext();
         const osc = ctx.createOscillator();
         const gainNode = ctx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(ctx.destination);
+        window.connectGameAudioNode(gainNode);
 
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(150, ctx.currentTime);
@@ -481,7 +482,7 @@ function setOrbPale(isPale) {
 }
 
 function onWindowScroll(event) {
-    if (isRespawning || window.gameBeaten || window.isGamePaused) return;
+    if (isRespawning || window.gameBeaten || window.isGamePaused || window.gamePaused) return;
     event.preventDefault();
 
     if (event.deltaY > 0) {
@@ -532,7 +533,7 @@ window.rotateFrequencies = rotateFrequencies;
 const tempWorldVector = new THREE.Vector3();
 
 function checkOrbBugCollisions() {
-    if (!sacredGeometryGroup || !camera || isRespawning || window.isGamePaused) return;
+    if (!sacredGeometryGroup || !camera || isRespawning || window.isGamePaused || window.gamePaused) return;
 
     sacredGeometryGroup.getWorldPosition(tempWorldVector);
 
@@ -540,6 +541,16 @@ function checkOrbBugCollisions() {
 
     const screenX = (projectedCoord.x * 0.5 + 0.5) * window.innerWidth;
     const screenY = (-projectedCoord.y * 0.5 + 0.5) * window.innerHeight;
+
+    const orbLogo = document.getElementById('orb-core-logo');
+    if (orbLogo) {
+        const logoSize = 34 * (sacredGeometryGroup.scale.x / zoomScale);
+        orbLogo.style.left = `${screenX}px`;
+        orbLogo.style.top = `${screenY}px`;
+        orbLogo.style.width = `${logoSize}px`;
+        orbLogo.style.height = `${logoSize}px`;
+        orbLogo.style.display = sacredGeometryGroup.visible ? 'block' : 'none';
+    }
 
     // Strict boundary safeguard blocking any top-left [0,0] artifacts from rendering or interacting
     if (screenX < 40 && screenY < 40) return;
@@ -645,11 +656,11 @@ function triggerSoftColorChange() {
 
 function playHoldWarningTone() {
     try {
-        const warningCtx = window.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const warningCtx = window.getGameAudioContext();
         const osc = warningCtx.createOscillator();
         const gainNode = warningCtx.createGain();
         osc.connect(gainNode);
-        gainNode.connect(ctx.destination);
+        window.connectGameAudioNode(gainNode);
 
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(220, warningCtx.currentTime);
@@ -699,6 +710,8 @@ function killAndRespawnOrb() {
     trajectoryLine.visible = false;
     
     sacredGeometryGroup.visible = false;
+    const orbLogo = document.getElementById('orb-core-logo');
+    if (orbLogo) orbLogo.style.display = 'none';
     
     respawnTargetScale = zoomScale;
     sacredGeometryGroup.scale.set(0.01, 0.01, 0.01);
@@ -725,7 +738,7 @@ window.killAndRespawnOrb = killAndRespawnOrb;
 function animate() {
     requestAnimationFrame(animate);
 
-    if (window.isGamePaused) {
+    if (window.isGamePaused || window.gamePaused) {
         renderer.render(scene, camera);
         return;
     }
