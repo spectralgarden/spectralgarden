@@ -250,8 +250,36 @@ window.showcaseWindowId = null;
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
 
+function initializeWallpaperWordmark() {
+    const wordmark = document.querySelector('.wallpaper-logo');
+    if (!wordmark) return;
+
+    wordmark.setAttribute('role', 'img');
+    wordmark.setAttribute('aria-label', 'Spectral Garden');
+    const words = [...wordmark.querySelectorAll(':scope > span')];
+    const letterCount = words.reduce((count, word) => count + (word.textContent || '').length, 0);
+    let letterIndex = 0;
+    words.forEach((word) => {
+        const letters = Array.from(word.textContent || '');
+        word.setAttribute('aria-hidden', 'true');
+        word.replaceChildren(...letters.map((letter, index) => {
+            const letterElement = document.createElement('span');
+            letterElement.textContent = letter;
+            const angle = (letterIndex / letterCount) * Math.PI * 2;
+            const distance = 65 + ((letterIndex * 17) % 36);
+            letterElement.style.setProperty('--explode-x', `${Math.cos(angle) * distance}px`);
+            letterElement.style.setProperty('--explode-y', `${Math.sin(angle) * distance}px`);
+            letterElement.style.setProperty('--explode-delay', `${(letterIndex % 5) * 24}ms`);
+            letterIndex++;
+            return letterElement;
+        }));
+    });
+}
+
 // Initialize events
 document.addEventListener('DOMContentLoaded', () => {
+    initializeWallpaperWordmark();
+
     const portalWin = document.getElementById('portal-control');
     if (portalWin) {
         centerWindowOnScreen(portalWin);
@@ -1232,6 +1260,14 @@ window.takeDamage = takeDamage;
 function loseLifeOrTriggerGameOver() {
     window.playerLives--;
     updateLivesDisplay();
+    document.body.classList.remove('orb-exploding');
+    void document.body.offsetWidth;
+    document.body.classList.add('orb-exploding');
+    if (window.orbExplosionTimeout) clearTimeout(window.orbExplosionTimeout);
+    window.orbExplosionTimeout = setTimeout(() => {
+        document.body.classList.remove('orb-exploding');
+        window.orbExplosionTimeout = null;
+    }, 1400);
 
     // Grab the exact 2D screen coordinate calculated by Three.js tracker
     const deathX = window.orbScreenX || window.innerWidth / 2;
