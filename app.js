@@ -247,6 +247,7 @@ window.gamePausedForShowcase = false;
 window.activeShowcaseAlly = null;
 
 let spawnIntervalTimer = null;
+let bombAimIndicator = null;
 
 // Initialize events
 document.addEventListener('DOMContentLoaded', () => {
@@ -1048,19 +1049,52 @@ function armClusterBomb() {
     window.isClusterBombArmed = true;
     document.body.classList.add('bomb-armed');
 
+    const prompt = document.createElement('div');
+    prompt.id = 'bomb-arm-prompt';
+    prompt.setAttribute('role', 'status');
+    prompt.setAttribute('aria-live', 'assertive');
+    prompt.innerHTML = '<strong>AOE BOMB ARMED</strong><span>CLICK OR TAP THE FIELD TO DETONATE</span>';
+    document.body.appendChild(prompt);
+
+    bombAimIndicator = document.createElement('div');
+    bombAimIndicator.id = 'bomb-aim-indicator';
+    bombAimIndicator.setAttribute('aria-hidden', 'true');
+    bombAimIndicator.innerHTML = '<span></span>';
+    document.body.appendChild(bombAimIndicator);
+    positionBombAimIndicator(window.innerWidth / 2, window.innerHeight / 2);
+
     const output = document.getElementById('terminal-output');
     if (output) {
         const line = document.createElement('div');
-        line.style.color = '#ff9900';
-        line.textContent = '>> BOMB_MODULE_LOADED: CLICK CANVAS FIELD TO DROP AOE CLUSTER DESTRUCT...';
+        line.style.color = '#c084fc';
+        line.textContent = '>> AOE BOMB ARMED: CLICK OR TAP THE FIELD TO DETONATE.';
         output.appendChild(line);
         output.scrollTop = output.scrollHeight;
     }
 }
 
+function positionBombAimIndicator(x, y) {
+    if (!bombAimIndicator) return;
+    bombAimIndicator.style.left = `${x}px`;
+    bombAimIndicator.style.top = `${y}px`;
+}
+
+window.addEventListener('pointermove', event => {
+    positionBombAimIndicator(event.clientX, event.clientY);
+});
+
+window.addEventListener('pointerdown', event => {
+    if (window.isClusterBombArmed) {
+        positionBombAimIndicator(event.clientX, event.clientY);
+    }
+});
+
 function detonateClusterBomb(clickX, clickY) {
     window.isClusterBombArmed = false;
     document.body.classList.remove('bomb-armed');
+    document.getElementById('bomb-arm-prompt')?.remove();
+    bombAimIndicator?.remove();
+    bombAimIndicator = null;
 
     const explosion = document.createElement('div');
     explosion.className = 'aoe-explosion';
