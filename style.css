@@ -28,6 +28,125 @@ body.bomb-armed, body.bomb-armed * {
     cursor: crosshair !important;
 }
 
+body.bomb-armed::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100003;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at center, rgba(147, 51, 234, 0.08), transparent 70%),
+        linear-gradient(135deg, rgba(88, 28, 135, 0.08), rgba(192, 132, 252, 0.12));
+    box-shadow: inset 0 0 45px rgba(147, 51, 234, 0.5), inset 0 0 110px rgba(126, 34, 206, 0.3);
+    animation: bomb-armed-screen-pulse 0.7s ease-in-out infinite alternate;
+}
+
+body.bomb-armed #canvas-container {
+    animation: bomb-armed-screen-shake 0.13s steps(2, end) infinite;
+}
+
+#bomb-arm-prompt {
+    position: fixed;
+    z-index: 100010;
+    top: 12px;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 270px;
+    padding: 10px 18px;
+    transform: translateX(-50%);
+    border: 2px solid #c084fc;
+    background: rgba(30, 10, 55, 0.94);
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 0 0 12px #a855f7, inset 0 0 14px rgba(192, 132, 252, 0.3);
+    animation: bomb-prompt-pulse 0.7s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+#bomb-arm-prompt strong {
+    color: #e9d5ff;
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+#bomb-arm-prompt span {
+    color: #f5d0fe;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+#bomb-aim-indicator {
+    position: fixed;
+    z-index: 100011;
+    top: 50%;
+    left: 50%;
+    width: 66px;
+    height: 66px;
+    border: 2px solid rgba(232, 121, 249, 0.95);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #a855f7, inset 0 0 12px rgba(192, 132, 252, 0.55);
+    pointer-events: none;
+    animation: bomb-reticle-pulse 0.45s ease-in-out infinite alternate;
+}
+
+#bomb-aim-indicator::before,
+#bomb-aim-indicator::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: #f5d0fe;
+    box-shadow: 0 0 8px #c084fc;
+    transform: translate(-50%, -50%);
+}
+
+#bomb-aim-indicator::before {
+    width: 86px;
+    height: 2px;
+}
+
+#bomb-aim-indicator::after {
+    width: 2px;
+    height: 86px;
+}
+
+#bomb-aim-indicator span {
+    position: absolute;
+    inset: 20px;
+    border: 2px dashed #ffffff;
+    border-radius: 50%;
+    animation: bomb-reticle-spin 1.2s linear infinite;
+}
+
+@keyframes bomb-armed-screen-pulse {
+    from { opacity: 0.45; }
+    to { opacity: 1; }
+}
+
+@keyframes bomb-armed-screen-shake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    75% { transform: translate(1px, 1px); }
+}
+
+@keyframes bomb-prompt-pulse {
+    from { filter: brightness(0.85); }
+    to { filter: brightness(1.25); }
+}
+
+@keyframes bomb-reticle-pulse {
+    from { opacity: 0.7; scale: 0.9; }
+    to { opacity: 1; scale: 1.1; }
+}
+
+@keyframes bomb-reticle-spin {
+    to { transform: rotate(360deg); }
+}
+
 body.bomb-burst-flash::after {
     content: '';
     position: fixed;
