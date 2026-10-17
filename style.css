@@ -1883,53 +1883,30 @@ body.showcase-burst-flash::after {
     height: 220px;
     pointer-events: none;
     z-index: 90;
-    transform: translate(-50%, -50%);
-    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8));
-    animation: vortexHoverPulse 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.7));
 }
 
 .spiral-vortex-inner {
     position: relative;
     width: 100%;
     height: 100%;
-    animation: vortexGlobalSpin 1.2s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.spiral-ring {
+.spiral-vortex-inner::before {
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    border: 2px dashed rgba(0, 255, 255, 0.4);
-}
-
-.spiral-ring.ring-1 {
-    width: 80px;
-    height: 80px;
-    border-color: #00ffff;
-    border-width: 3px;
-    box-shadow: inset 0 0 15px rgba(0,255,255,0.6), 0 0 15px rgba(0,255,255,0.6);
-    animation: ringSpinCounter 0.8s linear infinite;
-}
-
-.spiral-ring.ring-2 {
-    width: 150px;
-    height: 150px;
-    border-color: #ff00ff;
-    border-style: dotted;
-    border-width: 4px;
-    box-shadow: inset 0 0 20px rgba(255,0,255,0.5), 0 0 20px rgba(255,0,255,0.5);
-    animation: ringSpinClockwise 1.6s linear infinite;
-}
-
-.spiral-ring.ring-3 {
-    width: 220px;
-    height: 220px;
-    border-color: #00ff66;
-    border-width: 1px;
-    box-shadow: 0 0 25px rgba(0,255,102,0.4);
-    animation: ringSpinCounter 2.5s linear infinite;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(34, 211, 238, 0.08) 45deg, rgba(168, 85, 247, 0.72) 105deg, rgba(217, 70, 239, 0.25) 165deg, transparent 230deg, rgba(34, 211, 238, 0.55) 300deg, transparent 360deg);
+    filter: blur(8px);
+    animation: vortexGlowSpin 1.8s linear infinite, vortexGlowPulse 0.8s ease-in-out infinite alternate;
 }
 
 .vortex-symbol {
@@ -1937,49 +1914,56 @@ body.showcase-burst-flash::after {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
+    width: 74px;
+    height: 74px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, rgba(0,255,255,0.8) 0%, rgba(10,10,10,0.9) 80%);
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.45), rgba(88, 28, 135, 0.45) 58%, transparent 78%);
     border-radius: 50%;
-    box-shadow: 0 0 25px #00ffff;
-    animation: corePulse 0.4s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 12px #22d3ee) drop-shadow(0 0 22px #a855f7);
+    animation: vortexCorePulse 0.65s ease-in-out infinite alternate;
+}
+
+.vortex-symbol img {
+    position: relative;
+    z-index: 1;
 }
 
 .vortex-debris {
     position: absolute;
-    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
     pointer-events: none;
-    animation: debrisOrbit 1s linear infinite;
+    transform-origin: 0 0;
+    color: var(--orbit-color);
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 0;
+    text-shadow: 0 0 5px currentColor, 0 0 11px currentColor;
+    animation: vortexParticleOrbit var(--orbit-duration) linear infinite;
 }
 
-@keyframes vortexGlobalSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes vortexGlowSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg) scale(0.9); }
+    to { transform: translate(-50%, -50%) rotate(360deg) scale(1.08); }
 }
 
-@keyframes ringSpinClockwise {
-    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-    50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.05); }
-    100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+@keyframes vortexGlowPulse {
+    from { opacity: 0.65; }
+    to { opacity: 1; }
 }
 
-@keyframes ringSpinCounter {
-    0% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
-    50% { transform: translate(-50%, -50%) rotate(180deg) scale(0.95); }
-    100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+@keyframes vortexParticleOrbit {
+    from { transform: rotate(var(--orbit-angle)) translateX(var(--orbit-radius)) rotate(0deg); }
+    to { transform: rotate(calc(var(--orbit-angle) + 360deg)) translateX(var(--orbit-radius)) rotate(-360deg); }
 }
 
-@keyframes corePulse {
-    0% { transform: translate(-50%, -50%) scale(0.85); box-shadow: 0 0 10px #00ffff; }
-    100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 30px #ff00ff; }
-}
-
-@keyframes vortexHoverPulse {
-    0% { filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6)); }
-    100% { filter: drop-shadow(0 0 25px rgba(255, 0, 255, 0.9)); }
+@keyframes vortexCorePulse {
+    from { transform: translate(-50%, -50%) scale(0.9); }
+    to { transform: translate(-50%, -50%) scale(1.1); }
 }
 /* --- UPGRADED F-SYS FIGHTER DRONES --- */
 .fighter-orb {
