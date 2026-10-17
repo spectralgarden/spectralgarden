@@ -685,14 +685,14 @@ body.orb-exploding .wallpaper-inline-logo {
 
 .start-btn {
     background-color: #111111;
-    border: 2px solid #7cfc00;
+    border: 2px solid #a855f7;
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
     font-weight: bold;
     padding: 4px 14px;
     outline: none;
-    box-shadow: 0 0 8px rgba(124, 252, 0, 0.55), 0 0 16px rgba(124, 252, 0, 0.25);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.55), 0 0 16px rgba(168, 85, 247, 0.25);
     transition: background 0.15s;
 }
 
@@ -709,6 +709,27 @@ body.orb-exploding .wallpaper-inline-logo {
     align-items: center;
     gap: 10px;
     max-width: 85%;
+}
+
+.kills-display-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 26px;
+    margin-left: 8px;
+    padding: 0 8px;
+    border: 1px solid rgba(139, 92, 246, 0.55);
+    background: rgba(139, 92, 246, 0.07);
+    color: #5b21b6;
+    font: bold 10px monospace;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+}
+
+.kills-display-box span:last-child {
+    min-width: 1.5ch;
+    color: #111111;
+    text-align: right;
 }
 
 #system-clock {
@@ -1922,6 +1943,15 @@ body.showcase-burst-flash::after {
         width: 11px !important;
         height: 11px !important;
         margin-right: 2px !important;
+    }
+
+    .kills-display-box {
+        flex: 0 0 auto;
+        height: 24px;
+        margin-left: 2px;
+        padding: 0 5px;
+        gap: 3px;
+        font-size: 9px;
     }
 
     .taskbar-right {
