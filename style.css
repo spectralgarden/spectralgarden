@@ -20,6 +20,23 @@ body {
     cursor: url('assets/images/star_cursor.png') 32 2, auto;
 }
 
+.screen-frame {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    border-radius: 0;
+    background-image:
+        linear-gradient(90deg, rgba(34, 211, 238, 0.72), rgba(139, 92, 246, 0.72) 52%, rgba(232, 121, 249, 0.72)),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.72), rgba(139, 92, 246, 0.72) 52%, rgba(232, 121, 249, 0.72)),
+        linear-gradient(180deg, rgba(34, 211, 238, 0.72), rgba(139, 92, 246, 0.72) 52%, rgba(232, 121, 249, 0.72)),
+        linear-gradient(180deg, rgba(34, 211, 238, 0.72), rgba(139, 92, 246, 0.72) 52%, rgba(232, 121, 249, 0.72));
+    background-size: 100% 3px, 100% 3px, 3px 100%, 3px 100%;
+    background-position: top left, bottom left, top left, top right;
+    background-repeat: no-repeat;
+    box-shadow: inset 0 0 7px rgba(168, 85, 247, 0.06);
+    pointer-events: none;
+}
+
 a, button, .retro-btn, .close-btn, .icon, .start-btn, .submenu-item, .menu-item, input, .window-header {
     cursor: url('assets/images/star_cursor.png') 32 2, pointer !important;
 }
@@ -486,6 +503,56 @@ body.orb-exploding .wallpaper-inline-logo {
     z-index: 10;
 }
 
+#tos-window,
+#contact-window {
+    border-color: #0f766e;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.85), 0 0 12px rgba(20, 184, 166, 0.2);
+}
+
+#tos-window::after,
+#contact-window::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    z-index: 0;
+    border: 1px solid rgba(20, 184, 166, 0.58);
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0 3px,
+        rgba(20, 184, 166, 0.035) 3px 4px
+    );
+    pointer-events: none;
+    animation: teal-static-trim 0.18s steps(2, end) infinite alternate;
+}
+
+#tos-window > *,
+#contact-window > * {
+    position: relative;
+    z-index: 1;
+}
+
+#tos-window .window-header,
+#contact-window .window-header {
+    border-bottom-color: #14b8a6;
+}
+
+#tos-window .close-btn,
+#contact-window .close-btn {
+    border-color: #14b8a6;
+    color: #5eead4;
+}
+
+#tos-window .close-btn:hover,
+#contact-window .close-btn:hover {
+    background: #0f766e;
+    color: #ffffff;
+}
+
+@keyframes teal-static-trim {
+    from { opacity: 0.55; }
+    to { opacity: 0.8; }
+}
+
 .window.showcase-window {
     position: fixed;
     z-index: 100020;
@@ -501,6 +568,39 @@ body.orb-exploding .wallpaper-inline-logo {
     align-items: center;
     border-bottom: 2px solid #8b5cf6;
     font-size: 12px;
+}
+
+#taskbar .taskbar-right > button[onclick*="tos-window"],
+#taskbar .taskbar-right > button[onclick*="contact-window"] {
+    border-color: #8b5cf6 !important;
+    color: #8b5cf6;
+    animation: taskbar-purple-flicker 2.8s steps(2, end) infinite;
+}
+
+#taskbar .taskbar-right > button[onclick*="tos-window"]:hover,
+#taskbar .taskbar-right > button[onclick*="contact-window"]:hover {
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #8b5cf6;
+    animation: none;
+}
+
+@keyframes taskbar-purple-flicker {
+    0%, 84%, 100% {
+        box-shadow: 0 0 2px rgba(139, 92, 246, 0.12);
+        text-shadow: none;
+    }
+    88% {
+        box-shadow: 0 0 6px rgba(139, 92, 246, 0.42), 0 0 11px rgba(139, 92, 246, 0.18);
+        text-shadow: 0 0 4px rgba(139, 92, 246, 0.35);
+    }
+    92% {
+        box-shadow: 0 0 3px rgba(139, 92, 246, 0.2);
+        text-shadow: none;
+    }
+    96% {
+        box-shadow: 0 0 7px rgba(139, 92, 246, 0.36), 0 0 12px rgba(139, 92, 246, 0.15);
+        text-shadow: 0 0 3px rgba(139, 92, 246, 0.3);
+    }
 }
 
 .window-title {
@@ -2298,6 +2398,138 @@ body {
         transform: translate3d(calc(-20px + var(--trail-drift)), -8px, 0) scale(0.15);
         filter: drop-shadow(0 0 0 currentColor);
     }
+}
+
+.fire-demon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100012;
+    width: 68px;
+    height: 68px;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    will-change: transform;
+    animation: fireDemonHover 0.8s ease-in-out infinite alternate;
+}
+
+.fire-demon img {
+    position: relative;
+    z-index: 1;
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 6px #fff3b0)
+        drop-shadow(0 0 13px var(--demon-glow))
+        drop-shadow(0 0 25px var(--demon-glow));
+    animation: fireDemonFlicker 0.13s steps(2, end) infinite alternate, fireDemonFlare 1.1s ease-in-out infinite alternate;
+}
+
+.fire-demon-aura {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 12%, #fff2ae 18%, #ff6a00 28%, transparent 38% 50%, var(--demon-glow) 62%, #ffb000 74%, transparent 86% 100%);
+    filter: blur(8px);
+    opacity: 0.95;
+    animation: fireDemonAura 0.42s linear infinite;
+}
+
+.fire-demon-flame {
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    background:
+        radial-gradient(ellipse at 50% 80%, rgba(255, 238, 129, 0.95), transparent 38%),
+        radial-gradient(ellipse at 25% 55%, rgba(255, 65, 0, 0.78), transparent 55%),
+        radial-gradient(ellipse at 75% 45%, rgba(255, 132, 0, 0.82), transparent 58%);
+    filter: blur(5px);
+    mix-blend-mode: screen;
+    animation: fireDemonFlameFlow 0.32s ease-in-out infinite alternate;
+}
+
+.fire-demon-trail {
+    position: fixed;
+    z-index: 100011;
+    pointer-events: none;
+    font-size: 19px;
+    line-height: 1;
+    text-shadow: 0 0 7px #fff2ae, 0 0 14px currentColor, 0 0 26px currentColor;
+    animation: fireDemonTrailFade 720ms ease-out forwards;
+}
+
+.fireball-projectile {
+    position: fixed;
+    top: -8px;
+    left: -8px;
+    z-index: 100013;
+    width: 24px;
+    height: 19px;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+    isolation: isolate;
+    background: radial-gradient(ellipse at 65% 50%, #fff8b0 0 12%, #ffd23f 30%, #ff6a00 60%, var(--fireball-glow) 82%);
+    box-shadow: 0 0 9px #fff2ae, 0 0 19px #ff6a00, 0 0 32px var(--fireball-glow);
+    animation: fireballFlicker 0.1s steps(2, end) infinite alternate;
+}
+
+.fireball-projectile::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    right: 8px;
+    width: 72px;
+    height: 18px;
+    transform: translateY(-50%);
+    border-radius: 50% 0 0 50%;
+    background: linear-gradient(90deg, transparent, var(--fireball-glow) 35%, #ff8a00 76%, #fff2ae);
+    filter: blur(5px);
+    opacity: 1;
+    background-size: 200% 100%;
+    animation: fireballTrailFlow 0.24s linear infinite;
+}
+
+@keyframes fireDemonHover {
+    from { margin-top: -5px; }
+    to { margin-top: 5px; }
+}
+
+@keyframes fireDemonFlicker {
+    from { filter: drop-shadow(0 0 5px #fff3b0) drop-shadow(0 0 11px var(--demon-glow)); }
+    to { filter: drop-shadow(0 0 9px #ffffff) drop-shadow(0 0 20px var(--demon-glow)) drop-shadow(0 0 30px #ff6a00); }
+}
+
+@keyframes fireDemonAura {
+    to { transform: rotate(360deg) scale(1.16); }
+}
+
+@keyframes fireDemonFlare {
+    from { transform: scale(0.96) rotate(-3deg); }
+    to { transform: scale(1.08) rotate(3deg); }
+}
+
+@keyframes fireDemonFlameFlow {
+    from { opacity: 0.7; transform: scale(0.88) rotate(-8deg); }
+    to { opacity: 1; transform: scale(1.15) rotate(8deg); }
+}
+
+@keyframes fireDemonTrailFade {
+    from { opacity: 0.95; transform: translate3d(0, 0, 0) scale(1); }
+    to { opacity: 0; transform: translate3d(calc(-18px + var(--trail-drift)), -12px, 0) scale(0.15); }
+}
+
+@keyframes fireballFlicker {
+    from { filter: brightness(0.85) saturate(1.1); }
+    to { filter: brightness(1.5) saturate(1.6); }
+}
+
+@keyframes fireballTrailFlow {
+    from { background-position: 100% 50%; opacity: 0.72; }
+    to { background-position: 0 50%; opacity: 1; }
 }
 
 .retro-powerup {
