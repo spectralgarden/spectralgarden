@@ -589,6 +589,7 @@ function detonateShowcaseAlly(centerX, centerY) {
             explodeBug(bug.id);
         }
     }
+    damageFireDemonsInRadius(centerX, centerY, blastRadius);
 
     if (window.bossActive && bossElement &&
         Math.hypot(window.bossX + 50 - centerX, window.bossY + 50 - centerY) <= blastRadius + 50) {
@@ -1056,6 +1057,50 @@ function spawnFireDemonWave() {
     });
 }
 
+function damageFireDemon(demon) {
+    const index = fireDemons.indexOf(demon);
+    if (index === -1) return;
+
+    createExplosionParticles(demon.x + 34, demon.y + 34, demon.glowColor);
+    playExplosionSound();
+    demon.element.remove();
+    fireDemons.splice(index, 1);
+
+    window.bugEliminationCount++;
+    earnXP(200);
+    if (window.bugHighScore < window.bugEliminationCount) {
+        window.bugHighScore = window.bugEliminationCount;
+        localStorage.setItem('spectral_bugs_highscore', window.bugHighScore);
+        const bugHighscoreEl = document.getElementById('bug-highscore');
+        if (bugHighscoreEl) bugHighscoreEl.textContent = window.bugHighScore;
+    }
+    const bugCounterEl = document.getElementById('bug-counter');
+    if (bugCounterEl) bugCounterEl.textContent = window.bugEliminationCount;
+    updateKillsDisplay();
+}
+window.damageFireDemon = damageFireDemon;
+
+function damageFireDemonsInRadius(x, y, radius) {
+    for (let i = fireDemons.length - 1; i >= 0; i--) {
+        const demon = fireDemons[i];
+        if (Math.hypot(demon.x + 34 - x, demon.y + 34 - y) <= radius) {
+            damageFireDemon(demon);
+        }
+    }
+}
+
+window.hitFireDemonAtOrb = function (orbX, orbY, radius) {
+    for (let i = fireDemons.length - 1; i >= 0; i--) {
+        const demon = fireDemons[i];
+        if (Math.hypot(demon.x + 34 - orbX, demon.y + 34 - orbY) <= radius + 34) {
+            damageFireDemon(demon);
+            takeDamage(8);
+            return true;
+        }
+    }
+    return false;
+};
+
 function fireDemonFireball(demon, targetX, targetY) {
     const element = document.createElement('div');
     element.className = 'fireball-projectile';
@@ -1206,6 +1251,7 @@ function detonateClusterBomb(clickX, clickY) {
             explodeBug(bug.id);
         }
     }
+    damageFireDemonsInRadius(clickX, clickY, 300);
 
     if (window.bossActive && bossElement) {
         const distBoss = Math.hypot(window.bossX + 50 - clickX, window.bossY + 50 - clickY);
@@ -1459,6 +1505,7 @@ function castAuraWave(type) {
                 explodeBug(bug.id);
             }
         }
+        damageFireDemonsInRadius(orbX, orbY, radius);
         if (window.bossActive && bossElement) {
             const distBoss = Math.hypot(window.bossX + 50 - orbX, window.bossY + 50 - orbY);
             if (distBoss < radius) {
@@ -1995,6 +2042,7 @@ function updateGameplayLoop() {
                 explodeBug(bug.id);
             }
         }
+        damageFireDemonsInRadius(ally.x + allyWidth / 2, ally.y + allyHeight / 2, 40);
 
         if (window.bossActive && bossElement && !ally.bossHit &&
             window.bossX < ally.x + allyWidth && window.bossX + 100 > ally.x &&
@@ -2135,6 +2183,16 @@ function updateGameplayLoop() {
         }
 
         if (!target) {
+            for (const demon of fireDemons) {
+                const d = Math.hypot(demon.x + 34 - drone.x, demon.y + 34 - drone.y);
+                if (d < minDist) {
+                    minDist = d;
+                    target = { id: 'fire-demon', demon, x: demon.x + 34, y: demon.y + 34 };
+                }
+            }
+        }
+
+        if (!target) {
             for (let b = 0; b < window.dataBugs.length; b++) {
                 const bug = window.dataBugs[b];
                 if (bug.isPeaceful) continue;
@@ -2183,6 +2241,7 @@ function updateGameplayLoop() {
                 explodeBug(bug.id);
             }
         }
+        damageFireDemonsInRadius(tornado.x, tornado.y, 110);
 
         if (window.bossActive && bossElement) {
             const dBoss = Math.hypot(window.bossX + 50 - tornado.x, window.bossY + 50 - tornado.y);
@@ -2382,6 +2441,8 @@ function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
 
     if (bugTarget.id === 'boss') {
         damageBoss(80); 
+    } else if (bugTarget.id === 'fire-demon') {
+        damageFireDemon(bugTarget.demon);
     } else {
         explodeBug(bugTarget.id);
     }
