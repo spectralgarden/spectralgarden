@@ -231,6 +231,9 @@ let lastBossChargeTime = 0;
 let lastBossStarRainTime = 0;
 let lastBossMissileTime = 0;
 let bossProjectiles = [];
+let fireDemons = [];
+let fireDemonProjectiles = [];
+let nextFireDemonWaveAt = Date.now() + 12000;
 
 window.isClusterBombArmed = false;
 window.orbHP = 100;
@@ -1015,6 +1018,62 @@ function deployFighters() {
     }
 }
 
+function spawnFireDemonWave() {
+    const viewHeight = window.innerHeight - 40;
+    const demonSprites = [
+        'assets/images/sprites/1fire_seige.png',
+        'assets/images/sprites/2fire_seige.png',
+        'assets/images/sprites/3fire_seige.png'
+    ];
+    const fromRight = Math.random() < 0.5;
+    const startX = fromRight ? window.innerWidth + 80 : -80;
+    const direction = fromRight ? -1 : 1;
+
+    demonSprites.forEach((sprite, index) => {
+        const element = document.createElement('div');
+        element.className = 'fire-demon';
+        element.style.setProperty('--demon-glow', ['#ff3b18', '#ff6a00', '#ff2d55'][index]);
+        element.innerHTML = `<span class="fire-demon-aura"></span><span class="fire-demon-flame"></span><img src="${sprite}" alt="">`;
+
+        const y = Math.max(50, Math.min(viewHeight - 70, viewHeight * (index + 1) / 4));
+        const x = startX + direction * index * 55;
+        element.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(${direction})`;
+        document.body.appendChild(element);
+
+        fireDemons.push({
+            element,
+            x,
+            y,
+            baseY: y,
+            direction,
+            speed: 2.2 + Math.random() * 0.6,
+            wave: Math.random() * Math.PI * 2,
+            fireRate: 1200 + Math.random() * 650,
+            lastFireTime: Date.now() + index * 350,
+            lastTrailTime: 0,
+            glowColor: ['#ff3b18', '#ff6a00', '#ff2d55'][index]
+        });
+    });
+}
+
+function fireDemonFireball(demon, targetX, targetY) {
+    const element = document.createElement('div');
+    element.className = 'fireball-projectile';
+    const originX = demon.x + 28;
+    const originY = demon.y + 28;
+    const dx = targetX - originX;
+    const dy = targetY - originY;
+    const distance = Math.hypot(dx, dy) || 1;
+    const speed = 5.6;
+    const vx = (dx / distance) * speed;
+    const vy = (dy / distance) * speed;
+    element.style.setProperty('--fireball-glow', demon.glowColor);
+    element.style.transform = `translate3d(${originX}px, ${originY}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
+    document.body.appendChild(element);
+
+    fireDemonProjectiles.push({ element, x: originX, y: originY, vx, vy });
+}
+
 function deployTornado() {
     const wrapper = document.createElement('div');
     wrapper.className = 'spiral-vortex-wrapper';
@@ -1508,6 +1567,11 @@ function clearGameBoard() {
     window.activeTornado = null;
     window.activeFighters.forEach(fighter => fighter?.element?.remove());
     window.activeFighters = [];
+    fireDemons.forEach(demon => demon.element.remove());
+    fireDemons = [];
+    fireDemonProjectiles.forEach(projectile => projectile.element.remove());
+    fireDemonProjectiles = [];
+    nextFireDemonWaveAt = Date.now() + 12000;
 
     if (typeof cleanupBossFight === 'function') cleanupBossFight();
     if (typeof window.clearOrbTrailGhosts === 'function') window.clearOrbTrailGhosts();
@@ -1518,6 +1582,9 @@ function clearGameBoard() {
         '.showcase-ally',
         '.fighter-drone-unit',
         '.fighter-trail-particle',
+        '.fire-demon',
+        '.fire-demon-trail',
+        '.fireball-projectile',
         '.fighter-orb',
         '.spiral-vortex-wrapper',
         '.boss-entity',
@@ -1953,6 +2020,73 @@ function updateGameplayLoop() {
     }
 
     const now = Date.now();
+    if (!window.gameBeaten && window.currentLevel >= 5 && now >= nextFireDemonWaveAt) {
+        spawnFireDemonWave();
+        nextFireDemonWaveAt = now + Math.max(12000, 24000 - window.currentLevel * 350);
+    }
+
+    for (let i = fireDemons.length - 1; i >= 0; i--) {
+        const demon = fireDemons[i];
+        demon.x += demon.speed * demon.direction;
+        demon.y = demon.baseY + Math.sin(now * 0.003 + demon.wave) * 28;
+        demon.element.style.transform = `translate3d(${demon.x}px, ${demon.y}px, 0) scaleX(${demon.direction})`;
+
+        if (now - demon.lastTrailTime > 38) {
+            demon.lastTrailTime = now;
+            const trail = document.createElement('span');
+            trail.className = 'fire-demon-trail';
+            trail.textContent = Math.random() > 0.45 ? '✦' : '🔥';
+            trail.style.color = demon.glowColor;
+            trail.style.left = `${demon.x + (demon.direction > 0 ? 8 : 44)}px`;
+            trail.style.top = `${demon.y + 20 + Math.random() * 18}px`;
+            trail.style.setProperty('--trail-drift', `${(Math.random() - 0.5) * 18}px`);
+            trail.addEventListener('animationend', () => trail.remove(), { once: true });
+            document.body.appendChild(trail);
+        }
+
+        if (now - demon.lastFireTime >= demon.fireRate) {
+            demon.lastFireTime = now;
+            fireDemonFireball(demon, window.orbScreenX, window.orbScreenY);
+        }
+
+        if ((demon.direction > 0 && demon.x > viewWidth + 80) ||
+            (demon.direction < 0 && demon.x < -100)) {
+            demon.element.remove();
+            fireDemons.splice(i, 1);
+        }
+    }
+
+    for (let i = fireDemonProjectiles.length - 1; i >= 0; i--) {
+        const projectile = fireDemonProjectiles[i];
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || (window.innerHeight - 40) / 2;
+        const targetDx = orbX - projectile.x;
+        const targetDy = orbY - projectile.y;
+        const targetDistance = Math.hypot(targetDx, targetDy) || 1;
+        const currentSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
+        const turnStrength = 0.075;
+        projectile.vx += (targetDx / targetDistance * currentSpeed - projectile.vx) * turnStrength;
+        projectile.vy += (targetDy / targetDistance * currentSpeed - projectile.vy) * turnStrength;
+        projectile.x += projectile.vx;
+        projectile.y += projectile.vy;
+        projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
+
+        const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 11;
+        if (Math.hypot(projectile.x - orbX, projectile.y - orbY) < collisionRadius) {
+            createExplosionParticles(projectile.x, projectile.y, projectile.element.style.getPropertyValue('--fireball-glow'));
+            projectile.element.remove();
+            fireDemonProjectiles.splice(i, 1);
+            takeDamage(8);
+            continue;
+        }
+
+        if (projectile.x < -40 || projectile.x > viewWidth + 40 ||
+            projectile.y < -40 || projectile.y > window.innerHeight + 40) {
+            projectile.element.remove();
+            fireDemonProjectiles.splice(i, 1);
+        }
+    }
+
     for (let i = window.activeFighters.length - 1; i >= 0; i--) {
         const drone = window.activeFighters[i];
         drone.x += drone.vx;
