@@ -1071,7 +1071,7 @@ function fireDemonFireball(demon, targetX, targetY) {
     element.style.transform = `translate3d(${originX}px, ${originY}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
     document.body.appendChild(element);
 
-    fireDemonProjectiles.push({ element, x: originX, y: originY, vx, vy });
+    fireDemonProjectiles.push({ element, x: originX, y: originY, vx, vy, speed, createdAt: Date.now() });
 }
 
 function deployTornado() {
@@ -2063,16 +2063,30 @@ function updateGameplayLoop() {
         const targetDx = orbX - projectile.x;
         const targetDy = orbY - projectile.y;
         const targetDistance = Math.hypot(targetDx, targetDy) || 1;
-        const currentSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
+        const desiredVx = targetDx / targetDistance * projectile.speed;
+        const desiredVy = targetDy / targetDistance * projectile.speed;
         const turnStrength = 0.075;
-        projectile.vx += (targetDx / targetDistance * currentSpeed - projectile.vx) * turnStrength;
-        projectile.vy += (targetDy / targetDistance * currentSpeed - projectile.vy) * turnStrength;
+        projectile.vx += (desiredVx - projectile.vx) * turnStrength;
+        projectile.vy += (desiredVy - projectile.vy) * turnStrength;
+        const steeredSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
+        projectile.vx = projectile.vx / steeredSpeed * projectile.speed;
+        projectile.vy = projectile.vy / steeredSpeed * projectile.speed;
+        const previousX = projectile.x;
+        const previousY = projectile.y;
         projectile.x += projectile.vx;
         projectile.y += projectile.vy;
         projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
 
         const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 11;
-        if (Math.hypot(projectile.x - orbX, projectile.y - orbY) < collisionRadius) {
+        const segmentX = projectile.x - previousX;
+        const segmentY = projectile.y - previousY;
+        const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+        const nearestPointRatio = segmentLengthSquared
+            ? Math.max(0, Math.min(1, ((orbX - previousX) * segmentX + (orbY - previousY) * segmentY) / segmentLengthSquared))
+            : 0;
+        const nearestX = previousX + segmentX * nearestPointRatio;
+        const nearestY = previousY + segmentY * nearestPointRatio;
+        if (Math.hypot(nearestX - orbX, nearestY - orbY) < collisionRadius) {
             createExplosionParticles(projectile.x, projectile.y, projectile.element.style.getPropertyValue('--fireball-glow'));
             projectile.element.remove();
             fireDemonProjectiles.splice(i, 1);
@@ -2080,7 +2094,8 @@ function updateGameplayLoop() {
             continue;
         }
 
-        if (projectile.x < -40 || projectile.x > viewWidth + 40 ||
+        if (now - projectile.createdAt > 5000 ||
+            projectile.x < -40 || projectile.x > viewWidth + 40 ||
             projectile.y < -40 || projectile.y > window.innerHeight + 40) {
             projectile.element.remove();
             fireDemonProjectiles.splice(i, 1);
