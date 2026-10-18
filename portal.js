@@ -311,10 +311,11 @@ function spawnOrbTrailGhost() {
 }
 
 function updateOrbTrailGhosts() {
+    const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const currentSpeed = Math.hypot(vx, vy);
     if (currentSpeed > 0.3 && !isDraggingOrb) {
         const now = Date.now();
-        if (now - lastTrailSpawnTime > 80) {
+        if (now - lastTrailSpawnTime > 80 / movementScale) {
             lastTrailSpawnTime = now;
             spawnOrbTrailGhost();
         }
@@ -322,9 +323,9 @@ function updateOrbTrailGhosts() {
 
     for (let i = orbTrailGhosts.length - 1; i >= 0; i--) {
         const ghost = orbTrailGhosts[i];
-        ghost.life -= ghost.decay;
+        ghost.life -= ghost.decay * movementScale;
         
-        const shrinkFactor = 0.95;
+        const shrinkFactor = Math.pow(0.95, movementScale);
         ghost.mesh.scale.multiplyScalar(shrinkFactor);
 
         ghost.mesh.children.forEach(m => {
@@ -653,8 +654,8 @@ function checkOrbBugCollisions() {
             const pushAngle = Math.atan2(screenY - bossCenterY, screenX - bossCenterX);
             vx = Math.cos(pushAngle) * 0.45;
             vy = Math.sin(pushAngle) * 0.45;
-            posX += vx * 5;
-            posY += vy * 5;
+            posX += vx * 5 * (window.gameMovementScale || 1);
+            posY += vy * 5 * (window.gameMovementScale || 1);
         }
     }
 
@@ -803,9 +804,10 @@ function animate() {
         return;
     }
 
+    const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const spinFactor = window.gameBeaten ? 0.4 : 1.0;
-    sacredGeometryGroup.rotation.x += 0.005 * spinFactor;
-    sacredGeometryGroup.rotation.y += 0.008 * spinFactor;
+    sacredGeometryGroup.rotation.x += 0.005 * spinFactor * movementScale;
+    sacredGeometryGroup.rotation.y += 0.008 * spinFactor * movementScale;
 
     let hoverScaleBonus = 0;
     if (isHoveringOrb && !isAimingSlingshot) {
@@ -814,7 +816,7 @@ function animate() {
 
     if (starFieldMesh) {
         starFieldMesh.material.opacity = 0.65 + Math.sin(Date.now() * 0.002) * 0.25;
-        starFieldMesh.rotation.z += 0.0002;
+        starFieldMesh.rotation.z += 0.0002 * movementScale;
     }
 
     updateOrbTrailGhosts();
@@ -825,8 +827,8 @@ function animate() {
             dragLimitExceeded = true;
             
             const shakeSeverity = (dragDuration - 3000) * 0.0025;
-            posX += (Math.random() - 0.5) * shakeSeverity;
-            posY += (Math.random() - 0.5) * shakeSeverity;
+            posX += (Math.random() - 0.5) * shakeSeverity * movementScale;
+            posY += (Math.random() - 0.5) * shakeSeverity * movementScale;
 
             const currentTime = performance.now();
             if (currentTime - lastHoldDamageTime > 250) {
@@ -840,8 +842,8 @@ function animate() {
     }
 
     if (!isDraggingOrb) {
-        vx *= dragFriction;
-        vy *= dragFriction;
+        vx *= Math.pow(dragFriction, movementScale);
+        vy *= Math.pow(dragFriction, movementScale);
 
         const speed = Math.hypot(vx, vy);
         if (speed < minSpeed) {
@@ -850,8 +852,8 @@ function animate() {
             vy = Math.sin(currentAngle) * minSpeed;
         }
 
-        posX += vx;
-        posY += vy;
+        posX += vx * movementScale;
+        posY += vy * movementScale;
 
         const bounceWidth = halfWidth3D - 0.2;
         const bounceHeight = halfHeight3D - 0.2;

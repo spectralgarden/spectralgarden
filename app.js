@@ -240,6 +240,8 @@ let bossElement = null;
 let lastBossChargeTime = 0;
 let lastBossStarRainTime = 0;
 let lastBossMissileTime = 0;
+let bossRetreatTimer = null;
+let bossRetreatAdvanceTimer = null;
 let bossProjectiles = [];
 let fireDemons = [];
 let fireDemonProjectiles = [];
@@ -247,6 +249,14 @@ let nextFireDemonWaveAt = Date.now() + 12000;
 let confettiNpc = null;
 let confettiBombProjectiles = [];
 let nextConfettiNpcAt = Date.now() + 18000;
+let enemyFighters = [];
+let enemyFighterProjectiles = [];
+let nextEnemyFighterWaveAt = Date.now() + 14000;
+let mines = [];
+let mineFragments = [];
+let nextMineSpawnAt = Date.now() + 12000;
+let gameTimeEffectTimer = null;
+window.gameMovementScale = 1;
 
 window.isClusterBombArmed = false;
 window.orbHP = 100;
@@ -268,6 +278,29 @@ const showcaseWindowIds = new Set(['apps-window', 'vst-window', 'games-window'])
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
 let wordmarkGlitchTimer = null;
+
+function setGameTimeEffect(scale, label) {
+    window.gameMovementScale = scale;
+    if (gameTimeEffectTimer) clearTimeout(gameTimeEffectTimer);
+
+    let indicator = document.getElementById('game-time-effect');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'game-time-effect';
+        indicator.setAttribute('role', 'status');
+        document.body.appendChild(indicator);
+    }
+    indicator.textContent = `${label} // 6 SECONDS`;
+    indicator.classList.toggle('game-time-effect--slow', scale < 1);
+    indicator.classList.toggle('game-time-effect--fast', scale > 1);
+    indicator.classList.add('is-visible');
+
+    gameTimeEffectTimer = setTimeout(() => {
+        window.gameMovementScale = 1;
+        indicator.classList.remove('is-visible');
+        gameTimeEffectTimer = null;
+    }, 6000);
+}
 
 function setStartMenuOpen(isOpen) {
     const menu = document.getElementById('start-menu');
@@ -913,7 +946,9 @@ function handlePowerUpSpawning() {
             cluster_bomb: ['bomb-powerup', 'Cluster bomb'],
             extra_life: ['extra-life', 'Extra life'],
             health_potion: ['health-potion', 'Health potion'],
-            energy_cell: ['energy-cell', 'Energy cell']
+            energy_cell: ['energy-cell', 'Energy cell'],
+            time_fracture: ['time-fracture', 'Time fracture: slow time'],
+            time_forward: ['time-forward', 'Time forward: accelerate time']
         };
         const [powerUpClass, powerUpLabel] = powerUpStyles[itemType];
         itemElement.classList.add(powerUpClass);
@@ -951,6 +986,12 @@ function handlePowerUpSpawning() {
 
         } else if (itemType === 'energy_cell') {
             itemElement.innerHTML = renderIcon('🔋');
+            window.nextPowerUpType = 'time_fracture';
+        } else if (itemType === 'time_fracture') {
+            itemElement.innerHTML = renderIcon('assets/images/items/timefracture.png');
+            window.nextPowerUpType = 'time_forward';
+        } else if (itemType === 'time_forward') {
+            itemElement.innerHTML = renderIcon('assets/images/items/timeforward.png');
             window.nextPowerUpType = 'fighter';
         }
 
@@ -995,6 +1036,10 @@ function collectPowerUp() {
         deployTornado();
     } else if (type === 'cluster_bomb') {
         armClusterBomb();
+    } else if (type === 'time_fracture') {
+        setGameTimeEffect(0.45, 'TIME FRACTURE');
+    } else if (type === 'time_forward') {
+        setGameTimeEffect(1.7, 'TIME FORWARD');
     }
 }
 window.collectPowerUp = collectPowerUp;
@@ -1099,6 +1144,117 @@ function spawnFireDemonWave() {
             glowColor: ['#ff3b18', '#ff6a00', '#ff2d55'][index]
         });
     });
+}
+
+function spawnEnemyFighterWave() {
+    const sprites = [
+        'assets/images/enemy fighters/NoseUPenemyfighterjets.png',
+        'assets/images/enemy fighters/NoseUPenemyfighterjet2.png',
+        'assets/images/enemy fighters/NoseUPenemyfighterjets3.png'
+    ];
+    const viewHeight = window.innerHeight - 40;
+
+    sprites.forEach((sprite, index) => {
+        const element = document.createElement('div');
+        element.className = 'enemy-fighter';
+        element.innerHTML = `<img src="${sprite}" alt="">`;
+        const x = window.innerWidth + 80 + index * 75;
+        const y = Math.max(60, Math.random() * (viewHeight - 120));
+        element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        document.body.appendChild(element);
+        enemyFighters.push({
+            element,
+            x,
+            y,
+            baseY: y,
+            vx: -(1.6 + Math.random() * 0.8),
+            hp: 3,
+            fireRate: 1700 + Math.random() * 500,
+            lastFireTime: Date.now() + index * 350
+        });
+    });
+}
+
+function damageEnemyFighter(fighter) {
+    const index = enemyFighters.indexOf(fighter);
+    if (index === -1) return;
+
+    createExplosionParticles(fighter.x + 30, fighter.y + 20, '#fb7185');
+    fighter.element.remove();
+    enemyFighters.splice(index, 1);
+    playExplosionSound();
+    recordEnemyElimination(125);
+}
+
+function fireEnemyFighterProjectile(fighter, targetX, targetY) {
+    const element = document.createElement('div');
+    element.className = 'enemy-fighter-projectile';
+    const x = fighter.x + 30;
+    const y = fighter.y + 22;
+    const dx = targetX - x;
+    const dy = targetY - y;
+    const distance = Math.hypot(dx, dy) || 1;
+    const speed = 4.2;
+    const vx = dx / distance * speed;
+    const vy = dy / distance * speed;
+    element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
+    document.body.appendChild(element);
+    enemyFighterProjectiles.push({ element, x, y, vx, vy, createdAt: Date.now() });
+}
+
+function spawnMine() {
+    const viewHeight = window.innerHeight - 40;
+    const fromRight = Math.random() < 0.5;
+    const x = fromRight ? window.innerWidth + 40 : -40;
+    const y = 60 + Math.random() * Math.max(1, viewHeight - 120);
+    const targetX = window.orbScreenX || window.innerWidth / 2;
+    const targetY = window.orbScreenY || viewHeight / 2;
+    const angle = Math.atan2(targetY - y, targetX - x);
+    const element = document.createElement('div');
+    element.className = 'mine-item';
+    const sprite = Math.random() < 0.5
+        ? 'assets/images/mines/orbclusterbomb.png'
+        : 'assets/images/mines/orbcluster2.png';
+    element.innerHTML = `<img src="${sprite}" alt="">`;
+    element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    document.body.appendChild(element);
+    mines.push({
+        element,
+        x,
+        y,
+        vx: Math.cos(angle) * (0.9 + Math.random() * 0.4),
+        vy: Math.sin(angle) * (0.9 + Math.random() * 0.4),
+        createdAt: Date.now()
+    });
+}
+
+function detonateMine(mine) {
+    const index = mines.indexOf(mine);
+    if (index === -1) return;
+    mine.element.remove();
+    mines.splice(index, 1);
+    createExplosionParticles(mine.x + 18, mine.y + 18, '#c084fc');
+
+    const fragmentCount = 8;
+    const angleOffset = Math.random() * Math.PI * 2;
+    for (let i = 0; i < fragmentCount; i++) {
+        const angle = angleOffset + (Math.PI * 2 * i) / fragmentCount;
+        const element = document.createElement('img');
+        element.className = 'mine-fragment';
+        element.src = 'assets/images/mines/frag.png';
+        element.alt = '';
+        element.setAttribute('aria-hidden', 'true');
+        element.style.transform = `translate3d(${mine.x}px, ${mine.y}px, 0) rotate(${angle}rad)`;
+        document.body.appendChild(element);
+        mineFragments.push({
+            element,
+            x: mine.x,
+            y: mine.y,
+            vx: Math.cos(angle) * (2.4 + Math.random() * 1.2),
+            vy: Math.sin(angle) * (2.4 + Math.random() * 1.2),
+            createdAt: Date.now()
+        });
+    }
 }
 
 function recordEnemyElimination(xpReward) {
@@ -1750,6 +1906,14 @@ function clearGameBoard() {
     window.activeTornado = null;
     window.activeFighters.forEach(fighter => fighter?.element?.remove());
     window.activeFighters = [];
+    enemyFighters.forEach(fighter => fighter.element.remove());
+    enemyFighters = [];
+    enemyFighterProjectiles.forEach(projectile => projectile.element.remove());
+    enemyFighterProjectiles = [];
+    mines.forEach(mine => mine.element.remove());
+    mines = [];
+    mineFragments.forEach(fragment => fragment.element.remove());
+    mineFragments = [];
     fireDemons.forEach(demon => demon.element.remove());
     fireDemons = [];
     fireDemonProjectiles.forEach(projectile => projectile.element.remove());
@@ -1760,6 +1924,12 @@ function clearGameBoard() {
     confettiBombProjectiles = [];
     nextFireDemonWaveAt = Date.now() + 12000;
     nextConfettiNpcAt = Date.now() + 18000;
+    nextEnemyFighterWaveAt = Date.now() + 14000;
+    nextMineSpawnAt = Date.now() + 12000;
+    if (gameTimeEffectTimer) clearTimeout(gameTimeEffectTimer);
+    gameTimeEffectTimer = null;
+    window.gameMovementScale = 1;
+    document.getElementById('game-time-effect')?.classList.remove('is-visible');
 
     if (typeof cleanupBossFight === 'function') cleanupBossFight();
     if (typeof window.clearOrbTrailGhosts === 'function') window.clearOrbTrailGhosts();
@@ -1770,6 +1940,10 @@ function clearGameBoard() {
         '.showcase-ally',
         '.fighter-drone-unit',
         '.fighter-trail-particle',
+        '.enemy-fighter',
+        '.enemy-fighter-projectile',
+        '.mine-item',
+        '.mine-fragment',
         '.fire-demon',
         '.fire-demon-trail',
         '.fireball-projectile',
@@ -1821,6 +1995,7 @@ function submitScoreToLeaderboard() {
     window.gamePausedForShowcase = false;
     window.isClusterBombArmed = false;
     window.nextPowerUpType = 'fighter';
+    window.gameMovementScale = 1;
     window.showcaseWindowId = null;
     document.body.classList.remove('orb-exploding', 'orb-damaged', 'bomb-armed', 'bomb-burst-flash', 'showcase-burst-flash');
     if (window.orbExplosionTimeout) clearTimeout(window.orbExplosionTimeout);
@@ -1932,7 +2107,11 @@ function triggerBossFight() {
         '⚡', 
         '🪐'
     ];
-    const chosenSymbol = bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
+    const chosenSymbol = window.currentLevel === 5
+        ? 'assets/images/boss/5_boss.png'
+        : window.currentLevel === 6
+            ? 'assets/images/boss/6_boss.png'
+            : bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
     
     const bossTitles = [
         "CORE_BREACH_CORRUPTOR.EXE",
@@ -2017,6 +2196,11 @@ function damageBoss(amount) {
 }
 
 function defeatBoss() {
+    if (window.currentLevel === 5) {
+        retreatBoss();
+        return;
+    }
+
     for (let i = 0; i < 5; i++) {
         setTimeout(() => {
             createExplosionParticles(window.bossX + 30 + Math.random() * 40, window.bossY + 30 + Math.random() * 40, '#a855f7');
@@ -2028,7 +2212,53 @@ function defeatBoss() {
     advanceLevel();
 }
 
+function retreatBoss() {
+    window.bossActive = false;
+    window.bossIsCharging = false;
+    if (bossElement) {
+        const retreatingBoss = bossElement;
+        retreatingBoss.classList.add('boss-retreating');
+        retreatingBoss.style.transform = `translate3d(${window.bossX}px, -140px, 0) scale(0.7)`;
+        bossRetreatTimer = setTimeout(() => {
+            if (bossElement === retreatingBoss) {
+                retreatingBoss.remove();
+                bossElement = null;
+            }
+            bossRetreatTimer = null;
+        }, 900);
+    }
+
+    const bossHUD = document.getElementById('boss-hud');
+    if (bossHUD) bossHUD.style.display = 'none';
+    bossProjectiles.forEach(projectile => projectile.element.remove());
+    bossProjectiles = [];
+    document.querySelectorAll('.boss-charge-line').forEach(line => line.remove());
+
+    const bannerText = document.getElementById('level-banner-text');
+    const bannerSub = document.getElementById('level-banner-sub');
+    const banner = document.getElementById('level-banner');
+    if (banner && bannerText && bannerSub) {
+        bannerText.textContent = 'BOSS 05 RETREATING';
+        bannerSub.textContent = 'EVOLVED FORM DETECTED // LEVEL 06';
+        banner.classList.add('show');
+        setTimeout(() => banner.classList.remove('show'), 1800);
+    }
+    playLevelUpSound();
+    bossRetreatAdvanceTimer = setTimeout(() => {
+        if (window.currentLevel === 5 && !window.bossActive) advanceLevel();
+        bossRetreatAdvanceTimer = null;
+    }, 900);
+}
+
 function cleanupBossFight() {
+    if (bossRetreatTimer) {
+        clearTimeout(bossRetreatTimer);
+        bossRetreatTimer = null;
+    }
+    if (bossRetreatAdvanceTimer) {
+        clearTimeout(bossRetreatAdvanceTimer);
+        bossRetreatAdvanceTimer = null;
+    }
     window.bossActive = false;
     if (bossElement) {
         bossElement.remove();
@@ -2124,6 +2354,7 @@ function updateGameplayLoop() {
         return;
     }
 
+    const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const viewWidth = window.innerWidth;
     const viewHeight = window.innerHeight - 40;
 
@@ -2167,8 +2398,8 @@ function updateGameplayLoop() {
             bugObj.vy = (bugObj.vy / currentSpeed) * maxSpeed;
         }
 
-        bugObj.x += bugObj.vx;
-        bugObj.y += bugObj.vy;
+        bugObj.x += bugObj.vx * movementScale;
+        bugObj.y += bugObj.vy * movementScale;
 
         bugObj.angle = Math.atan2(bugObj.vy, bugObj.vx) + Math.PI / 2 + Math.sin(Date.now() * 0.015) * 0.15;
         bugObj.element.style.transform = `translate3d(${bugObj.x}px, ${bugObj.y}px, 0) rotate(${bugObj.angle}rad)`;
@@ -2176,7 +2407,7 @@ function updateGameplayLoop() {
 
     if (window.activeShowcaseAlly) {
         const ally = window.activeShowcaseAlly;
-        ally.x += ally.vx;
+        ally.x += ally.vx * movementScale;
         ally.element.style.transform = `translate3d(${ally.x}px, ${ally.y}px, 0)`;
 
         const allyWidth = ally.element.offsetWidth;
@@ -2220,14 +2451,23 @@ function updateGameplayLoop() {
         spawnFireDemonWave();
         nextFireDemonWaveAt = now + Math.max(12000, 24000 - window.currentLevel * 350);
     }
+    if (!window.gameBeaten && window.currentLevel >= 3 && now >= nextEnemyFighterWaveAt) {
+        spawnEnemyFighterWave();
+        nextEnemyFighterWaveAt = now + Math.max(17000, 30000 - window.currentLevel * 400);
+    }
+    if (!window.gameBeaten && window.currentLevel >= 3 && now >= nextMineSpawnAt) {
+        spawnMine();
+        nextMineSpawnAt = now + Math.max(11000, 17000 - window.currentLevel * 250);
+    }
     if (!window.gameBeaten && window.currentLevel >= 3 && !confettiNpc && now >= nextConfettiNpcAt) {
         spawnConfettiNpc();
     }
 
     for (let i = fireDemons.length - 1; i >= 0; i--) {
         const demon = fireDemons[i];
-        demon.x += demon.speed * demon.direction;
-        demon.y = demon.baseY + Math.sin(now * 0.003 + demon.wave) * 28;
+        demon.x += demon.speed * demon.direction * movementScale;
+        const demonTargetY = demon.baseY + Math.sin(now * 0.003 + demon.wave) * 28;
+        demon.y += (demonTargetY - demon.y) * movementScale;
         demon.element.style.transform = `translate3d(${demon.x}px, ${demon.y}px, 0) scaleX(${demon.direction})`;
 
         if (now - demon.lastTrailTime > 38) {
@@ -2243,7 +2483,7 @@ function updateGameplayLoop() {
             document.body.appendChild(trail);
         }
 
-        if (now - demon.lastFireTime >= demon.fireRate) {
+        if (now - demon.lastFireTime >= demon.fireRate / movementScale) {
             demon.lastFireTime = now;
             fireDemonFireball(demon, window.orbScreenX, window.orbScreenY);
         }
@@ -2257,8 +2497,9 @@ function updateGameplayLoop() {
 
     if (confettiNpc) {
         const npc = confettiNpc;
-        npc.x += npc.speed * npc.direction;
-        npc.y = npc.baseY + Math.sin(now * 0.0028 + npc.wave) * 24;
+        npc.x += npc.speed * npc.direction * movementScale;
+        const npcTargetY = npc.baseY + Math.sin(now * 0.0028 + npc.wave) * 24;
+        npc.y += (npcTargetY - npc.y) * movementScale;
         npc.element.style.transform = `translate3d(${npc.x}px, ${npc.y}px, 0) scaleX(${npc.direction})`;
 
         if (now - npc.lastTrailTime > 95) {
@@ -2273,7 +2514,7 @@ function updateGameplayLoop() {
             document.body.appendChild(trail);
         }
 
-        if (now - npc.lastFireTime >= npc.fireRate) {
+        if (now - npc.lastFireTime >= npc.fireRate / movementScale) {
             npc.lastFireTime = now;
             fireConfettiBomb(npc, window.orbScreenX, window.orbScreenY);
         }
@@ -2296,15 +2537,15 @@ function updateGameplayLoop() {
         const desiredVx = targetDx / targetDistance * projectile.speed;
         const desiredVy = targetDy / targetDistance * projectile.speed;
         const turnStrength = 0.075;
-        projectile.vx += (desiredVx - projectile.vx) * turnStrength;
-        projectile.vy += (desiredVy - projectile.vy) * turnStrength;
+        projectile.vx += (desiredVx - projectile.vx) * turnStrength * movementScale;
+        projectile.vy += (desiredVy - projectile.vy) * turnStrength * movementScale;
         const steeredSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
         projectile.vx = projectile.vx / steeredSpeed * projectile.speed;
         projectile.vy = projectile.vy / steeredSpeed * projectile.speed;
         const previousX = projectile.x;
         const previousY = projectile.y;
-        projectile.x += projectile.vx;
-        projectile.y += projectile.vy;
+        projectile.x += projectile.vx * movementScale;
+        projectile.y += projectile.vy * movementScale;
         projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
 
         const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 11;
@@ -2333,15 +2574,15 @@ function updateGameplayLoop() {
         const targetDistance = Math.hypot(targetDx, targetDy) || 1;
         const desiredVx = targetDx / targetDistance * projectile.speed;
         const desiredVy = targetDy / targetDistance * projectile.speed;
-        projectile.vx += (desiredVx - projectile.vx) * 0.12;
-        projectile.vy += (desiredVy - projectile.vy) * 0.12;
+        projectile.vx += (desiredVx - projectile.vx) * 0.12 * movementScale;
+        projectile.vy += (desiredVy - projectile.vy) * 0.12 * movementScale;
         const steeredSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
         projectile.vx = projectile.vx / steeredSpeed * projectile.speed;
         projectile.vy = projectile.vy / steeredSpeed * projectile.speed;
         const previousX = projectile.x;
         const previousY = projectile.y;
-        projectile.x += projectile.vx;
-        projectile.y += projectile.vy;
+        projectile.x += projectile.vx * movementScale;
+        projectile.y += projectile.vy * movementScale;
         projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
 
         const collisionRadius = 140 * (window.orbZoomScale || 0.22) + 12;
@@ -2362,10 +2603,113 @@ function updateGameplayLoop() {
         }
     }
 
+    for (let i = enemyFighters.length - 1; i >= 0; i--) {
+        const fighter = enemyFighters[i];
+        fighter.x += fighter.vx * movementScale;
+        fighter.y += (fighter.baseY + Math.sin(now * 0.002 + fighter.x * 0.01) * 18 - fighter.y) * movementScale;
+        fighter.element.style.transform = `translate3d(${fighter.x}px, ${fighter.y}px, 0)`;
+
+        if (now - fighter.lastFireTime >= fighter.fireRate / movementScale) {
+            fighter.lastFireTime = now;
+            fireEnemyFighterProjectile(
+                fighter,
+                window.orbScreenX || window.innerWidth / 2,
+                window.orbScreenY || viewHeight / 2
+            );
+        }
+
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || viewHeight / 2;
+        const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 24;
+        if (Math.hypot(fighter.x + 30 - orbX, fighter.y + 20 - orbY) < collisionRadius) {
+            damageEnemyFighter(fighter);
+            takeDamage(8);
+            continue;
+        }
+
+        if (fighter.x < -90) {
+            fighter.element.remove();
+            enemyFighters.splice(i, 1);
+        }
+    }
+
+    for (let i = enemyFighterProjectiles.length - 1; i >= 0; i--) {
+        const projectile = enemyFighterProjectiles[i];
+        const previousX = projectile.x;
+        const previousY = projectile.y;
+        projectile.x += projectile.vx * movementScale;
+        projectile.y += projectile.vy * movementScale;
+        projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
+
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || viewHeight / 2;
+        if (segmentWithinRadius(previousX, previousY, projectile.x, projectile.y, orbX, orbY, 50 * (window.orbZoomScale || 0.22) + 7)) {
+            createExplosionParticles(projectile.x, projectile.y, '#fb7185');
+            projectile.element.remove();
+            enemyFighterProjectiles.splice(i, 1);
+            takeDamage(6);
+            continue;
+        }
+
+        if (now - projectile.createdAt > 6000 ||
+            projectile.x < -60 || projectile.x > viewWidth + 60 ||
+            projectile.y < -60 || projectile.y > window.innerHeight + 60) {
+            projectile.element.remove();
+            enemyFighterProjectiles.splice(i, 1);
+        }
+    }
+
+    for (let i = mines.length - 1; i >= 0; i--) {
+        const mine = mines[i];
+        mine.x += mine.vx * movementScale;
+        mine.y += mine.vy * movementScale;
+        mine.element.style.transform = `translate3d(${mine.x}px, ${mine.y}px, 0) rotate(${now * 0.001}rad)`;
+
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || viewHeight / 2;
+        if (Math.hypot(mine.x + 18 - orbX, mine.y + 18 - orbY) < 50 * (window.orbZoomScale || 0.22) + 32) {
+            detonateMine(mine);
+            continue;
+        }
+
+        if (now - mine.createdAt > 16000 ||
+            mine.x < -80 || mine.x > viewWidth + 80 ||
+            mine.y < -80 || mine.y > viewHeight + 80) {
+            mine.element.remove();
+            mines.splice(i, 1);
+        }
+    }
+
+    for (let i = mineFragments.length - 1; i >= 0; i--) {
+        const fragment = mineFragments[i];
+        const previousX = fragment.x;
+        const previousY = fragment.y;
+        fragment.x += fragment.vx * movementScale;
+        fragment.y += fragment.vy * movementScale;
+        fragment.element.style.transform = `translate3d(${fragment.x}px, ${fragment.y}px, 0) rotate(${Math.atan2(fragment.vy, fragment.vx)}rad)`;
+
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || viewHeight / 2;
+        if (segmentWithinRadius(previousX, previousY, fragment.x, fragment.y, orbX, orbY, 50 * (window.orbZoomScale || 0.22) + 5)) {
+            createExplosionParticles(fragment.x, fragment.y, '#f97316');
+            fragment.element.remove();
+            mineFragments.splice(i, 1);
+            takeDamage(6);
+            continue;
+        }
+
+        if (now - fragment.createdAt > 4500 ||
+            fragment.x < -40 || fragment.x > viewWidth + 40 ||
+            fragment.y < -40 || fragment.y > window.innerHeight + 40) {
+            fragment.element.remove();
+            mineFragments.splice(i, 1);
+        }
+    }
+
     for (let i = window.activeFighters.length - 1; i >= 0; i--) {
         const drone = window.activeFighters[i];
-        drone.x += drone.vx;
-        drone.y += drone.vy;
+        drone.x += drone.vx * movementScale;
+        drone.y += drone.vy * movementScale;
 
         drone.element.style.transform = `translate3d(${drone.x}px, ${drone.y}px, 0)`;
 
@@ -2385,6 +2729,14 @@ function updateGameplayLoop() {
 
         let target = null;
         let minDist = 280;
+
+        for (const fighter of enemyFighters) {
+            const distance = Math.hypot(fighter.x + 30 - drone.x, fighter.y + 20 - drone.y);
+            if (distance < minDist) {
+                minDist = distance;
+                target = { id: 'enemy-fighter', fighter, x: fighter.x + 30, y: fighter.y + 20 };
+            }
+        }
 
         if (window.bossActive && bossElement) {
             const dB = Math.hypot(window.bossX + 50 - drone.x, window.bossY + 50 - drone.y);
@@ -2427,7 +2779,7 @@ function updateGameplayLoop() {
             }
         }
 
-        if (target && (now - drone.lastFireTime > drone.fireRate)) {
+        if (target && (now - drone.lastFireTime > drone.fireRate / movementScale)) {
             drone.lastFireTime = now;
             fireLaser(drone.x, drone.y, target, drone.glowColor); // Optional: pass color to laser
         }
@@ -2446,8 +2798,8 @@ function updateGameplayLoop() {
         tornado.vx *= 0.98;
         tornado.vy *= 0.98;
 
-        tornado.x += tornado.vx;
-        tornado.y += tornado.vy;
+        tornado.x += tornado.vx * movementScale;
+        tornado.y += tornado.vy * movementScale;
 
         if (tornado.x < 110) { tornado.x = 110; tornado.vx *= -1; }
         if (tornado.x > viewWidth - 110) { tornado.x = viewWidth - 110; tornado.vx *= -1; }
@@ -2474,7 +2826,7 @@ function updateGameplayLoop() {
             }
         }
 
-        tornado.lifeFrames--;
+        tornado.lifeFrames -= movementScale;
         if (tornado.lifeFrames <= 0) {
             tornado.element.remove();
             window.activeTornado = null;
@@ -2483,8 +2835,8 @@ function updateGameplayLoop() {
 
     if (window.bossActive && bossElement) {
         if (!window.bossIsCharging) {
-            window.bossX += window.bossVX;
-            window.bossY += window.bossVY;
+            window.bossX += window.bossVX * movementScale;
+            window.bossY += window.bossVY * movementScale;
 
             if (window.bossX < 220 || window.bossX > window.innerWidth - 150) window.bossVX *= -1;
             if (window.bossY < 80 || window.bossY > window.innerHeight - 200) window.bossVY *= -1;
@@ -2495,7 +2847,7 @@ function updateGameplayLoop() {
         const orbX = window.orbScreenX || (window.innerWidth / 2);
         const orbY = window.orbScreenY || ((window.innerHeight - 40) / 2);
 
-        if (now - lastBossChargeTime > 6500 && !window.bossIsCharging) {
+        if (now - lastBossChargeTime > 6500 / movementScale && !window.bossIsCharging) {
             window.bossIsCharging = true;
             bossElement.style.borderColor = '#ffffff'; 
             
@@ -2534,8 +2886,8 @@ function updateGameplayLoop() {
                         return;
                     }
                     if (window.gamePaused) return;
-                    window.bossX += (targetSlideX - window.bossX) * 0.25;
-                    window.bossY += (targetSlideY - window.bossY) * 0.25;
+                    window.bossX += (targetSlideX - window.bossX) * 0.25 * (window.gameMovementScale || 1);
+                    window.bossY += (targetSlideY - window.bossY) * 0.25 * (window.gameMovementScale || 1);
                     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
                     
                     slideStepCount++;
@@ -2550,7 +2902,7 @@ function updateGameplayLoop() {
             }, 1500);
         }
 
-        if (now - lastBossStarRainTime > 8500) {
+        if (now - lastBossStarRainTime > 8500 / movementScale) {
             lastBossStarRainTime = now;
             for (let s = 0; s < 8; s++) {
                 setTimeout(() => {
@@ -2579,7 +2931,7 @@ function updateGameplayLoop() {
             }
         }
 
-        if (now - lastBossMissileTime > 4500) {
+        if (now - lastBossMissileTime > 4500 / movementScale) {
             lastBossMissileTime = now;
             const proj = document.createElement('div');
             proj.className = 'boss-projectile';
@@ -2608,7 +2960,7 @@ function updateGameplayLoop() {
         const orbY = window.orbScreenY || ((window.innerHeight - 40) / 2);
 
         if (proj.type === 'star') {
-            proj.y += proj.vy;
+            proj.y += proj.vy * movementScale;
             proj.element.style.transform = `translate3d(${proj.x}px, ${proj.y}px, 0)`;
 
             if (proj.y > window.innerHeight) {
@@ -2621,13 +2973,13 @@ function updateGameplayLoop() {
             const dy = orbY - proj.y;
             const len = Math.hypot(dx, dy);
 
-            proj.vx += (dx / (len || 1)) * 0.08;
-            proj.vy += (dy / (len || 1)) * 0.08;
+            proj.vx += (dx / (len || 1)) * 0.08 * movementScale;
+            proj.vy += (dy / (len || 1)) * 0.08 * movementScale;
             proj.vx *= 0.98;
             proj.vy *= 0.98;
 
-            proj.x += proj.vx;
-            proj.y += proj.vy;
+            proj.x += proj.vx * movementScale;
+            proj.y += proj.vy * movementScale;
 
             proj.element.style.transform = `translate3d(${proj.x}px, ${proj.y}px, 0)`;
         }
@@ -2665,6 +3017,11 @@ function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
 
     if (bugTarget.id === 'boss') {
         damageBoss(80); 
+    } else if (bugTarget.id === 'enemy-fighter') {
+        bugTarget.fighter.hp--;
+        bugTarget.fighter.element.classList.add('enemy-fighter-hit');
+        setTimeout(() => bugTarget.fighter.element.classList.remove('enemy-fighter-hit'), 120);
+        if (bugTarget.fighter.hp <= 0) damageEnemyFighter(bugTarget.fighter);
     } else if (bugTarget.id === 'fire-demon') {
         damageFireDemon(bugTarget.demon);
     } else if (bugTarget.id === 'confetti-npc') {

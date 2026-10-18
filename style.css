@@ -1273,6 +1273,11 @@ body.orb-exploding .wallpaper-inline-logo {
     pointer-events: none;
 }
 
+.boss-entity.boss-retreating {
+    opacity: 0;
+    transition: transform 0.9s ease-in, opacity 0.9s ease-in;
+}
+
 .boss-projectile {
     position: absolute;
     width: 12px;
@@ -2409,6 +2414,97 @@ body {
     z-index: 0;
 }
 
+.enemy-fighter {
+    position: absolute;
+    width: 64px;
+    height: 48px;
+    z-index: 44;
+    pointer-events: none;
+    will-change: transform, filter;
+    filter: drop-shadow(0 0 5px #fb7185) drop-shadow(0 0 10px rgba(244, 63, 94, 0.72));
+}
+
+.enemy-fighter img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(-90deg);
+}
+
+.enemy-fighter-hit {
+    filter: brightness(2) drop-shadow(0 0 12px #ffffff);
+}
+
+.enemy-fighter-projectile {
+    position: absolute;
+    width: 12px;
+    height: 5px;
+    border-radius: 5px;
+    background: #fb7185;
+    box-shadow: 0 0 6px #fb7185, 0 0 12px #f43f5e;
+    z-index: 995;
+    pointer-events: none;
+}
+
+.mine-item,
+.mine-fragment {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.mine-item {
+    width: 38px;
+    height: 38px;
+    z-index: 997;
+    filter: drop-shadow(0 0 7px #c084fc) drop-shadow(0 0 13px rgba(168, 85, 247, 0.8));
+}
+
+.mine-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.mine-fragment {
+    width: 20px;
+    height: 20px;
+    z-index: 996;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px #fb923c);
+}
+
+#game-time-effect {
+    position: fixed;
+    z-index: 100009;
+    top: 56px;
+    left: 50%;
+    transform: translate(-50%, -8px);
+    padding: 8px 14px;
+    border: 2px solid currentColor;
+    background: rgba(5, 5, 15, 0.94);
+    font: bold 12px monospace;
+    letter-spacing: 1px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#game-time-effect.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+#game-time-effect.game-time-effect--slow {
+    color: #c084fc;
+    box-shadow: 0 0 14px rgba(168, 85, 247, 0.75);
+}
+
+#game-time-effect.game-time-effect--fast {
+    color: #fb923c;
+    box-shadow: 0 0 14px rgba(249, 115, 22, 0.75);
+}
+
 @keyframes dronePulse {
     0% { transform: scale(0.8); opacity: 0.5; }
     100% { transform: scale(1.4); opacity: 1; }
@@ -2812,6 +2908,8 @@ body {
 .retro-powerup.extra-life { color: #f0abfc; }
 .retro-powerup.health-potion { color: #7cfc00; }
 .retro-powerup.energy-cell { color: #fde047; }
+.retro-powerup.time-fracture { color: #c084fc; }
+.retro-powerup.time-forward { color: #fb923c; }
 
 @keyframes powerupGlow {
     from { filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 9px currentColor); }
