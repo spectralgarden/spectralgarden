@@ -244,8 +244,10 @@ window.activeTornado = null;
 window.nextPowerUpType = 'fighter';
 window.gamePaused = false;
 window.gamePausedForShowcase = false;
+window.gamePausedBeforeShowcase = false;
 window.activeShowcaseAlly = null;
 window.showcaseWindowId = null;
+const showcaseWindowIds = new Set(['apps-window', 'vst-window', 'games-window']);
 
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
@@ -561,8 +563,6 @@ function openShowcaseAlly(category, key, element) {
     document.body.appendChild(showcaseWindow);
     showcaseWindow.classList.add('showcase-window');
     window.showcaseWindowId = windowId;
-    window.gamePaused = true;
-    window.gamePausedForShowcase = true;
     loadModule(category, key);
 }
 
@@ -2609,8 +2609,10 @@ function dragElement(elmnt, header) {
         
         document.body.classList.add('dragging-active');
         
-        document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
-        elmnt.style.zIndex = 100;
+        document.querySelectorAll('.window').forEach(w => {
+            w.style.zIndex = w.classList.contains('showcase-window') ? 100020 : 10;
+        });
+        elmnt.style.zIndex = elmnt.classList.contains('showcase-window') ? 100021 : 100;
     }
 
     function elementDrag(e) {
@@ -2645,6 +2647,15 @@ function openWindow(id) {
     playUISound();
     const win = document.getElementById(id);
     if (win) {
+        if (showcaseWindowIds.has(id)) {
+            if (!window.gamePausedForShowcase) {
+                window.gamePausedBeforeShowcase = window.gamePaused;
+            }
+            window.gamePaused = true;
+            window.gamePausedForShowcase = true;
+            document.body.appendChild(win);
+            win.classList.add('showcase-window');
+        }
         win.style.display = 'flex';
         win.style.zIndex = win.classList.contains('showcase-window') ? 100020 : 101;
         centerWindowOnScreen(win);
@@ -2658,11 +2669,21 @@ function closeWindow(id) {
     if (win) {
         win.style.display = 'none';
     }
-    if ((id === 'apps-window' || id === 'vst-window') && window.gamePausedForShowcase) {
-        window.gamePausedForShowcase = false;
-        window.gamePaused = false;
-        window.showcaseWindowId = null;
-        scheduleShowcaseAlly();
+    if (showcaseWindowIds.has(id)) {
+        if (window.showcaseWindowId === id) {
+            window.showcaseWindowId = null;
+        }
+        const anotherShowcaseWindowIsOpen = Array.from(showcaseWindowIds).some(windowId => {
+            const showcaseWindow = document.getElementById(windowId);
+            return showcaseWindow && showcaseWindow.style.display !== 'none';
+        });
+        if (!anotherShowcaseWindowIsOpen && window.gamePausedForShowcase) {
+            window.gamePaused = window.gamePausedBeforeShowcase;
+            window.gamePausedBeforeShowcase = false;
+            window.gamePausedForShowcase = false;
+            window.showcaseWindowId = null;
+            scheduleShowcaseAlly();
+        }
     }
 }
 
