@@ -296,6 +296,31 @@ body.bomb-burst-flash::after {
     will-change: transform, opacity;
 }
 
+.wallpaper-glitch-pixel {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    background: var(--glitch-color);
+    box-shadow: 0 0 5px var(--glitch-color), 0 0 10px var(--glitch-color);
+    mix-blend-mode: screen;
+    animation: wallpaper-static-glitch 360ms steps(2, end) forwards;
+}
+
+@keyframes wallpaper-static-glitch {
+    0%, 100% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+    14%, 32%, 58%, 78% {
+        opacity: 0.95;
+        transform: translate(var(--glitch-x), var(--glitch-y));
+    }
+    24%, 46%, 68% {
+        opacity: 0.2;
+        transform: translate(calc(var(--glitch-x) * -0.35), calc(var(--glitch-y) * 0.4));
+    }
+}
+
 .wallpaper-inline-logo {
     width: 65px;  /* Scaled slightly for a clean text balance */
     height: 68px;
@@ -430,6 +455,13 @@ body.orb-exploding .wallpaper-inline-logo {
 
     body.orb-exploding .wallpaper-inline-logo {
         animation-duration: 0.55s;
+    }
+
+    .confetti-npc-aura,
+    .confetti-npc-sparkle,
+    .confetti-npc img,
+    .confetti-bomb-projectile::before {
+        animation: none;
     }
 
     @keyframes wordmark-explode-reduced {
@@ -1947,6 +1979,21 @@ body.showcase-burst-flash::after {
     color: #ffffff;
     text-decoration: none;
 }
+
+.app-data-box > .retro-btn {
+    display: block;
+    width: max-content;
+    margin-bottom: 10px;
+}
+
+.app-launch-bar:empty {
+    display: none;
+}
+
+.app-launch-bar > .retro-btn {
+    width: 100%;
+}
+
 /* ========================================================================== */
 /* Contact Box Clean Left Alignment Fix                                       */
 /* ========================================================================== */
@@ -2493,6 +2540,138 @@ body {
     animation: fireballTrailFlow 0.24s linear infinite;
 }
 
+.confetti-npc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100012;
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.confetti-npc img {
+    position: relative;
+    z-index: 1;
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 5px #ffffff)
+        drop-shadow(0 0 12px var(--confetti-glow))
+        drop-shadow(0 0 20px #67e8f9);
+    animation: confettiNpcFloat 1.2s ease-in-out infinite alternate;
+}
+
+.confetti-npc-aura {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0 8%,
+        var(--confetti-glow) 15%,
+        #f472b6 28%,
+        transparent 39% 48%,
+        #67e8f9 59%,
+        #93c5fd 71%,
+        transparent 84% 100%
+    );
+    filter: blur(9px);
+    opacity: 0.8;
+    animation: confettiNpcAura 2.4s linear infinite;
+}
+
+.confetti-npc-sparkle {
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 24% 28%, rgba(244, 114, 182, 0.8), transparent 25%),
+        radial-gradient(circle at 76% 35%, rgba(103, 232, 249, 0.85), transparent 28%),
+        radial-gradient(circle at 48% 82%, rgba(192, 132, 252, 0.8), transparent 34%);
+    filter: blur(7px);
+    mix-blend-mode: screen;
+    animation: confettiNpcSparkle 1s ease-in-out infinite alternate;
+}
+
+.confetti-npc-trail {
+    position: fixed;
+    z-index: 100011;
+    pointer-events: none;
+    font-size: 18px;
+    line-height: 1;
+    text-shadow: 0 0 7px currentColor, 0 0 15px currentColor;
+    animation: confettiNpcTrailFade 650ms ease-out forwards;
+}
+
+.confetti-bomb-projectile {
+    position: fixed;
+    top: -12px;
+    left: -12px;
+    z-index: 100013;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+    background: radial-gradient(circle at 35% 30%, #ffffff 0 7%, #f9a8d4 15%, #a855f7 48%, #312e81 78%);
+    box-shadow:
+        0 0 7px #ffffff,
+        0 0 15px #f472b6,
+        0 0 25px #67e8f9;
+}
+
+.confetti-bomb-projectile::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 1px solid rgba(103, 232, 249, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 8px #c084fc, inset 0 0 7px #f472b6;
+    animation: confettiBombRing 750ms ease-in-out infinite alternate;
+}
+
+.confetti-bomb-projectile span {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    box-shadow: 0 0 6px currentColor;
+}
+
+.confetti-bomb-projectile span:nth-child(1) {
+    top: -4px;
+    left: 7px;
+    color: #f472b6;
+    background: currentColor;
+}
+
+.confetti-bomb-projectile span:nth-child(2) {
+    top: 5px;
+    right: -4px;
+    color: #67e8f9;
+    background: currentColor;
+}
+
+.confetti-bomb-projectile span:nth-child(3) {
+    bottom: -3px;
+    left: 5px;
+    color: #c084fc;
+    background: currentColor;
+}
+
+.confetti-bomb-projectile span:nth-child(4) {
+    top: 4px;
+    left: -4px;
+    color: #93c5fd;
+    background: currentColor;
+}
+
 @keyframes fireDemonHover {
     from { margin-top: -5px; }
     to { margin-top: 5px; }
@@ -2525,6 +2704,30 @@ body {
 @keyframes fireballFlicker {
     from { filter: brightness(0.85) saturate(1.1); }
     to { filter: brightness(1.5) saturate(1.6); }
+}
+
+@keyframes confettiNpcFloat {
+    from { transform: translateY(-3px) scale(0.97); }
+    to { transform: translateY(3px) scale(1.04); }
+}
+
+@keyframes confettiNpcAura {
+    to { transform: rotate(360deg) scale(1.12); }
+}
+
+@keyframes confettiNpcSparkle {
+    from { opacity: 0.45; transform: scale(0.9); }
+    to { opacity: 0.95; transform: scale(1.08); }
+}
+
+@keyframes confettiNpcTrailFade {
+    from { opacity: 0.95; transform: translate3d(0, 0, 0) scale(1); }
+    to { opacity: 0; transform: translate3d(-18px, -10px, 0) scale(0.2); }
+}
+
+@keyframes confettiBombRing {
+    from { transform: scale(0.85); opacity: 0.55; }
+    to { transform: scale(1.2); opacity: 1; }
 }
 
 @keyframes fireballTrailFlow {

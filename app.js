@@ -184,7 +184,17 @@ const moduleDatabase = {
                      "FEATURES: Astrocartography lines, relocation comparisons, planetary crossings, parans, and transit maps.",
             image: "assets/images/spectralatlasscreen.png",
             pageUrl: "https://spectralgarden.github.io/spectralatlas/",
-            openLabel: "OPEN SPECTRAL ATLAS"
+            openLabel: "LAUNCH SPECTRAL ATLAS"
+        },
+        app_c: {
+            title: "C:\\PROG\\APPS\\FLAME_FINDER.EXE",
+            header: "FLAME FINDER",
+            desc: "Explore astrology and relationship synastry, then connect with a community forum for charts, interpretations, and conversation.",
+            content: "ASTROLOGY TOOLS + COMMUNITY<br><br>" +
+                     "Explore natal charts and synastry reports, and connect with others in the Flame Finder forum.",
+            image: "assets/images/flamefinderscreenshot.png",
+            pageUrl: "https://flame-finder-main.onrender.com/",
+            openLabel: "LAUNCH FLAME FINDER"
         }
     },
        
@@ -234,6 +244,9 @@ let bossProjectiles = [];
 let fireDemons = [];
 let fireDemonProjectiles = [];
 let nextFireDemonWaveAt = Date.now() + 12000;
+let confettiNpc = null;
+let confettiBombProjectiles = [];
+let nextConfettiNpcAt = Date.now() + 18000;
 
 window.isClusterBombArmed = false;
 window.orbHP = 100;
@@ -254,6 +267,7 @@ const showcaseWindowIds = new Set(['apps-window', 'vst-window', 'games-window'])
 
 let spawnIntervalTimer = null;
 let bombAimIndicator = null;
+let wordmarkGlitchTimer = null;
 
 function setStartMenuOpen(isOpen) {
     const menu = document.getElementById('start-menu');
@@ -289,6 +303,35 @@ function initializeWallpaperWordmark() {
             letterIndex++;
             return letterElement;
         }));
+    });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    wordmark.addEventListener('animationiteration', (event) => {
+        if (event.target !== wordmark || event.animationName !== 'wallpaper-pulse') return;
+        if (wordmarkGlitchTimer) clearTimeout(wordmarkGlitchTimer);
+        wordmarkGlitchTimer = window.setTimeout(() => {
+            wordmarkGlitchTimer = null;
+            if (Math.random() > 0.42 || document.body.classList.contains('orb-exploding')) return;
+
+            const bounds = wordmark.getBoundingClientRect();
+            const colors = ['#c084fc', '#f472b6', '#67e8f9', '#93c5fd'];
+            const fragmentCount = 18 + Math.floor(Math.random() * 11);
+            for (let i = 0; i < fragmentCount; i++) {
+                const pixel = document.createElement('span');
+                pixel.className = 'wallpaper-glitch-pixel';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                pixel.style.left = `${Math.random() * bounds.width}px`;
+                pixel.style.top = `${Math.random() * bounds.height}px`;
+                pixel.style.width = `${2 + Math.random() * 7}px`;
+                pixel.style.height = `${1 + Math.random() * 3}px`;
+                pixel.style.setProperty('--glitch-color', color);
+                pixel.style.setProperty('--glitch-x', `${(Math.random() - 0.5) * 32}px`);
+                pixel.style.setProperty('--glitch-y', `${(Math.random() - 0.5) * 20}px`);
+                wordmark.appendChild(pixel);
+                pixel.addEventListener('animationend', () => pixel.remove(), { once: true });
+            }
+        }, 4000);
     });
 }
 
@@ -590,6 +633,7 @@ function detonateShowcaseAlly(centerX, centerY) {
         }
     }
     damageFireDemonsInRadius(centerX, centerY, blastRadius);
+    damageConfettiNpcInRadius(centerX, centerY, blastRadius);
 
     if (window.bossActive && bossElement &&
         Math.hypot(window.bossX + 50 - centerX, window.bossY + 50 - centerY) <= blastRadius + 50) {
@@ -1057,17 +1101,9 @@ function spawnFireDemonWave() {
     });
 }
 
-function damageFireDemon(demon) {
-    const index = fireDemons.indexOf(demon);
-    if (index === -1) return;
-
-    createExplosionParticles(demon.x + 34, demon.y + 34, demon.glowColor);
-    playExplosionSound();
-    demon.element.remove();
-    fireDemons.splice(index, 1);
-
+function recordEnemyElimination(xpReward) {
     window.bugEliminationCount++;
-    earnXP(200);
+    earnXP(xpReward);
     if (window.bugHighScore < window.bugEliminationCount) {
         window.bugHighScore = window.bugEliminationCount;
         localStorage.setItem('spectral_bugs_highscore', window.bugHighScore);
@@ -1077,6 +1113,18 @@ function damageFireDemon(demon) {
     const bugCounterEl = document.getElementById('bug-counter');
     if (bugCounterEl) bugCounterEl.textContent = window.bugEliminationCount;
     updateKillsDisplay();
+}
+
+function damageFireDemon(demon) {
+    const index = fireDemons.indexOf(demon);
+    if (index === -1) return;
+
+    createExplosionParticles(demon.x + 34, demon.y + 34, demon.glowColor);
+    playExplosionSound();
+    demon.element.remove();
+    fireDemons.splice(index, 1);
+
+    recordEnemyElimination(200);
 }
 window.damageFireDemon = damageFireDemon;
 
@@ -1099,7 +1147,93 @@ window.hitFireDemonAtOrb = function (orbX, orbY, radius) {
         }
     }
     return false;
-};
+}
+
+function spawnConfettiNpc() {
+    const viewHeight = window.innerHeight - 40;
+    const fromRight = Math.random() < 0.5;
+    const direction = fromRight ? -1 : 1;
+    const element = document.createElement('div');
+    element.className = 'confetti-npc';
+    element.setAttribute('aria-hidden', 'true');
+    element.innerHTML = `
+        <span class="confetti-npc-aura"></span>
+        <span class="confetti-npc-sparkle"></span>
+        <img src="assets/images/sprites/confettibomb.png" alt="">
+    `;
+
+    const x = fromRight ? window.innerWidth + 80 : -80;
+    const y = Math.max(90, Math.min(viewHeight - 150, viewHeight * (0.25 + Math.random() * 0.45)));
+    const glowColor = ['#c084fc', '#f472b6', '#67e8f9'][Math.floor(Math.random() * 3)];
+    element.style.setProperty('--confetti-glow', glowColor);
+    element.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(${direction})`;
+    document.body.appendChild(element);
+
+    confettiNpc = {
+        element,
+        x,
+        y,
+        baseY: y,
+        direction,
+        speed: 1.1 + Math.random() * 0.45,
+        wave: Math.random() * Math.PI * 2,
+        fireRate: Math.max(1050, 1650 - window.currentLevel * 20),
+        lastFireTime: Date.now() + 600,
+        lastTrailTime: 0,
+    };
+}
+
+function damageConfettiNpc() {
+    if (!confettiNpc) return;
+    const npc = confettiNpc;
+    const centerX = npc.x + 38;
+    const centerY = npc.y + 38;
+    npc.element.remove();
+    confettiNpc = null;
+    nextConfettiNpcAt = Date.now() + 24000;
+    ['#c084fc', '#f472b6', '#67e8f9', '#93c5fd'].forEach((color) => {
+        createExplosionParticles(centerX, centerY, color);
+    });
+    playExplosionSound();
+    recordEnemyElimination(250);
+}
+
+function damageConfettiNpcInRadius(x, y, radius) {
+    if (confettiNpc && Math.hypot(confettiNpc.x + 38 - x, confettiNpc.y + 38 - y) <= radius) {
+        damageConfettiNpc();
+    }
+}
+
+function fireConfettiBomb(npc, targetX, targetY) {
+    const element = document.createElement('div');
+    element.className = 'confetti-bomb-projectile';
+    element.setAttribute('aria-hidden', 'true');
+    element.innerHTML = '<span></span><span></span><span></span><span></span>';
+
+    const x = npc.x + 38;
+    const y = npc.y + 38;
+    const dx = targetX - x;
+    const dy = targetY - y;
+    const distance = Math.hypot(dx, dy) || 1;
+    const speed = 5.2 + Math.min(window.currentLevel * 0.04, 1.4);
+    const vx = dx / distance * speed;
+    const vy = dy / distance * speed;
+    element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
+    document.body.appendChild(element);
+    confettiBombProjectiles.push({ element, x, y, vx, vy, speed, createdAt: Date.now() });
+}
+
+function segmentWithinRadius(x1, y1, x2, y2, targetX, targetY, radius) {
+    const segmentX = x2 - x1;
+    const segmentY = y2 - y1;
+    const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+    const nearestPointRatio = segmentLengthSquared
+        ? Math.max(0, Math.min(1, ((targetX - x1) * segmentX + (targetY - y1) * segmentY) / segmentLengthSquared))
+        : 0;
+    const nearestX = x1 + segmentX * nearestPointRatio;
+    const nearestY = y1 + segmentY * nearestPointRatio;
+    return Math.hypot(nearestX - targetX, nearestY - targetY) < radius;
+}
 
 function fireDemonFireball(demon, targetX, targetY) {
     const element = document.createElement('div');
@@ -1252,6 +1386,7 @@ function detonateClusterBomb(clickX, clickY) {
         }
     }
     damageFireDemonsInRadius(clickX, clickY, 300);
+    damageConfettiNpcInRadius(clickX, clickY, 300);
 
     if (window.bossActive && bossElement) {
         const distBoss = Math.hypot(window.bossX + 50 - clickX, window.bossY + 50 - clickY);
@@ -1506,6 +1641,7 @@ function castAuraWave(type) {
             }
         }
         damageFireDemonsInRadius(orbX, orbY, radius);
+        damageConfettiNpcInRadius(orbX, orbY, radius);
         if (window.bossActive && bossElement) {
             const distBoss = Math.hypot(window.bossX + 50 - orbX, window.bossY + 50 - orbY);
             if (distBoss < radius) {
@@ -1618,7 +1754,12 @@ function clearGameBoard() {
     fireDemons = [];
     fireDemonProjectiles.forEach(projectile => projectile.element.remove());
     fireDemonProjectiles = [];
+    confettiNpc?.element.remove();
+    confettiNpc = null;
+    confettiBombProjectiles.forEach(projectile => projectile.element.remove());
+    confettiBombProjectiles = [];
     nextFireDemonWaveAt = Date.now() + 12000;
+    nextConfettiNpcAt = Date.now() + 18000;
 
     if (typeof cleanupBossFight === 'function') cleanupBossFight();
     if (typeof window.clearOrbTrailGhosts === 'function') window.clearOrbTrailGhosts();
@@ -1632,6 +1773,9 @@ function clearGameBoard() {
         '.fire-demon',
         '.fire-demon-trail',
         '.fireball-projectile',
+        '.confetti-npc',
+        '.confetti-npc-trail',
+        '.confetti-bomb-projectile',
         '.fighter-orb',
         '.spiral-vortex-wrapper',
         '.boss-entity',
@@ -1932,6 +2076,10 @@ function triggerTranscendedEndState() {
     window.gameBeaten = true;
     window.currentLevel = 32;
     updateLevelDisplay();
+    confettiNpc?.element.remove();
+    confettiNpc = null;
+    confettiBombProjectiles.forEach(projectile => projectile.element.remove());
+    confettiBombProjectiles = [];
 
     for (let i = 0; i < window.dataBugs.length; i++) {
         window.dataBugs[i].element.remove();
@@ -2072,6 +2220,9 @@ function updateGameplayLoop() {
         spawnFireDemonWave();
         nextFireDemonWaveAt = now + Math.max(12000, 24000 - window.currentLevel * 350);
     }
+    if (!window.gameBeaten && window.currentLevel >= 3 && !confettiNpc && now >= nextConfettiNpcAt) {
+        spawnConfettiNpc();
+    }
 
     for (let i = fireDemons.length - 1; i >= 0; i--) {
         const demon = fireDemons[i];
@@ -2104,6 +2255,37 @@ function updateGameplayLoop() {
         }
     }
 
+    if (confettiNpc) {
+        const npc = confettiNpc;
+        npc.x += npc.speed * npc.direction;
+        npc.y = npc.baseY + Math.sin(now * 0.0028 + npc.wave) * 24;
+        npc.element.style.transform = `translate3d(${npc.x}px, ${npc.y}px, 0) scaleX(${npc.direction})`;
+
+        if (now - npc.lastTrailTime > 95) {
+            npc.lastTrailTime = now;
+            const trail = document.createElement('span');
+            trail.className = 'confetti-npc-trail';
+            trail.textContent = Math.random() > 0.5 ? '✦' : '✧';
+            trail.style.color = ['#c084fc', '#f472b6', '#67e8f9', '#93c5fd'][Math.floor(Math.random() * 4)];
+            trail.style.left = `${npc.x + (npc.direction > 0 ? 48 : 22)}px`;
+            trail.style.top = `${npc.y + 28 + Math.random() * 22}px`;
+            trail.addEventListener('animationend', () => trail.remove(), { once: true });
+            document.body.appendChild(trail);
+        }
+
+        if (now - npc.lastFireTime >= npc.fireRate) {
+            npc.lastFireTime = now;
+            fireConfettiBomb(npc, window.orbScreenX, window.orbScreenY);
+        }
+
+        if ((npc.direction > 0 && npc.x > viewWidth + 90) ||
+            (npc.direction < 0 && npc.x < -110)) {
+            npc.element.remove();
+            confettiNpc = null;
+            nextConfettiNpcAt = now + 24000;
+        }
+    }
+
     for (let i = fireDemonProjectiles.length - 1; i >= 0; i--) {
         const projectile = fireDemonProjectiles[i];
         const orbX = window.orbScreenX || window.innerWidth / 2;
@@ -2126,15 +2308,7 @@ function updateGameplayLoop() {
         projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
 
         const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 11;
-        const segmentX = projectile.x - previousX;
-        const segmentY = projectile.y - previousY;
-        const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
-        const nearestPointRatio = segmentLengthSquared
-            ? Math.max(0, Math.min(1, ((orbX - previousX) * segmentX + (orbY - previousY) * segmentY) / segmentLengthSquared))
-            : 0;
-        const nearestX = previousX + segmentX * nearestPointRatio;
-        const nearestY = previousY + segmentY * nearestPointRatio;
-        if (Math.hypot(nearestX - orbX, nearestY - orbY) < collisionRadius) {
+        if (segmentWithinRadius(previousX, previousY, projectile.x, projectile.y, orbX, orbY, collisionRadius)) {
             createExplosionParticles(projectile.x, projectile.y, projectile.element.style.getPropertyValue('--fireball-glow'));
             projectile.element.remove();
             fireDemonProjectiles.splice(i, 1);
@@ -2147,6 +2321,44 @@ function updateGameplayLoop() {
             projectile.y < -40 || projectile.y > window.innerHeight + 40) {
             projectile.element.remove();
             fireDemonProjectiles.splice(i, 1);
+        }
+    }
+
+    for (let i = confettiBombProjectiles.length - 1; i >= 0; i--) {
+        const projectile = confettiBombProjectiles[i];
+        const orbX = window.orbScreenX || window.innerWidth / 2;
+        const orbY = window.orbScreenY || (window.innerHeight - 40) / 2;
+        const targetDx = orbX - projectile.x;
+        const targetDy = orbY - projectile.y;
+        const targetDistance = Math.hypot(targetDx, targetDy) || 1;
+        const desiredVx = targetDx / targetDistance * projectile.speed;
+        const desiredVy = targetDy / targetDistance * projectile.speed;
+        projectile.vx += (desiredVx - projectile.vx) * 0.12;
+        projectile.vy += (desiredVy - projectile.vy) * 0.12;
+        const steeredSpeed = Math.hypot(projectile.vx, projectile.vy) || 1;
+        projectile.vx = projectile.vx / steeredSpeed * projectile.speed;
+        projectile.vy = projectile.vy / steeredSpeed * projectile.speed;
+        const previousX = projectile.x;
+        const previousY = projectile.y;
+        projectile.x += projectile.vx;
+        projectile.y += projectile.vy;
+        projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
+
+        const collisionRadius = 140 * (window.orbZoomScale || 0.22) + 12;
+        if (segmentWithinRadius(previousX, previousY, projectile.x, projectile.y, orbX, orbY, collisionRadius)) {
+            createExplosionParticles(projectile.x, projectile.y, '#f472b6');
+            createExplosionParticles(projectile.x, projectile.y, '#67e8f9');
+            projectile.element.remove();
+            confettiBombProjectiles.splice(i, 1);
+            takeDamage(6);
+            continue;
+        }
+
+        if (now - projectile.createdAt > 5000 ||
+            projectile.x < -40 || projectile.x > viewWidth + 40 ||
+            projectile.y < -40 || projectile.y > window.innerHeight + 40) {
+            projectile.element.remove();
+            confettiBombProjectiles.splice(i, 1);
         }
     }
 
@@ -2179,6 +2391,17 @@ function updateGameplayLoop() {
             if (dB < minDist) {
                 minDist = dB;
                 target = { id: 'boss', x: window.bossX + 50, y: window.bossY + 50 };
+            }
+        }
+
+        if (!target && confettiNpc) {
+            const d = Math.hypot(confettiNpc.x + 38 - drone.x, confettiNpc.y + 38 - drone.y);
+            if (d < minDist) {
+                target = {
+                    id: 'confetti-npc',
+                    x: confettiNpc.x + 38,
+                    y: confettiNpc.y + 38,
+                };
             }
         }
 
@@ -2242,6 +2465,7 @@ function updateGameplayLoop() {
             }
         }
         damageFireDemonsInRadius(tornado.x, tornado.y, 110);
+        damageConfettiNpcInRadius(tornado.x, tornado.y, 110);
 
         if (window.bossActive && bossElement) {
             const dBoss = Math.hypot(window.bossX + 50 - tornado.x, window.bossY + 50 - tornado.y);
@@ -2443,6 +2667,8 @@ function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
         damageBoss(80); 
     } else if (bugTarget.id === 'fire-demon') {
         damageFireDemon(bugTarget.demon);
+    } else if (bugTarget.id === 'confetti-npc') {
+        damageConfettiNpc();
     } else {
         explodeBug(bugTarget.id);
     }
@@ -2752,13 +2978,15 @@ function loadModule(category, key) {
         // Use innerHTML instead of textContent so <a> links become clickable
         const appBox = win.querySelector('.app-data-box');
         appBox.innerHTML = data.content;
+        const launchBar = win.querySelector('.app-launch-bar');
+        launchBar.innerHTML = '';
         if (data.pageUrl) {
             const pageButton = document.createElement('button');
             pageButton.className = 'retro-btn';
             pageButton.type = 'button';
             pageButton.textContent = data.openLabel || 'OPEN PAGE';
             pageButton.addEventListener('click', () => openAppPage(key));
-            appBox.appendChild(pageButton);
+            launchBar.appendChild(pageButton);
         }
 
         const img = win.querySelector('#app-img');
