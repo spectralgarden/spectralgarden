@@ -633,6 +633,10 @@ function checkOrbBugCollisions() {
         }
     }
 
+    if (typeof window.hitFireDemonAtOrb === 'function') {
+        window.hitFireDemonAtOrb(screenX, screenY, currentCollisionRadius);
+    }
+
     if (window.bossActive && window.bossHP > 0) {
         const bossCenterX = window.bossX + 50;
         const bossCenterY = window.bossY + 50;
