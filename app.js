@@ -1167,6 +1167,21 @@ function detonateClusterBomb(clickX, clickY) {
 }
 
 function updateHPDisplay() {
+    const healthRatio = Math.max(0, Math.min(1, window.orbHP / 100));
+    const damageRatio = 1 - healthRatio;
+    const wallpaperLogo = document.querySelector('.wallpaper-logo');
+    if (wallpaperLogo) {
+        const color = {
+            r: Math.round(139 + (255 - 139) * damageRatio),
+            g: Math.round(92 + (55 - 92) * damageRatio),
+            b: Math.round(246 + (150 - 246) * damageRatio)
+        };
+        wallpaperLogo.style.setProperty('--health-color', `${color.r}, ${color.g}, ${color.b}`);
+        wallpaperLogo.style.setProperty('--health-glow-opacity', (0.12 + damageRatio * 0.58).toFixed(2));
+        wallpaperLogo.style.setProperty('--health-glow-size', `${6 + damageRatio * 18}px`);
+        wallpaperLogo.style.setProperty('--health-text-alpha', (0.025 + damageRatio * 0.12).toFixed(3));
+    }
+
     const hpDisplay = document.getElementById('orb-hp-display');
     if (hpDisplay) {
         hpDisplay.textContent = Math.max(0, window.orbHP);
