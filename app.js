@@ -167,13 +167,13 @@ const moduleDatabase = {
             desc: "A ritual-coded search guide for the Akashic Tarot deck. Built as a static web portal using HTML, CSS, and JavaScript.",
             image: "assets/images/tarot_preview.png",
             content: "--- AKASHIC TAROT SYSTEM SPECS ---<br><br>" +
-                     "🌐 <strong>LIVE PORTAL:</strong><br>" +
-                     "<a href='https://spectralgarden.github.io/akashictarot/' target='_blank' style='color: #8b5cf6; font-weight: bold;'>[ LAUNCH AKASHIC TAROT WEBAPP ]</a>"+ 
-                    "✨ <strong>FEATURES:</strong><br>" +
+                     "✨ <strong>FEATURES:</strong><br>" +
                      "• Search: Instantly locates & highlights cards.<br>" +
                      "• Random Draw: Simulates a digital pull.<br>" +
                      "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
-                     "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>" 
+                     "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>",
+            pageUrl: "https://spectralgarden.github.io/akashictarot/",
+            openLabel: "LAUNCH AKASHIC TAROT WEBAPP"
         },
         app_b: {
             title: "C:\\PROG\\APPS\\SPECTRAL_ATLAS.EXE",
@@ -193,7 +193,7 @@ const moduleDatabase = {
             content: "ASTROLOGY TOOLS + COMMUNITY<br><br>" +
                      "Explore natal charts and synastry reports, and connect with others in the Flame Finder forum.",
             image: "assets/images/flamefinderscreenshot.png",
-            pageUrl: "https://flamefinder.onrender.com/",
+            pageUrl: "https://flamefinder.spectralgarden.workers.dev/",
             openLabel: "LAUNCH FLAME FINDER"
         }
     },
