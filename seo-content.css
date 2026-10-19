@@ -5,9 +5,15 @@
     margin: 100vh auto 0;
     padding: clamp(24px, 5vw, 56px);
     color: #eee8f5;
-    background: #15131d;
-    border: 1px solid #645175;
-    box-shadow: 0 0 42px rgba(0, 0, 0, 0.55);
+    background:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 4px),
+        radial-gradient(ellipse at 90% 0%, rgba(34, 211, 238, 0.1), transparent 38%),
+        linear-gradient(145deg, #090d1c 0%, #151025 52%, #08151e 100%);
+    border: 1px solid rgba(103, 232, 249, 0.48);
+    box-shadow:
+        0 0 0 1px rgba(139, 92, 246, 0.22),
+        0 0 42px rgba(76, 29, 149, 0.32),
+        inset 0 0 36px rgba(34, 211, 238, 0.035);
     font-family: "Segoe UI", Arial, sans-serif;
     line-height: 1.7;
     user-select: text;
@@ -20,7 +26,7 @@
 }
 
 .site-guide__eyebrow {
-    color: #bfa6e7;
+    color: #67e8f9;
     font: 600 0.8rem "Courier New", monospace;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -31,6 +37,7 @@
 .site-guide h3 {
     color: #fff;
     line-height: 1.25;
+    text-shadow: 0 0 18px rgba(139, 92, 246, 0.2);
 }
 
 .site-guide h1 {
@@ -63,19 +70,20 @@
 .site-guide__nav {
     margin: 0 0 36px;
     padding: 16px;
-    border: 1px solid #3d3549;
-    background: #1d1926;
+    border: 1px solid rgba(139, 92, 246, 0.42);
+    background: rgba(5, 8, 21, 0.82);
+    box-shadow: inset 0 0 18px rgba(139, 92, 246, 0.08);
 }
 
 .site-guide a {
-    color: #d9c0ff;
+    color: #c4b5fd;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
 }
 
 .site-guide a:hover,
 .site-guide a:focus-visible {
-    color: #fff;
+    color: #67e8f9;
 }
 
 .site-guide__section {
@@ -86,8 +94,22 @@
 .site-guide__card {
     margin: 14px 0;
     padding: 18px;
-    border-left: 3px solid #a884d8;
-    background: #201b2b;
+    border: 1px solid rgba(139, 92, 246, 0.22);
+    border-left: 3px solid #a78bfa;
+    background: rgba(8, 11, 28, 0.82);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.site-guide__section#learning {
+    padding: clamp(18px, 3vw, 28px);
+    border: 1px solid rgba(34, 211, 238, 0.32);
+    border-left: 3px solid #22d3ee;
+    background: linear-gradient(135deg, rgba(9, 18, 35, 0.96), rgba(25, 13, 42, 0.96));
+    box-shadow: inset 0 0 28px rgba(34, 211, 238, 0.045), 0 0 24px rgba(139, 92, 246, 0.12);
+}
+
+.site-guide__section#learning h2 {
+    color: #e9d5ff;
 }
 
 .site-guide__links {
@@ -96,11 +118,11 @@
 
 .site-guide details {
     padding: 14px 0;
-    border-top: 1px solid #3d3549;
+    border-top: 1px solid rgba(103, 116, 154, 0.35);
 }
 
 .site-guide summary {
-    color: #fff;
+    color: #e9d5ff;
     cursor: pointer;
     font-weight: 600;
 }
