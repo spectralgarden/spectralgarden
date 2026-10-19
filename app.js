@@ -193,7 +193,7 @@ const moduleDatabase = {
             content: "ASTROLOGY TOOLS + COMMUNITY<br><br>" +
                      "Explore natal charts and synastry reports, and connect with others in the Flame Finder forum.",
             image: "assets/images/flamefinderscreenshot.png",
-            pageUrl: "https://flame-finder-main.onrender.com/",
+            pageUrl: "https://flamefinder.onrender.com/",
             openLabel: "LAUNCH FLAME FINDER"
         }
     },

@@ -603,14 +603,16 @@ body.orb-exploding .wallpaper-inline-logo {
 }
 
 #taskbar .taskbar-right > button[onclick*="tos-window"],
-#taskbar .taskbar-right > button[onclick*="contact-window"] {
+#taskbar .taskbar-right > button[onclick*="contact-window"],
+#taskbar .taskbar-right > .taskbar-forum-btn {
     border-color: #8b5cf6 !important;
     color: #8b5cf6;
     animation: taskbar-purple-flicker 2.8s steps(2, end) infinite;
 }
 
 #taskbar .taskbar-right > button[onclick*="tos-window"]:hover,
-#taskbar .taskbar-right > button[onclick*="contact-window"]:hover {
+#taskbar .taskbar-right > button[onclick*="contact-window"]:hover,
+#taskbar .taskbar-right > .taskbar-forum-btn:hover {
     color: #ffffff;
     box-shadow: 3px 3px 0 #8b5cf6;
     animation: none;
