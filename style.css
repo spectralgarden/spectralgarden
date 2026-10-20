@@ -258,7 +258,7 @@ body.bomb-burst-flash::after {
     background-position: center;
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    opacity: 0.28;
+    opacity: 0.00;
     pointer-events: none;
     transition: opacity 0.18s ease-out;
 }
