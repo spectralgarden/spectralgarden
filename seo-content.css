@@ -131,6 +131,33 @@
     margin-top: 8px;
 }
 
+@media (min-width: 900px) {
+    .site-guide {
+        width: min(100% - 48px, 1160px);
+    }
+
+    .site-guide__section {
+        padding: 22px 24px;
+        border: 1px solid rgba(103, 116, 154, 0.25);
+        background: rgba(8, 11, 28, 0.38);
+    }
+
+    .site-guide__section#astrology-tools {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 18px;
+    }
+
+    .site-guide__section#astrology-tools > h2,
+    .site-guide__section#astrology-tools > p {
+        grid-column: 1 / -1;
+    }
+
+    .site-guide__card {
+        height: 100%;
+    }
+}
+
 @media (max-width: 600px) {
     .site-guide {
         width: 100%;

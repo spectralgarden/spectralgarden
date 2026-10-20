@@ -152,11 +152,11 @@ const moduleDatabase = {
     },
     games: {
         game_a: {
-    title: "C:\\PROG\\GAMES\\Eden's Edge.EXE",
-    header: "Eden's Edge (2027)",
-    desc: "A surreal, avant‑garde horror action RPG set inside a fractured 3D world. Navigate esoteric landscapes, confront impossible entities, and descend through shifting realities that refuse to stay stable. (Coming soon in 2027)",
-    image: "assets/images/game_sim_x.gif",
-    content: "STATUS: BOOT SEQUENCE ONLINE\nREALITY ANCHOR: UNSTABLE\nENTITY VECTOR: ACTIVE\n\nEngage Eden's Edge runtime below and enter the distortion."
+    title: "C:\\PROG\\GAMES\\ASTRAL_AVENGER.EXE",
+    header: "Astral Avenger",
+    desc: "A spectral arcade survival game. Slingshot the core through the field, gather power-ups, and face the corrupted guardians.",
+    image: "",
+    content: "STATUS: READY\nGAME WINDOW: RESIZABLE\nCONTROLS: DRAG AND RELEASE"
         },
        
     },
@@ -214,6 +214,7 @@ window.bugHighScore = parseInt(localStorage.getItem('spectral_bugs_highscore') |
 let bugIdCounter = 0;
 let showcaseAllyTimer = null;
 let lastShowcaseItemId = null;
+const desktopShowcaseTimers = new Map();
 
 // Lives & Player state
 window.playerLives = 3;
@@ -268,16 +269,66 @@ window.activePowerUpItem = null;
 window.activeFighters = [];
 window.activeTornado = null;
 window.nextPowerUpType = 'fighter';
-window.gamePaused = false;
-window.gamePausedForShowcase = false;
-window.gamePausedBeforeShowcase = false;
+window.gamePaused = true;
+window.gameWindowActive = false;
 window.activeShowcaseAlly = null;
 window.showcaseWindowId = null;
-const showcaseWindowIds = new Set(['apps-window', 'vst-window', 'games-window']);
+const showcaseWindowIds = new Set(['apps-window', 'vst-window']);
 
 let spawnIntervalTimer = null;
+let gameplayFrameHandle = null;
 let bombAimIndicator = null;
 let wordmarkGlitchTimer = null;
+
+function appendGameEntity(element) {
+    const layer = document.getElementById('game-entities-layer');
+    (layer || document.body).appendChild(element);
+}
+
+function updateGameEntityClip() {
+    const stage = document.getElementById('game-stage');
+    const layer = document.getElementById('game-entities-layer');
+    if (!stage || !layer) return;
+    const rect = stage.getBoundingClientRect();
+    const isVisible = window.gameWindowActive && rect.width > 0 && rect.height > 0;
+    layer.style.visibility = isVisible ? 'visible' : 'hidden';
+    layer.style.clipPath = isVisible
+        ? `inset(${rect.top}px ${Math.max(0, window.innerWidth - rect.right)}px ${Math.max(0, window.innerHeight - rect.bottom)}px ${rect.left}px)`
+        : 'inset(0 100% 100% 0)';
+}
+
+function startGameplayLoop() {
+    if (gameplayFrameHandle === null && !window.gamePaused) {
+        gameplayFrameHandle = requestAnimationFrame(updateGameplayLoop);
+    }
+}
+
+function stopGameplayLoop() {
+    if (gameplayFrameHandle !== null) {
+        cancelAnimationFrame(gameplayFrameHandle);
+        gameplayFrameHandle = null;
+    }
+}
+
+function togglePauseGame() {
+    if (!window.gameWindowActive) return;
+    window.gamePaused = !window.gamePaused;
+    const modal = document.getElementById('pause-modal');
+    if (modal) modal.style.display = window.gamePaused ? 'flex' : 'none';
+    const button = document.querySelector('#games-window .game-window-controls [aria-label="Pause or resume game"]');
+    if (button) button.textContent = window.gamePaused ? '▶' : 'Ⅱ';
+    if (window.gamePaused) {
+        stopGameplayLoop();
+        if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+        spawnIntervalTimer = null;
+        window.stopPortalAnimation?.();
+    } else {
+        startGameplayLoop();
+        reinitSpawnInterval();
+        window.startPortalAnimation?.();
+    }
+}
+window.togglePauseGame = togglePauseGame;
 
 function setGameTimeEffect(scale, label) {
     window.gameMovementScale = scale;
@@ -288,7 +339,7 @@ function setGameTimeEffect(scale, label) {
         indicator = document.createElement('div');
         indicator.id = 'game-time-effect';
         indicator.setAttribute('role', 'status');
-        document.body.appendChild(indicator);
+        appendGameEntity(indicator);
     }
     indicator.textContent = `${label} // 6 SECONDS`;
     indicator.classList.toggle('game-time-effect--slow', scale < 1);
@@ -383,6 +434,16 @@ document.addEventListener('DOMContentLoaded', () => {
         dragElement(win, header);
     });
 
+    const gameStage = document.getElementById('game-stage');
+    if (gameStage && 'ResizeObserver' in window) {
+        new ResizeObserver(() => {
+            updateGameEntityClip();
+            window.resizeGamePortal?.();
+        }).observe(gameStage);
+    }
+    window.addEventListener('resize', updateGameEntityClip);
+    document.addEventListener('mousemove', updateGameEntityClip);
+
     const submenus = document.querySelectorAll('.submenu');
     submenus.forEach(submenu => {
         submenu.addEventListener('wheel', (e) => {
@@ -415,16 +476,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateHPDisplay();
     updateLevelDisplay();
-    reinitSpawnInterval();
-    scheduleShowcaseAlly();
     updateXPDisplay();
     updateEnergyDisplay();
 
-    updateGameplayLoop();
+    updateGameEntityClip();
+    loadModule('games', 'game_a', { keepPosition: true, silent: true });
+    loadModule('apps', Object.keys(moduleDatabase.apps)[0], { keepPosition: true, silent: true });
+    loadModule('vst', Object.keys(moduleDatabase.vst)[0], { keepPosition: true, silent: true });
 
     document.addEventListener('click', (e) => {
         if (window.isClusterBombArmed) {
-            if (!e.target.closest('#taskbar') && !e.target.closest('.window') && !e.target.closest('#start-menu')) {
+            if (e.target.closest('#game-stage')) {
                 e.preventDefault();
                 e.stopPropagation();
                 detonateClusterBomb(e.clientX, e.clientY);
@@ -510,36 +572,18 @@ function toggleHelpSubmenu(event) {
 window.toggleHelpSubmenu = toggleHelpSubmenu;
 
 function getSafeSpawnCoords() {
-    const sidebarWidth = 260;
-    const topBarHeight = 120;
-    const monitorWidth = 420;
-    const rightMargin = 160;
-    const bottomMargin = 120;
-    
-    const w = isNaN(window.innerWidth) || window.innerWidth <= 0 ? 1200 : window.innerWidth;
-    const h = isNaN(window.innerHeight) || window.innerHeight <= 0 ? 800 : window.innerHeight;
-
-    let x, y;
-    let attempts = 0;
-    while (attempts < 100) {
-        x = Math.random() * (w - sidebarWidth - rightMargin) + sidebarWidth;
-        y = Math.random() * (h - topBarHeight - bottomMargin) + topBarHeight;
-        
-        if (x > w - monitorWidth && y < 350) { 
-            attempts++; 
-            continue; 
-        }
-        if (isNaN(x) || isNaN(y)) {
-            attempts++;
-            continue;
-        }
-        return { x, y };
-    }
-    return { x: w / 2, y: h / 2 };
+    const bounds = getGameBounds();
+    const margin = 32;
+    return {
+        x: bounds.left + margin + Math.random() * Math.max(0, bounds.right - bounds.left - margin * 2),
+        y: bounds.top + margin + Math.random() * Math.max(0, bounds.bottom - bounds.top - margin * 2)
+    };
 }
 
 function reinitSpawnInterval() {
     if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+    spawnIntervalTimer = null;
+    if (window.gamePaused || !window.gameWindowActive) return;
     
     const intervalTime = Math.max(400, 1200 - (window.currentLevel * 50));
     spawnIntervalTimer = setInterval(() => {
@@ -550,9 +594,11 @@ function reinitSpawnInterval() {
 }
 
 function scheduleShowcaseAlly(delay = 12000 + Math.random() * 18000) {
+    if (!window.gameWindowActive) return;
     if (showcaseAllyTimer) clearTimeout(showcaseAllyTimer);
     showcaseAllyTimer = setTimeout(() => {
         showcaseAllyTimer = null;
+        if (!window.gameWindowActive) return;
         if (window.gamePaused || window.activeShowcaseAlly) {
             scheduleShowcaseAlly(1000);
             return;
@@ -602,17 +648,18 @@ function spawnShowcaseAlly() {
 
     element.append(image, name, prompt);
 
+    const bounds = getGameBounds();
     const cardHeight = 118;
-    const viewHeight = Math.max(0, window.innerHeight - 40 - cardHeight);
-    const y = 60 + Math.random() * Math.max(0, viewHeight - 60);
-    const x = -150;
+    const viewHeight = Math.max(0, bounds.bottom - bounds.top - cardHeight);
+    const y = bounds.top + 20 + Math.random() * Math.max(0, viewHeight - 20);
+    const x = bounds.left - 150;
     element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     element.addEventListener('click', event => {
         event.preventDefault();
         event.stopPropagation();
         openShowcaseAlly(category, key, element);
     });
-    document.body.appendChild(element);
+    appendGameEntity(element);
 
     window.activeShowcaseAlly = {
         category,
@@ -651,7 +698,7 @@ function detonateShowcaseAlly(centerX, centerY) {
     burst.className = 'aoe-explosion showcase-ally-burst';
     burst.style.left = `${centerX}px`;
     burst.style.top = `${centerY}px`;
-    document.body.appendChild(burst);
+    appendGameEntity(burst);
     requestAnimationFrame(() => burst.classList.add('detonated'));
     setTimeout(() => burst.remove(), 700);
 
@@ -879,27 +926,31 @@ function spawnDataBug() {
 
     bugElement.style.filter = `drop-shadow(0px 0px 5px ${chosenShadow})`;
 
-    const edgeSelection = Math.floor(Math.random() * 3); 
+    const edgeSelection = Math.floor(Math.random() * 4); 
     let x, y;
     const buffer = 40;
-    const viewWidth = window.innerWidth;
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewWidth = bounds.right - bounds.left;
+    const viewHeight = bounds.bottom - bounds.top;
 
     if (edgeSelection === 0) {
-        x = Math.random() * (viewWidth - 280) + 240;
-        y = -buffer;
+        x = bounds.left + Math.random() * viewWidth;
+        y = bounds.top - buffer;
     } else if (edgeSelection === 1) {
-        x = viewWidth + buffer;
-        y = Math.random() * (viewHeight - 120) + 80;
+        x = bounds.right + buffer;
+        y = bounds.top + Math.random() * viewHeight;
+    } else if (edgeSelection === 2) {
+        x = bounds.left + Math.random() * viewWidth;
+        y = bounds.bottom + buffer;
     } else {
-        x = Math.random() * (viewWidth - 280) + 240;
-        y = viewHeight + buffer;
+        x = bounds.left - buffer;
+        y = bounds.top + Math.random() * viewHeight;
     }
 
     bugElement.style.left = '0px';
     bugElement.style.top = '0px';
     bugElement.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    document.body.appendChild(bugElement);
+    appendGameEntity(bugElement);
 
     const bugId = bugIdCounter++;
     const bugObj = {
@@ -909,8 +960,8 @@ function spawnDataBug() {
         y: y,
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
-        targetX: Math.random() * viewWidth,
-        targetY: Math.random() * viewHeight,
+        targetX: bounds.left + Math.random() * viewWidth,
+        targetY: bounds.top + Math.random() * viewHeight,
         angle: 0,
         isAlien: isAlien,
         isHealer: isHealer,
@@ -998,7 +1049,7 @@ function handlePowerUpSpawning() {
         // Positioning
         itemElement.style.left = (safeCoords.x - 50) + 'px';
         itemElement.style.top = (safeCoords.y - 20) + 'px';
-        document.body.appendChild(itemElement);
+        appendGameEntity(itemElement);
 
         // Track active item
         window.activePowerUpItem = {
@@ -1045,7 +1096,8 @@ function collectPowerUp() {
 window.collectPowerUp = collectPowerUp;
 
 function deployFighters() {
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewHeight = bounds.bottom - bounds.top;
     
     // Define 3 unique fighter archetypes
     const fighterArchetypes = [
@@ -1086,13 +1138,13 @@ function deployFighters() {
         `;
         droneEl.style.setProperty('--drone-glow', archetype.glowColor);
 
-        const startX = -70 - (i * 45); // Stagger their entry formations horizontally
-        const startY = (viewHeight / 4) * (i + 1);
+        const startX = bounds.left - 70 - (i * 45);
+        const startY = bounds.top + (viewHeight / 4) * (i + 1);
         
         droneEl.style.left = '0px';
         droneEl.style.top = '0px';
         droneEl.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
-        document.body.appendChild(droneEl);
+        appendGameEntity(droneEl);
 
         window.activeFighters.push({
             element: droneEl,
@@ -1109,14 +1161,15 @@ function deployFighters() {
 }
 
 function spawnFireDemonWave() {
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewHeight = bounds.bottom - bounds.top;
     const demonSprites = [
         'assets/images/sprites/1fire_seige.png',
         'assets/images/sprites/2fire_seige.png',
         'assets/images/sprites/3fire_seige.png'
     ];
     const fromRight = Math.random() < 0.5;
-    const startX = fromRight ? window.innerWidth + 80 : -80;
+    const startX = fromRight ? bounds.right + 80 : bounds.left - 80;
     const direction = fromRight ? -1 : 1;
 
     demonSprites.forEach((sprite, index) => {
@@ -1125,10 +1178,10 @@ function spawnFireDemonWave() {
         element.style.setProperty('--demon-glow', ['#ff3b18', '#ff6a00', '#ff2d55'][index]);
         element.innerHTML = `<span class="fire-demon-aura"></span><span class="fire-demon-flame"></span><img src="${sprite}" alt="">`;
 
-        const y = Math.max(50, Math.min(viewHeight - 70, viewHeight * (index + 1) / 4));
+        const y = bounds.top + Math.max(50, Math.min(viewHeight - 70, viewHeight * (index + 1) / 4));
         const x = startX + direction * index * 55;
         element.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(${direction})`;
-        document.body.appendChild(element);
+        appendGameEntity(element);
 
         fireDemons.push({
             element,
@@ -1152,16 +1205,17 @@ function spawnEnemyFighterWave() {
         'assets/images/enemy fighters/NoseUPenemyfighterjet2.png',
         'assets/images/enemy fighters/NoseUPenemyfighterjets3.png'
     ];
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewHeight = bounds.bottom - bounds.top;
 
     sprites.forEach((sprite, index) => {
         const element = document.createElement('div');
         element.className = 'enemy-fighter';
         element.innerHTML = `<img src="${sprite}" alt="">`;
-        const x = window.innerWidth + 80 + index * 75;
-        const y = Math.max(60, Math.random() * (viewHeight - 120));
+        const x = bounds.right + 80 + index * 75;
+        const y = bounds.top + Math.max(60, Math.random() * (viewHeight - 120));
         element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-        document.body.appendChild(element);
+        appendGameEntity(element);
         enemyFighters.push({
             element,
             x,
@@ -1198,17 +1252,18 @@ function fireEnemyFighterProjectile(fighter, targetX, targetY) {
     const vx = dx / distance * speed;
     const vy = dy / distance * speed;
     element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
-    document.body.appendChild(element);
+    appendGameEntity(element);
     enemyFighterProjectiles.push({ element, x, y, vx, vy, createdAt: Date.now() });
 }
 
 function spawnMine() {
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewHeight = bounds.bottom - bounds.top;
     const fromRight = Math.random() < 0.5;
-    const x = fromRight ? window.innerWidth + 40 : -40;
-    const y = 60 + Math.random() * Math.max(1, viewHeight - 120);
-    const targetX = window.orbScreenX || window.innerWidth / 2;
-    const targetY = window.orbScreenY || viewHeight / 2;
+    const x = fromRight ? bounds.right + 40 : bounds.left - 40;
+    const y = bounds.top + 60 + Math.random() * Math.max(1, viewHeight - 120);
+    const targetX = window.orbScreenX || (bounds.left + bounds.right) / 2;
+    const targetY = window.orbScreenY || (bounds.top + bounds.bottom) / 2;
     const angle = Math.atan2(targetY - y, targetX - x);
     const element = document.createElement('div');
     element.className = 'mine-item';
@@ -1217,7 +1272,7 @@ function spawnMine() {
         : 'assets/images/mines/orbcluster2.png';
     element.innerHTML = `<img src="${sprite}" alt="">`;
     element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    document.body.appendChild(element);
+    appendGameEntity(element);
     mines.push({
         element,
         x,
@@ -1245,7 +1300,7 @@ function detonateMine(mine) {
         element.alt = '';
         element.setAttribute('aria-hidden', 'true');
         element.style.transform = `translate3d(${mine.x}px, ${mine.y}px, 0) rotate(${angle}rad)`;
-        document.body.appendChild(element);
+        appendGameEntity(element);
         mineFragments.push({
             element,
             x: mine.x,
@@ -1306,7 +1361,8 @@ window.hitFireDemonAtOrb = function (orbX, orbY, radius) {
 }
 
 function spawnConfettiNpc() {
-    const viewHeight = window.innerHeight - 40;
+    const bounds = getGameBounds();
+    const viewHeight = bounds.bottom - bounds.top;
     const fromRight = Math.random() < 0.5;
     const direction = fromRight ? -1 : 1;
     const element = document.createElement('div');
@@ -1318,12 +1374,12 @@ function spawnConfettiNpc() {
         <img src="assets/images/sprites/confettibomb.png" alt="">
     `;
 
-    const x = fromRight ? window.innerWidth + 80 : -80;
-    const y = Math.max(90, Math.min(viewHeight - 150, viewHeight * (0.25 + Math.random() * 0.45)));
+    const x = fromRight ? bounds.right + 80 : bounds.left - 80;
+    const y = bounds.top + Math.max(90, Math.min(viewHeight - 150, viewHeight * (0.25 + Math.random() * 0.45)));
     const glowColor = ['#c084fc', '#f472b6', '#67e8f9'][Math.floor(Math.random() * 3)];
     element.style.setProperty('--confetti-glow', glowColor);
     element.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(${direction})`;
-    document.body.appendChild(element);
+    appendGameEntity(element);
 
     confettiNpc = {
         element,
@@ -1375,7 +1431,7 @@ function fireConfettiBomb(npc, targetX, targetY) {
     const vx = dx / distance * speed;
     const vy = dy / distance * speed;
     element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
-    document.body.appendChild(element);
+    appendGameEntity(element);
     confettiBombProjectiles.push({ element, x, y, vx, vy, speed, createdAt: Date.now() });
 }
 
@@ -1404,7 +1460,7 @@ function fireDemonFireball(demon, targetX, targetY) {
     const vy = (dy / distance) * speed;
     element.style.setProperty('--fireball-glow', demon.glowColor);
     element.style.transform = `translate3d(${originX}px, ${originY}px, 0) rotate(${Math.atan2(vy, vx)}rad)`;
-    document.body.appendChild(element);
+    appendGameEntity(element);
 
     fireDemonProjectiles.push({ element, x: originX, y: originY, vx, vy, speed, createdAt: Date.now() });
 }
@@ -1445,13 +1501,14 @@ function deployTornado() {
 
     wrapper.appendChild(inner);
 
-    const startX = window.innerWidth / 2;
-    const startY = (window.innerHeight - 40) / 2;
+    const bounds = getGameBounds();
+    const startX = (bounds.left + bounds.right) / 2;
+    const startY = (bounds.top + bounds.bottom) / 2;
 
     wrapper.style.left = '0px';
     wrapper.style.top = '0px';
     wrapper.style.transform = `translate3d(${startX - 110}px, ${startY - 110}px, 0)`;
-    document.body.appendChild(wrapper);
+    appendGameEntity(wrapper);
 
     window.activeTornado = {
         element: wrapper,
@@ -1468,20 +1525,23 @@ function deployTornado() {
 function armClusterBomb() {
     window.isClusterBombArmed = true;
     document.body.classList.add('bomb-armed');
+    const bounds = getGameBounds();
 
     const prompt = document.createElement('div');
     prompt.id = 'bomb-arm-prompt';
     prompt.setAttribute('role', 'status');
     prompt.setAttribute('aria-live', 'assertive');
     prompt.innerHTML = '<strong>AOE BOMB ARMED</strong><span>CLICK OR TAP THE FIELD TO DETONATE</span>';
-    document.body.appendChild(prompt);
+    prompt.style.left = `${(bounds.left + bounds.right) / 2}px`;
+    prompt.style.top = `${bounds.top + 12}px`;
+    appendGameEntity(prompt);
 
     bombAimIndicator = document.createElement('div');
     bombAimIndicator.id = 'bomb-aim-indicator';
     bombAimIndicator.setAttribute('aria-hidden', 'true');
     bombAimIndicator.innerHTML = '<span></span>';
-    document.body.appendChild(bombAimIndicator);
-    positionBombAimIndicator(window.innerWidth / 2, window.innerHeight / 2);
+    appendGameEntity(bombAimIndicator);
+    positionBombAimIndicator((bounds.left + bounds.right) / 2, (bounds.top + bounds.bottom) / 2);
 
     const output = document.getElementById('terminal-output');
     if (output) {
@@ -1504,7 +1564,7 @@ window.addEventListener('pointermove', event => {
 });
 
 window.addEventListener('pointerdown', event => {
-    if (window.isClusterBombArmed) {
+    if (window.isClusterBombArmed && event.target.closest('#game-stage')) {
         positionBombAimIndicator(event.clientX, event.clientY);
     }
 });
@@ -1520,7 +1580,7 @@ function detonateClusterBomb(clickX, clickY) {
     explosion.className = 'aoe-explosion';
     explosion.style.left = clickX + 'px';
     explosion.style.top = clickY + 'px';
-    document.body.appendChild(explosion);
+    appendGameEntity(explosion);
 
     document.body.classList.add('bomb-burst-flash');
     setTimeout(() => {
@@ -1728,6 +1788,10 @@ function loseLifeOrTriggerGameOver() {
         window.orbHP = 0;
         updateHPDisplay();
         window.gamePaused = true;
+        stopGameplayLoop();
+        if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+        spawnIntervalTimer = null;
+        window.stopPortalAnimation?.();
         
         // Final death explosion burst
         createExplosionParticles(deathX, deathY, '#8b5cf6');
@@ -1788,7 +1852,7 @@ function castAuraWave(type) {
     wave.className = `aura-wave ${type}`;
     wave.style.left = orbX + 'px';
     wave.style.top = orbY + 'px';
-    document.body.appendChild(wave);
+    appendGameEntity(wave);
 
     setTimeout(() => {
         wave.classList.add('expanded');
@@ -2001,8 +2065,7 @@ function submitScoreToLeaderboard() {
     window.orbHP = 100;
     window.orbEnergy = 100;
     window.gameBeaten = false;
-    window.gamePaused = false;
-    window.gamePausedForShowcase = false;
+    window.gamePaused = !window.gameWindowActive;
     window.isClusterBombArmed = false;
     window.nextPowerUpType = 'fighter';
     window.gameMovementScale = 1;
@@ -2035,8 +2098,11 @@ function submitScoreToLeaderboard() {
         window.resetOrbForNewGame();
     }
 
-    reinitSpawnInterval();
-    scheduleShowcaseAlly();
+    if (window.gameWindowActive) {
+        reinitSpawnInterval();
+        startGameplayLoop();
+        window.startPortalAnimation?.();
+    }
 }window.submitScoreToLeaderboard = submitScoreToLeaderboard;
 
 function renderLeaderboardList() {
@@ -2095,12 +2161,16 @@ function advanceLevel() {
 const BOSS_SIZE = 100;
 
 function getGameBounds() {
-    // Game entities use viewport-fixed coordinates, so bounds must not follow page scroll.
+    const stage = document.getElementById('game-stage');
+    const rect = stage?.getBoundingClientRect();
+    if (rect && rect.width > 0 && rect.height > 0) {
+        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
+    }
     return {
         left: 0,
         top: 0,
         right: window.innerWidth,
-        bottom: Math.max(0, window.innerHeight - 40)
+        bottom: window.innerHeight
     };
 }
 
@@ -2201,7 +2271,7 @@ function triggerBossFight() {
 
     bossElement.style.filter = `hue-rotate(${randomHue}deg) drop-shadow(0 0 20px rgba(168, 85, 247, 0.9))`;
     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
-    document.body.appendChild(bossElement);
+    appendGameEntity(bossElement);
 
     const bossTitleEl = document.querySelector('.boss-title');
     if (bossTitleEl) bossTitleEl.textContent = `[LVL ${window.currentLevel}] ${chosenTitle}`;
@@ -2398,15 +2468,16 @@ function triggerTranscendedEndState() {
 }
 
 function updateGameplayLoop() {
+    gameplayFrameHandle = null;
     if (window.gamePaused) {
-        requestAnimationFrame(updateGameplayLoop);
         return;
     }
 
     const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
-    const viewWidth = window.innerWidth;
-    const viewHeight = window.innerHeight - 40;
     const gameBounds = getGameBounds();
+    const viewWidth = gameBounds.right;
+    const fieldWidth = gameBounds.right - gameBounds.left;
+    const fieldHeight = gameBounds.bottom - gameBounds.top;
 
     handlePowerUpSpawning();
 
@@ -2414,8 +2485,8 @@ function updateGameplayLoop() {
         const bugObj = window.dataBugs[i];
         
         if (isNaN(bugObj.x) || isNaN(bugObj.y)) {
-            bugObj.x = window.innerWidth / 2;
-            bugObj.y = (window.innerHeight - 40) / 2;
+            bugObj.x = (gameBounds.left + gameBounds.right) / 2;
+            bugObj.y = (gameBounds.top + gameBounds.bottom) / 2;
             bugObj.vx = 0;
             bugObj.vy = 0;
         }
@@ -2430,8 +2501,8 @@ function updateGameplayLoop() {
         const dist = Math.hypot(dx, dy);
 
         if (dist < 40 && !bugObj.isAlien) {
-            bugObj.targetX = Math.random() * viewWidth;
-            bugObj.targetY = Math.random() * viewHeight;
+            bugObj.targetX = gameBounds.left + Math.random() * fieldWidth;
+            bugObj.targetY = gameBounds.top + Math.random() * fieldHeight;
         }
 
         const forceX = (dx / (dist || 1)) * 0.05;
@@ -2489,10 +2560,9 @@ function updateGameplayLoop() {
             }
         }
 
-        if (ally.x > viewWidth + allyWidth) {
+        if (ally.x > gameBounds.right + allyWidth) {
             ally.element.remove();
             window.activeShowcaseAlly = null;
-            scheduleShowcaseAlly();
         }
     }
 
@@ -2530,7 +2600,7 @@ function updateGameplayLoop() {
             trail.style.top = `${demon.y + 20 + Math.random() * 18}px`;
             trail.style.setProperty('--trail-drift', `${(Math.random() - 0.5) * 18}px`);
             trail.addEventListener('animationend', () => trail.remove(), { once: true });
-            document.body.appendChild(trail);
+            appendGameEntity(trail);
         }
 
         if (now - demon.lastFireTime >= demon.fireRate / movementScale) {
@@ -2538,8 +2608,8 @@ function updateGameplayLoop() {
             fireDemonFireball(demon, window.orbScreenX, window.orbScreenY);
         }
 
-        if ((demon.direction > 0 && demon.x > viewWidth + 80) ||
-            (demon.direction < 0 && demon.x < -100)) {
+        if ((demon.direction > 0 && demon.x > gameBounds.right + 80) ||
+            (demon.direction < 0 && demon.x < gameBounds.left - 100)) {
             demon.element.remove();
             fireDemons.splice(i, 1);
         }
@@ -2561,7 +2631,7 @@ function updateGameplayLoop() {
             trail.style.left = `${npc.x + (npc.direction > 0 ? 48 : 22)}px`;
             trail.style.top = `${npc.y + 28 + Math.random() * 22}px`;
             trail.addEventListener('animationend', () => trail.remove(), { once: true });
-            document.body.appendChild(trail);
+            appendGameEntity(trail);
         }
 
         if (now - npc.lastFireTime >= npc.fireRate / movementScale) {
@@ -2569,8 +2639,8 @@ function updateGameplayLoop() {
             fireConfettiBomb(npc, window.orbScreenX, window.orbScreenY);
         }
 
-        if ((npc.direction > 0 && npc.x > viewWidth + 90) ||
-            (npc.direction < 0 && npc.x < -110)) {
+        if ((npc.direction > 0 && npc.x > gameBounds.right + 90) ||
+            (npc.direction < 0 && npc.x < gameBounds.left - 110)) {
             npc.element.remove();
             confettiNpc = null;
             nextConfettiNpcAt = now + 24000;
@@ -2579,8 +2649,8 @@ function updateGameplayLoop() {
 
     for (let i = fireDemonProjectiles.length - 1; i >= 0; i--) {
         const projectile = fireDemonProjectiles[i];
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || (window.innerHeight - 40) / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         const targetDx = orbX - projectile.x;
         const targetDy = orbY - projectile.y;
         const targetDistance = Math.hypot(targetDx, targetDy) || 1;
@@ -2608,8 +2678,8 @@ function updateGameplayLoop() {
         }
 
         if (now - projectile.createdAt > 5000 ||
-            projectile.x < -40 || projectile.x > viewWidth + 40 ||
-            projectile.y < -40 || projectile.y > window.innerHeight + 40) {
+            projectile.x < gameBounds.left - 40 || projectile.x > gameBounds.right + 40 ||
+            projectile.y < gameBounds.top - 40 || projectile.y > gameBounds.bottom + 40) {
             projectile.element.remove();
             fireDemonProjectiles.splice(i, 1);
         }
@@ -2617,8 +2687,8 @@ function updateGameplayLoop() {
 
     for (let i = confettiBombProjectiles.length - 1; i >= 0; i--) {
         const projectile = confettiBombProjectiles[i];
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || (window.innerHeight - 40) / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         const targetDx = orbX - projectile.x;
         const targetDy = orbY - projectile.y;
         const targetDistance = Math.hypot(targetDx, targetDy) || 1;
@@ -2646,8 +2716,8 @@ function updateGameplayLoop() {
         }
 
         if (now - projectile.createdAt > 5000 ||
-            projectile.x < -40 || projectile.x > viewWidth + 40 ||
-            projectile.y < -40 || projectile.y > window.innerHeight + 40) {
+            projectile.x < gameBounds.left - 40 || projectile.x > gameBounds.right + 40 ||
+            projectile.y < gameBounds.top - 40 || projectile.y > gameBounds.bottom + 40) {
             projectile.element.remove();
             confettiBombProjectiles.splice(i, 1);
         }
@@ -2663,13 +2733,13 @@ function updateGameplayLoop() {
             fighter.lastFireTime = now;
             fireEnemyFighterProjectile(
                 fighter,
-                window.orbScreenX || window.innerWidth / 2,
-                window.orbScreenY || viewHeight / 2
+                window.orbScreenX || (gameBounds.left + gameBounds.right) / 2,
+                window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2
             );
         }
 
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || viewHeight / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 24;
         if (Math.hypot(fighter.x + 30 - orbX, fighter.y + 20 - orbY) < collisionRadius) {
             damageEnemyFighter(fighter);
@@ -2677,7 +2747,7 @@ function updateGameplayLoop() {
             continue;
         }
 
-        if (fighter.x < -90) {
+        if (fighter.x < gameBounds.left - 90) {
             fighter.element.remove();
             enemyFighters.splice(i, 1);
         }
@@ -2691,8 +2761,8 @@ function updateGameplayLoop() {
         projectile.y += projectile.vy * movementScale;
         projectile.element.style.transform = `translate3d(${projectile.x}px, ${projectile.y}px, 0) rotate(${Math.atan2(projectile.vy, projectile.vx)}rad)`;
 
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || viewHeight / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         if (segmentWithinRadius(previousX, previousY, projectile.x, projectile.y, orbX, orbY, 50 * (window.orbZoomScale || 0.22) + 7)) {
             createExplosionParticles(projectile.x, projectile.y, '#fb7185');
             projectile.element.remove();
@@ -2702,8 +2772,8 @@ function updateGameplayLoop() {
         }
 
         if (now - projectile.createdAt > 6000 ||
-            projectile.x < -60 || projectile.x > viewWidth + 60 ||
-            projectile.y < -60 || projectile.y > window.innerHeight + 60) {
+            projectile.x < gameBounds.left - 60 || projectile.x > gameBounds.right + 60 ||
+            projectile.y < gameBounds.top - 60 || projectile.y > gameBounds.bottom + 60) {
             projectile.element.remove();
             enemyFighterProjectiles.splice(i, 1);
         }
@@ -2715,16 +2785,16 @@ function updateGameplayLoop() {
         mine.y += mine.vy * movementScale;
         mine.element.style.transform = `translate3d(${mine.x}px, ${mine.y}px, 0) rotate(${now * 0.001}rad)`;
 
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || viewHeight / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         if (Math.hypot(mine.x + 18 - orbX, mine.y + 18 - orbY) < 50 * (window.orbZoomScale || 0.22) + 32) {
             detonateMine(mine);
             continue;
         }
 
         if (now - mine.createdAt > 16000 ||
-            mine.x < -80 || mine.x > viewWidth + 80 ||
-            mine.y < -80 || mine.y > viewHeight + 80) {
+            mine.x < gameBounds.left - 80 || mine.x > gameBounds.right + 80 ||
+            mine.y < gameBounds.top - 80 || mine.y > gameBounds.bottom + 80) {
             mine.element.remove();
             mines.splice(i, 1);
         }
@@ -2738,8 +2808,8 @@ function updateGameplayLoop() {
         fragment.y += fragment.vy * movementScale;
         fragment.element.style.transform = `translate3d(${fragment.x}px, ${fragment.y}px, 0) rotate(${Math.atan2(fragment.vy, fragment.vx)}rad)`;
 
-        const orbX = window.orbScreenX || window.innerWidth / 2;
-        const orbY = window.orbScreenY || viewHeight / 2;
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         if (segmentWithinRadius(previousX, previousY, fragment.x, fragment.y, orbX, orbY, 50 * (window.orbZoomScale || 0.22) + 5)) {
             createExplosionParticles(fragment.x, fragment.y, '#f97316');
             fragment.element.remove();
@@ -2749,8 +2819,8 @@ function updateGameplayLoop() {
         }
 
         if (now - fragment.createdAt > 4500 ||
-            fragment.x < -40 || fragment.x > viewWidth + 40 ||
-            fragment.y < -40 || fragment.y > window.innerHeight + 40) {
+            fragment.x < gameBounds.left - 40 || fragment.x > gameBounds.right + 40 ||
+            fragment.y < gameBounds.top - 40 || fragment.y > gameBounds.bottom + 40) {
             fragment.element.remove();
             mineFragments.splice(i, 1);
         }
@@ -2774,7 +2844,7 @@ function updateGameplayLoop() {
             trail.style.setProperty('--trail-drift', `${(Math.random() - 0.5) * 22}px`);
             trail.style.setProperty('--trail-scale', `${0.6 + Math.random() * 0.7}`);
             trail.addEventListener('animationend', () => trail.remove(), { once: true });
-            document.body.appendChild(trail);
+            appendGameEntity(trail);
         }
 
         let target = null;
@@ -2851,10 +2921,10 @@ function updateGameplayLoop() {
         tornado.x += tornado.vx * movementScale;
         tornado.y += tornado.vy * movementScale;
 
-        if (tornado.x < 110) { tornado.x = 110; tornado.vx *= -1; }
-        if (tornado.x > viewWidth - 110) { tornado.x = viewWidth - 110; tornado.vx *= -1; }
-        if (tornado.y < 110) { tornado.y = 110; tornado.vy *= -1; }
-        if (tornado.y > viewHeight - 110) { tornado.y = viewHeight - 110; tornado.vy *= -1; }
+        if (tornado.x < gameBounds.left + 110) { tornado.x = gameBounds.left + 110; tornado.vx *= -1; }
+        if (tornado.x > gameBounds.right - 110) { tornado.x = gameBounds.right - 110; tornado.vx *= -1; }
+        if (tornado.y < gameBounds.top + 110) { tornado.y = gameBounds.top + 110; tornado.vy *= -1; }
+        if (tornado.y > gameBounds.bottom - 110) { tornado.y = gameBounds.bottom - 110; tornado.vy *= -1; }
 
         tornado.element.style.transform = `translate3d(${tornado.x - 110}px, ${tornado.y - 110}px, 0)`;
 
@@ -2895,8 +2965,8 @@ function updateGameplayLoop() {
             bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
         }
 
-        const orbX = window.orbScreenX || (window.innerWidth / 2);
-        const orbY = window.orbScreenY || ((window.innerHeight - 40) / 2);
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
 
         if (now - lastBossChargeTime > 6500 / movementScale && !window.bossIsCharging) {
             window.bossIsCharging = true;
@@ -2904,7 +2974,7 @@ function updateGameplayLoop() {
             
             const warningLine = document.createElement('div');
             warningLine.className = 'boss-charge-line';
-            document.body.appendChild(warningLine);
+            appendGameEntity(warningLine);
 
             const bCenterX = window.bossX + 50;
             const bCenterY = window.bossY + 50;
@@ -2973,7 +3043,7 @@ function updateGameplayLoop() {
                     const spawnY = gameBounds.top;
                     
                     proj.style.transform = `translate3d(${spawnX}px, ${spawnY}px, 0)`;
-                    document.body.appendChild(proj);
+                    appendGameEntity(proj);
 
                     bossProjectiles.push({
                         element: proj,
@@ -2996,7 +3066,7 @@ function updateGameplayLoop() {
             const bCenterX = window.bossX + 50;
             const bCenterY = window.bossY + 50;
             proj.style.transform = `translate3d(${bCenterX}px, ${bCenterY}px, 0)`;
-            document.body.appendChild(proj);
+            appendGameEntity(proj);
 
             bossProjectiles.push({
                 element: proj,
@@ -3011,8 +3081,8 @@ function updateGameplayLoop() {
 
     for (let p = bossProjectiles.length - 1; p >= 0; p--) {
         const proj = bossProjectiles[p];
-        const orbX = window.orbScreenX || (window.innerWidth / 2);
-        const orbY = window.orbScreenY || ((window.innerHeight - 40) / 2);
+        const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
+        const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
 
         if (proj.type === 'star') {
             proj.y += proj.vy * movementScale;
@@ -3063,7 +3133,7 @@ function updateGameplayLoop() {
         }
     }
 
-    requestAnimationFrame(updateGameplayLoop);
+    startGameplayLoop();
 }
 
 function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
@@ -3071,7 +3141,7 @@ function fireLaser(fromX, fromY, bugTarget, color = '#00ff66') {
     laser.className = 'laser-beam';
     laser.style.backgroundColor = color;
     laser.style.boxShadow = `0 0 8px ${color}`;
-    document.body.appendChild(laser);
+    appendGameEntity(laser);
 
     const dx = bugTarget.x - fromX;
     const dy = bugTarget.y - fromY;
@@ -3150,7 +3220,7 @@ function createExplosionParticles(x, y, color) {
         particle.style.boxShadow = `0 0 4px ${color}`;
         particle.style.left = x + 'px';
         particle.style.top = y + 'px';
-        document.body.appendChild(particle);
+        appendGameEntity(particle);
 
         const angle = Math.random() * Math.PI * 2;
         const velocity = Math.random() * 2.5 + 1.2;
@@ -3341,8 +3411,8 @@ function playPowerupSound() {
     } catch (e) {}
 }
 
-function loadModule(category, key) {
-    playUISound();
+function loadModule(category, key, options = {}) {
+    if (!options.silent) playUISound();
     const data = moduleDatabase[category]?.[key];
     if (!data) return;
 
@@ -3372,24 +3442,11 @@ function loadModule(category, key) {
             btn.textContent = link.text;
             actionBar.appendChild(btn);
         });
-        openWindow('vst-window');
+        openWindow('vst-window', options);
     } else if (category === 'games') {
         const win = document.getElementById('games-window');
         win.querySelector('.window-header .window-title').textContent = data.title;
-        win.querySelector('.window-body h3').textContent = data.header;
-        win.querySelector('.window-body p').textContent = data.desc;
-        win.querySelector('.game-terminal-box').textContent = data.content;
-
-        const img = win.querySelector('#game-img');
-        if (img) {
-            img.src = data.image || '';
-            img.onerror = function() {
-                this.onerror = null;
-                this.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ff00' font-family='monospace'>[ ${data.header} PREVIEW ]</text></svg>`;
-            };
-        }
-
-        openWindow('games-window');
+        openWindow('games-window', options);
     } else if (category === 'apps') {
         const win = document.getElementById('apps-window');
         win.querySelector('.window-header .window-title').textContent = data.title;
@@ -3420,7 +3477,7 @@ function loadModule(category, key) {
             img.src = data.image || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ff00' font-family='monospace'>[ ${data.header} PREVIEW ]</text></svg>`;
         }
 
-        openWindow('apps-window');
+        openWindow('apps-window', options);
     } else if (category === 'music') {
         const win = document.getElementById('music-window');
         win.querySelector('.window-header .window-title').textContent = data.title;
@@ -3437,10 +3494,29 @@ function loadModule(category, key) {
             };
         }
 
-        openWindow('music-window');
+        openWindow('music-window', options);
     }
 
+    if ((category === 'apps' || category === 'vst') && !options.rotate && !desktopShowcaseTimers.has(category)) {
+        startDesktopShowcaseRotation(category);
+    }
     closeStartMenu();
+}
+
+function startDesktopShowcaseRotation(category) {
+    const windowId = category === 'apps' ? 'apps-window' : 'vst-window';
+    const interval = category === 'apps' ? 6500 : 7500;
+    if (desktopShowcaseTimers.has(category)) clearInterval(desktopShowcaseTimers.get(category));
+    const timer = setInterval(() => {
+        const showcase = document.getElementById(windowId);
+        if (!showcase || showcase.style.display === 'none') return;
+        const keys = Object.keys(moduleDatabase[category]);
+        if (keys.length < 2) return;
+        const currentIndex = keys.indexOf(currentActiveKeys[category]);
+        const nextKey = keys[(currentIndex + 1 + keys.length) % keys.length];
+        loadModule(category, nextKey, { keepPosition: true, rotate: true, silent: true });
+    }, interval);
+    desktopShowcaseTimers.set(category, timer);
 }
 
 function openAppPage(key) {
@@ -3475,7 +3551,8 @@ function dragElement(elmnt, header) {
 
     function dragMouseDown(e) {
         e = e || window.event;
-        e.preventDefault();
+    if (e.target instanceof Element && e.target.closest('button, a, input')) return;
+    e.preventDefault();
         pos3 = e.clientX;
         pos4 = e.clientY;
         document.onmouseup = closeDragElement;
@@ -3517,22 +3594,29 @@ function centerWindowOnScreen(win) {
     win.style.top = top + 'px';
 }
 
-function openWindow(id) {
-    playUISound();
+function openWindow(id, options = {}) {
+    if (!options.silent) playUISound();
     const win = document.getElementById(id);
     if (win) {
-        if (showcaseWindowIds.has(id)) {
-            if (!window.gamePausedForShowcase) {
-                window.gamePausedBeforeShowcase = window.gamePaused;
-            }
-            window.gamePaused = true;
-            window.gamePausedForShowcase = true;
-            document.body.appendChild(win);
-            win.classList.add('showcase-window');
+        if (id === 'games-window') {
+            win.classList.remove('is-maximized');
+            window.gameWindowActive = true;
+            window.gamePaused = false;
+            const pauseModal = document.getElementById('pause-modal');
+            if (pauseModal) pauseModal.style.display = 'none';
+            const pauseButton = win.querySelector('.game-window-controls [aria-label="Pause or resume game"]');
+            if (pauseButton) pauseButton.textContent = 'Ⅱ';
         }
         win.style.display = 'flex';
         win.style.zIndex = win.classList.contains('showcase-window') ? 100020 : 101;
-        centerWindowOnScreen(win);
+        if (!options.keepPosition && !showcaseWindowIds.has(id)) centerWindowOnScreen(win);
+        if (id === 'games-window') {
+            updateGameEntityClip();
+            window.resizeGamePortal?.();
+            window.startPortalAnimation?.();
+            startGameplayLoop();
+            reinitSpawnInterval();
+        }
     }
 }
 window.openWindow = openWindow;
@@ -3543,23 +3627,60 @@ function closeWindow(id) {
     if (win) {
         win.style.display = 'none';
     }
-    if (showcaseWindowIds.has(id)) {
-        if (window.showcaseWindowId === id) {
-            window.showcaseWindowId = null;
-        }
-        const anotherShowcaseWindowIsOpen = Array.from(showcaseWindowIds).some(windowId => {
-            const showcaseWindow = document.getElementById(windowId);
-            return showcaseWindow && showcaseWindow.style.display !== 'none';
-        });
-        if (!anotherShowcaseWindowIsOpen && window.gamePausedForShowcase) {
-            window.gamePaused = window.gamePausedBeforeShowcase;
-            window.gamePausedBeforeShowcase = false;
-            window.gamePausedForShowcase = false;
-            window.showcaseWindowId = null;
-            scheduleShowcaseAlly();
-        }
+    if (id === 'games-window') {
+        window.gameWindowActive = false;
+        window.gamePaused = true;
+        window.isClusterBombArmed = false;
+        document.body.classList.remove('bomb-armed');
+        document.getElementById('bomb-arm-prompt')?.remove();
+        document.getElementById('bomb-aim-indicator')?.remove();
+        stopGameplayLoop();
+        if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
+        spawnIntervalTimer = null;
+        if (showcaseAllyTimer) clearTimeout(showcaseAllyTimer);
+        showcaseAllyTimer = null;
+        window.stopPortalAnimation?.();
+        updateGameEntityClip();
+    }
+    if (id === 'apps-window' || id === 'vst-window') {
+        const category = id === 'apps-window' ? 'apps' : 'vst';
+        clearInterval(desktopShowcaseTimers.get(category));
+        desktopShowcaseTimers.delete(category);
     }
 }
+
+function toggleGameWindowMaximize() {
+    const win = document.getElementById('games-window');
+    if (!win) return;
+    if (win.classList.contains('is-maximized')) {
+        win.classList.remove('is-maximized');
+        win.style.left = win.dataset.restoreLeft || '';
+        win.style.top = win.dataset.restoreTop || '';
+        win.style.right = win.dataset.restoreRight || '';
+        win.style.bottom = win.dataset.restoreBottom || '';
+        win.style.width = win.dataset.restoreWidth || '';
+        win.style.height = win.dataset.restoreHeight || '';
+    } else {
+        const rect = win.getBoundingClientRect();
+        win.dataset.restoreLeft = win.style.left;
+        win.dataset.restoreTop = win.style.top;
+        win.dataset.restoreRight = win.style.right;
+        win.dataset.restoreBottom = win.style.bottom;
+        win.dataset.restoreWidth = `${rect.width}px`;
+        win.dataset.restoreHeight = `${rect.height}px`;
+        win.classList.add('is-maximized');
+        const edge = window.innerWidth <= 768 ? 0 : 10;
+        win.style.left = `${edge}px`;
+        win.style.top = `${edge}px`;
+        win.style.right = `${edge}px`;
+        win.style.bottom = `${window.innerWidth <= 768 ? 40 : 50}px`;
+        win.style.width = 'auto';
+        win.style.height = 'auto';
+    }
+    updateGameEntityClip();
+    window.resizeGamePortal?.();
+}
+window.toggleGameWindowMaximize = toggleGameWindowMaximize;
 
 // --- ADMIN TERMINAL & COMMAND LINE ROUTER ---
 

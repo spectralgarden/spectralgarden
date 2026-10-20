@@ -1,5 +1,6 @@
 // Portal Environment Setup using Three.js & Starfield background
 let scene, camera, renderer, sacredGeometryGroup, starFieldMesh, invisibleHitbox;
+let animationFrameHandle = null;
 
 // Slingshot aiming vectors and helpers
 let isAimingSlingshot = false;
@@ -51,19 +52,23 @@ let currentSoftColor = new THREE.Color(0xff00ff);
 function initPortal() {
     const container = document.getElementById('canvas-container');
     if (!container) return;
+    const stage = document.getElementById('game-stage');
+    const stageRect = stage ? stage.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+    const stageWidth = Math.max(1, stageRect.width);
+    const stageHeight = Math.max(1, stageRect.height);
     
     // Scene Setup
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x030303, 0.012);
 
     // Camera Setup
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(60, stageWidth / stageHeight, 0.1, 1000);
     camera.position.z = 15;
 
     // Renderer Setup
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(stageWidth, stageHeight);
     container.appendChild(renderer.domElement);
 
     // Create Background Starfield & Shooting Stars generator
@@ -113,8 +118,17 @@ function initPortal() {
     window.addEventListener('touchend', () => { onMouseUp(); }, { passive: false });
 
     document.addEventListener('wheel', onWindowScroll, { passive: false });
-
-    animate();
+    window.resizeGamePortal = onWindowResize;
+    window.startPortalAnimation = () => {
+        if (animationFrameHandle === null && renderer && !window.gamePaused && window.gameWindowActive) {
+            onWindowResize();
+            animate();
+        }
+    };
+    window.stopPortalAnimation = () => {
+        if (animationFrameHandle !== null) cancelAnimationFrame(animationFrameHandle);
+        animationFrameHandle = null;
+    };
 }
 
 function createStarfieldBackground() {
@@ -360,15 +374,18 @@ function clearOrbTrailGhosts() {
 window.clearOrbTrailGhosts = clearOrbTrailGhosts;
 
 function updateBounds() {
-    const aspect = window.innerWidth / window.innerHeight;
+    const stage = document.getElementById('game-stage');
+    const rect = stage ? stage.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+    const aspect = Math.max(1, rect.width) / Math.max(1, rect.height);
     halfHeight3D = Math.tan((camera.fov / 2) * Math.PI / 180) * camera.position.z;
     halfWidth3D = halfHeight3D * aspect;
 }
 
 function onMouseMoveVector(event) {
-    if (window.isGamePaused || window.gamePaused) return;
-    mouse2D.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse2D.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    if (!window.gameWindowActive || window.isGamePaused || window.gamePaused) return;
+    const rect = document.getElementById('game-stage').getBoundingClientRect();
+    mouse2D.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse2D.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
     raycaster.setFromCamera(mouse2D, camera);
     if (invisibleHitbox) {
@@ -420,11 +437,13 @@ function onMouseMoveVector(event) {
 }
 
 function onMouseDown(event) {
-    if (isRespawning || window.isClusterBombArmed || window.isGamePaused || window.gamePaused) return;
+    if (!window.gameWindowActive || isRespawning || window.isClusterBombArmed || window.isGamePaused || window.gamePaused) return;
+    const rect = document.getElementById('game-stage').getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) return;
     if (event.target instanceof Element && event.target.closest('.showcase-ally')) return;
 
-    mouse2D.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse2D.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    mouse2D.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse2D.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
     raycaster.setFromCamera(mouse2D, camera);
     const intersects = raycaster.intersectObject(invisibleHitbox);
@@ -498,7 +517,11 @@ function setOrbPale(isPale) {
 }
 
 function onWindowScroll(event) {
-    if (isRespawning || window.gameBeaten || window.isGamePaused || window.gamePaused) return;
+    const stage = document.getElementById('game-stage');
+    const rect = stage?.getBoundingClientRect();
+    if (!window.gameWindowActive || !rect || event.clientX < rect.left || event.clientX > rect.right ||
+        event.clientY < rect.top || event.clientY > rect.bottom ||
+        isRespawning || window.gameBeaten || window.isGamePaused || window.gamePaused) return;
     event.preventDefault();
 
     if (event.deltaY > 0) {
@@ -513,9 +536,14 @@ function onWindowScroll(event) {
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    if (!camera || !renderer) return;
+    const stage = document.getElementById('game-stage');
+    const rect = stage ? stage.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(width, height);
     updateBounds();
 }
 
@@ -554,12 +582,16 @@ function updateOrbCoreLogo() {
 
     sacredGeometryGroup.getWorldPosition(tempWorldVector);
     const projectedCoord = tempWorldVector.project(camera);
-    const screenX = (projectedCoord.x * 0.5 + 0.5) * window.innerWidth;
-    const screenY = (-projectedCoord.y * 0.5 + 0.5) * window.innerHeight;
+    const stage = document.getElementById('game-stage');
+    const rect = stage.getBoundingClientRect();
+    const localX = (projectedCoord.x * 0.5 + 0.5) * rect.width;
+    const localY = (-projectedCoord.y * 0.5 + 0.5) * rect.height;
+    const screenX = rect.left + localX;
+    const screenY = rect.top + localY;
     const logoSize = 34 * (sacredGeometryGroup.scale.x / zoomScale);
 
-    orbLogo.style.left = `${screenX}px`;
-    orbLogo.style.top = `${screenY}px`;
+    orbLogo.style.left = `${localX}px`;
+    orbLogo.style.top = `${localY}px`;
     orbLogo.style.width = `${logoSize}px`;
     orbLogo.style.height = `${logoSize}px`;
     orbLogo.style.display = sacredGeometryGroup.visible ? 'block' : 'none';
@@ -586,13 +618,16 @@ function checkOrbBugCollisions() {
 
     // Air Hockey Goal Defense Logic for Infinite Defense Mode (Level >= 32)
     if (window.gameBeaten) {
-        if (screenY < 90 && screenX > window.innerWidth / 2 - 120 && screenX < window.innerWidth / 2 + 120) {
+        const stageRect = document.getElementById('game-stage').getBoundingClientRect();
+        const goalCenterX = stageRect.left + stageRect.width / 2;
+        const isInsideGoal = screenX > goalCenterX - 120 && screenX < goalCenterX + 120;
+        if (screenY < stageRect.top + 90 && isInsideGoal) {
             if (typeof window.damageEnemySpawner === 'function') {
                 window.damageEnemySpawner();
             }
             vy = Math.abs(vy); 
         }
-        if (screenY > window.innerHeight - 90 && screenX > window.innerWidth / 2 - 120 && screenX < window.innerWidth / 2 + 120) {
+        if (screenY > stageRect.bottom - 90 && isInsideGoal) {
             if (typeof window.playerConcedeGoal === 'function') {
                 window.playerConcedeGoal();
             }
@@ -795,14 +830,13 @@ function resetOrbForNewGame() {
 window.resetOrbForNewGame = resetOrbForNewGame;
 
 function animate() {
-    requestAnimationFrame(animate);
-
-    updateOrbCoreLogo();
-
-    if (window.isGamePaused || window.gamePaused) {
-        renderer.render(scene, camera);
+    if (window.gamePaused || !window.gameWindowActive) {
+        animationFrameHandle = null;
         return;
     }
+    animationFrameHandle = requestAnimationFrame(animate);
+
+    updateOrbCoreLogo();
 
     const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const spinFactor = window.gameBeaten ? 0.4 : 1.0;
