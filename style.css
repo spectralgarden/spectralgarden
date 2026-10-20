@@ -1261,7 +1261,9 @@ body.orb-exploding .wallpaper-inline-logo {
 
 /* Boss Entity */
 .boss-entity {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100px;
     height: 100px;
     background-color: #111111;
@@ -1282,7 +1284,9 @@ body.orb-exploding .wallpaper-inline-logo {
 }
 
 .boss-projectile {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 12px;
     height: 12px;
     display: flex;
@@ -1296,7 +1300,9 @@ body.orb-exploding .wallpaper-inline-logo {
 }
 
 .boss-charge-line {
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 2px;
     background-color: rgba(139, 92, 246, 0.5);
     z-index: 994;
