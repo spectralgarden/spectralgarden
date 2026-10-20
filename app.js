@@ -3782,8 +3782,8 @@ function submitTerminal(event) {
 let audioCtx;
 let gameAudioGain;
 const storedAudioVolume = localStorage.getItem('spectral_game_volume');
-let gameAudioVolume = storedAudioVolume === null ? 1 : Number(storedAudioVolume);
-if (!Number.isFinite(gameAudioVolume) || gameAudioVolume < 0 || gameAudioVolume > 1) gameAudioVolume = 1;
+let gameAudioVolume = storedAudioVolume === null ? 0.05 : Number(storedAudioVolume);
+if (!Number.isFinite(gameAudioVolume) || gameAudioVolume < 0 || gameAudioVolume > 1) gameAudioVolume = 0.05;
 let gameAudioMuted = localStorage.getItem('spectral_game_muted') === 'true';
 
 function getGameAudioContext() {
