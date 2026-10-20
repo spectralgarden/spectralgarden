@@ -2082,6 +2082,57 @@ function advanceLevel() {
     }
 }
 
+const BOSS_SIZE = 100;
+let cachedGameBounds = null;
+let cachedViewportWidth = 0;
+let cachedViewportHeight = 0;
+
+function getGameBounds() {
+    if (
+        cachedGameBounds &&
+        cachedViewportWidth === window.innerWidth &&
+        cachedViewportHeight === window.innerHeight
+    ) {
+        return cachedGameBounds;
+    }
+
+    const desktop = document.getElementById('desktop');
+    const rect = desktop?.getBoundingClientRect();
+    cachedGameBounds = rect && rect.width > 0 && rect.height > 0
+        ? {left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom}
+        : {
+            left: 0,
+            top: 0,
+            right: window.innerWidth,
+            bottom: Math.max(0, window.innerHeight - 40)
+        };
+    cachedViewportWidth = window.innerWidth;
+    cachedViewportHeight = window.innerHeight;
+    return cachedGameBounds;
+}
+
+function getBossMovementBounds(gameBounds = getGameBounds()) {
+    const maxX = Math.max(gameBounds.left, gameBounds.right - BOSS_SIZE);
+    const maxY = Math.max(gameBounds.top, gameBounds.bottom - BOSS_SIZE);
+    return {
+        minX: Math.min(gameBounds.left + Math.min(220, Math.max(0, gameBounds.right - gameBounds.left - BOSS_SIZE)), maxX),
+        maxX,
+        minY: Math.min(gameBounds.top + 80, maxY),
+        maxY
+    };
+}
+
+function clampBossPosition(gameBounds) {
+    const bounds = getBossMovementBounds(gameBounds);
+    const x = Math.max(bounds.minX, Math.min(bounds.maxX, window.bossX));
+    const y = Math.max(bounds.minY, Math.min(bounds.maxY, window.bossY));
+    const hitX = x !== window.bossX;
+    const hitY = y !== window.bossY;
+    window.bossX = x;
+    window.bossY = y;
+    return { hitX, hitY };
+}
+
 function triggerBossFight() {
     if (window.bossActive) return;
     
@@ -2089,8 +2140,10 @@ function triggerBossFight() {
     window.bossMaxHP = 600 + (window.currentLevel * 250);
     window.bossHP = window.bossMaxHP;
 
-    window.bossX = window.innerWidth / 2 - 50;
+    const gameBounds = getGameBounds();
+    window.bossX = (gameBounds.left + gameBounds.right) / 2 - BOSS_SIZE / 2;
     window.bossY = 180;
+    clampBossPosition(gameBounds);
     window.bossIsCharging = false;
 
     const bossSymbols = [
@@ -2357,6 +2410,7 @@ function updateGameplayLoop() {
     const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const viewWidth = window.innerWidth;
     const viewHeight = window.innerHeight - 40;
+    const gameBounds = getGameBounds();
 
     handlePowerUpSpawning();
 
@@ -2838,8 +2892,9 @@ function updateGameplayLoop() {
             window.bossX += window.bossVX * movementScale;
             window.bossY += window.bossVY * movementScale;
 
-            if (window.bossX < 220 || window.bossX > window.innerWidth - 150) window.bossVX *= -1;
-            if (window.bossY < 80 || window.bossY > window.innerHeight - 200) window.bossVY *= -1;
+            const hitBounds = clampBossPosition(gameBounds);
+            if (hitBounds.hitX) window.bossVX *= -1;
+            if (hitBounds.hitY) window.bossVY *= -1;
 
             bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
         }
@@ -2874,8 +2929,9 @@ function updateGameplayLoop() {
                 if (!window.bossActive) return;
 
                 const slideAngle = Math.atan2(orbY - (window.bossY + 50), orbX - (window.bossX + 50));
-                const targetSlideX = window.bossX + Math.cos(slideAngle) * len;
-                const targetSlideY = window.bossY + Math.sin(slideAngle) * len;
+                const slideBounds = getBossMovementBounds();
+                const targetSlideX = Math.max(slideBounds.minX, Math.min(slideBounds.maxX, window.bossX + Math.cos(slideAngle) * len));
+                const targetSlideY = Math.max(slideBounds.minY, Math.min(slideBounds.maxY, window.bossY + Math.sin(slideAngle) * len));
 
                 let slideStepCount = 0;
                 const slideTicks = 20;
@@ -2888,6 +2944,9 @@ function updateGameplayLoop() {
                     if (window.gamePaused) return;
                     window.bossX += (targetSlideX - window.bossX) * 0.25 * (window.gameMovementScale || 1);
                     window.bossY += (targetSlideY - window.bossY) * 0.25 * (window.gameMovementScale || 1);
+                    const hitBounds = clampBossPosition();
+                    if (hitBounds.hitX) window.bossVX *= -1;
+                    if (hitBounds.hitY) window.bossVY *= -1;
                     bossElement.style.transform = `translate3d(${window.bossX}px, ${window.bossY}px, 0)`;
                     
                     slideStepCount++;
@@ -2914,8 +2973,8 @@ function updateGameplayLoop() {
                     proj.style.color = '#ff9900';
                     proj.style.fontSize = '14px';
 
-                    const spawnX = Math.random() * (window.innerWidth - 300) + 220;
-                    const spawnY = -20;
+                    const spawnX = gameBounds.left + Math.random() * Math.max(0, gameBounds.right - gameBounds.left - 12);
+                    const spawnY = gameBounds.top;
                     
                     proj.style.transform = `translate3d(${spawnX}px, ${spawnY}px, 0)`;
                     document.body.appendChild(proj);
@@ -2963,7 +3022,7 @@ function updateGameplayLoop() {
             proj.y += proj.vy * movementScale;
             proj.element.style.transform = `translate3d(${proj.x}px, ${proj.y}px, 0)`;
 
-            if (proj.y > window.innerHeight) {
+            if (proj.y > gameBounds.bottom - 12) {
                 proj.element.remove();
                 bossProjectiles.splice(p, 1);
                 continue;
@@ -2982,6 +3041,17 @@ function updateGameplayLoop() {
             proj.y += proj.vy * movementScale;
 
             proj.element.style.transform = `translate3d(${proj.x}px, ${proj.y}px, 0)`;
+        }
+
+        if (
+            proj.x < gameBounds.left ||
+            proj.x > gameBounds.right - 12 ||
+            proj.y < gameBounds.top ||
+            proj.y > gameBounds.bottom - 12
+        ) {
+            proj.element.remove();
+            bossProjectiles.splice(p, 1);
+            continue;
         }
 
         const collisionRadius = 50 * (window.orbZoomScale || 0.22);
@@ -3074,6 +3144,9 @@ window.explodeBug = explodeBug;
 
 function createExplosionParticles(x, y, color) {
     const count = 10;
+    const bounds = getGameBounds();
+    if (x < bounds.left || x + 4 > bounds.right || y < bounds.top || y + 4 > bounds.bottom) return;
+
     for (let i = 0; i < count; i++) {
         const particle = document.createElement('div');
         particle.className = 'bug-particle';
@@ -3087,25 +3160,20 @@ function createExplosionParticles(x, y, color) {
         const velocity = Math.random() * 2.5 + 1.2;
         const vx = Math.cos(angle) * velocity;
         const vy = Math.sin(angle) * velocity;
+        const endX = Math.max(bounds.left - x, Math.min(bounds.right - x - 4, vx * 20));
+        const endY = Math.max(bounds.top - y, Math.min(bounds.bottom - y - 4, vy * 20));
 
-        let opacity = 1.0;
-        let pX = x;
-        let pY = y;
-
-        const loop = setInterval(() => {
-            pX += vx;
-            pY += vy;
-            opacity -= 0.05;
-
-            particle.style.left = pX + 'px';
-            particle.style.top = pY + 'px';
-            particle.style.opacity = opacity;
-
-            if (opacity <= 0) {
-                clearInterval(loop);
-                particle.remove();
-            }
-        }, 20);
+        const animation = particle.animate([
+            {transform: 'translate3d(0, 0, 0)', opacity: 1},
+            {transform: `translate3d(${endX}px, ${endY}px, 0)`, opacity: 0}
+        ], {duration: 400, easing: 'linear', fill: 'forwards'});
+        const cleanupTimer = setTimeout(() => particle.remove(), 500);
+        const removeParticle = () => {
+            clearTimeout(cleanupTimer);
+            particle.remove();
+        };
+        animation.onfinish = removeParticle;
+        if (animation.playState === 'finished') removeParticle();
     }
 }
 

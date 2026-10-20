@@ -1582,7 +1582,7 @@ body.showcase-burst-flash::after {
 }
 
 .bug-particle {
-    position: absolute;
+    position: fixed;
     width: 4px;
     height: 4px;
     pointer-events: none;
