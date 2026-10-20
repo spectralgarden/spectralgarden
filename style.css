@@ -2553,6 +2553,7 @@ body.showcase-burst-flash::after {
     min-height: 0;
     overflow: hidden;
     background: #050813;
+    touch-action: none;
 }
 
 .game-stage #canvas-container,
