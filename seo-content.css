@@ -158,9 +158,10 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .site-guide {
         width: 100%;
+        margin-top: 0;
         padding: 24px 18px;
     }
 }

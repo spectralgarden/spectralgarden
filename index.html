@@ -82,13 +82,6 @@
     <!-- Vintage GUI Desktop Environment -->
     <div id="desktop">
         
-        <!-- Large Background Wallpaper Logo -->
-        <!-- Large Background Wallpaper Logo with Inline Logo Integration -->
-        <div class="wallpaper-logo">
-            <span>SPECTRAL</span>
-            <img src="assets/images/sg_logo23.png" alt="" class="wallpaper-inline-logo">
-            <span>GARDEN</span>
-        </div>
         <!-- Terms of Service Window -->
         <div id="tos-window" class="window" style="top: 20%; left: 35%; width: 440px; display: none;">
             <div class="window-header">
@@ -166,10 +159,10 @@
             </div>
         </div>
 
-        <!-- Astral Avenger game window -->
-        <div id="games-window" class="window game-window" style="top: 7%; left: 4%; width: 58%; height: 82%; display: none;" aria-label="Astral Avenger game window">
+        <!-- Astral's End game window -->
+        <div id="games-window" class="window game-window" style="top: 7%; left: 4%; width: 58%; height: 82%; display: none;" aria-label="Astral's End game window">
             <div class="window-header">
-                <span class="window-title">C:\PROG\GAMES\ASTRAL_AVENGER.EXE</span>
+                <span class="window-title">C:\PROG\GAMES\ASTRALS_END.EXE</span>
                 <div class="game-window-controls">
                     <button class="window-control" type="button" onclick="togglePauseGame()" aria-label="Pause or resume game" title="Pause or resume">Ⅱ</button>
                     <button class="window-control" type="button" onclick="toggleGameWindowMaximize()" aria-label="Maximize game window" title="Maximize or restore">□</button>
@@ -189,14 +182,14 @@
                     <div class="energy-bar-outer"><div id="energy-bar-inner" class="energy-bar-inner"></div></div>
                 </div>
                 <div class="shield-container">
-                    <div class="shield-label"><span>SHIELD</span><span id="shield-text">100%</span></div>
+                    <div class="shield-label"><span>HEALTH</span><span id="shield-text">100%</span></div>
                     <div class="shield-bar-outer"><div id="shield-bar-inner" class="shield-bar-inner"></div></div>
                 </div>
                 <div id="help-submenu-container">
                     <button id="help-submenu-trigger" class="retro-btn" type="button" onclick="toggleHelpSubmenu(event)">? CONTROLS</button>
                     <div id="help-submenu">
                         <div class="help-content-inner">
-                            <div class="help-title">[ ASTRAL AVENGER // FIELD MANUAL ]</div>
+                            <div class="help-title">[ ASTRAL'S END // FIELD MANUAL ]</div>
                             <p>Drag and release the core to slingshot it through the field. Collect allies and power-ups, avoid hostile entities, and survive each boss encounter.</p>
                         </div>
                     </div>
@@ -220,10 +213,15 @@
                     </div>
                 </div>
             </div>
-            <div id="game-stage" class="game-stage" aria-label="Astral Avenger playfield">
+            <div id="game-stage" class="game-stage" aria-label="Astral's End playfield">
                 <div id="level-background" aria-hidden="true"></div>
                 <div id="canvas-container"></div>
                 <div id="damage-overlay"></div>
+                <div class="wallpaper-logo">
+                    <span>SPECTRAL</span>
+                    <img src="assets/images/sg_logo23.png" alt="" class="wallpaper-inline-logo">
+                    <span>GARDEN</span>
+                </div>
                 <img id="orb-core-logo" src="assets/images/sglogo.png" alt="" aria-hidden="true">
                 <div id="level-banner" class="level-banner">
                     <div id="level-banner-text" class="level-banner-glitch">LEVEL 1</div>
@@ -345,7 +343,7 @@
                 <div class="menu-item">
                     <span>👾 GAMES</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
-                        <div class="submenu-item" onclick="loadModule('games', 'game_a')">Astral Avenger</div>
+                        <div class="submenu-item" onclick="loadModule('games', 'game_a')">Astral's End</div>
                     </div>
                 </div>
 
@@ -413,7 +411,7 @@
 
         <section id="experiences" class="site-guide__section">
             <h2>Interactive experiences and indie games</h2>
-            <p><em>Astral Avenger</em> is a playable arcade prototype in the desktop's VOID &gt; GAMES menu. Its Three.js playfield opens in a separate, resizable game window with its own status controls. The visual effects are artistic software rather than scientific visualization.</p>
+            <p><em>Astral's End</em> is a playable arcade prototype in the desktop's VOID &gt; GAMES menu. Its Three.js playfield opens in a separate, resizable game window with its own status controls. The visual effects are artistic software rather than scientific visualization.</p>
             <p>Spectral Garden also develops <em>Eden's Edge</em>, an independent game project in development. Prototype availability and release details may change as development continues.</p>
         </section>
 
@@ -447,7 +445,7 @@
             <details><summary>What is Spectral Garden?</summary><p>It is an independent software studio and project hub for astrology and tarot study tools, audio plugins, and experimental interactive media.</p></details>
             <details><summary>Do I need to use the desktop interface to access the apps?</summary><p>No. The direct application links in this guide open Spectral Atlas, Flame Finder, and the Akashic Tarot reference without using the desktop menus.</p></details>
             <details><summary>Are the astrology results scientific predictions?</summary><p>No. Astrology is a symbolic interpretive practice. The calculations map astronomical positions into an astrological framework, but the interpretations are not scientifically validated predictions.</p></details>
-            <details><summary>How do I play Astral Avenger?</summary><p>Open VOID, choose GAMES, and select Astral Avenger. The game opens in a resizable window with its own stats and controls; drag and release the core to launch it.</p></details>
+            <details><summary>How do I play Astral's End?</summary><p>Open VOID, choose GAMES, and select Astral's End. The game opens in a resizable window with its own stats and controls; drag and release the core to launch it.</p></details>
             <details><summary>Where can I find plugin compatibility and installation details?</summary><p>Consult the release information associated with each plugin before installing it. Compatibility and platform support depend on the current release.</p></details>
         </section>
     </main>

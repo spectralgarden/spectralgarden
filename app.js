@@ -152,8 +152,8 @@ const moduleDatabase = {
     },
     games: {
         game_a: {
-    title: "C:\\PROG\\GAMES\\ASTRAL_AVENGER.EXE",
-    header: "Astral Avenger",
+    title: "C:\\PROG\\GAMES\\ASTRALS_END.EXE",
+    header: "Astral's End",
     desc: "A spectral arcade survival game. Slingshot the core through the field, gather power-ups, and face the corrupted guardians.",
     image: "",
     content: "STATUS: READY\nGAME WINDOW: RESIZABLE\nCONTROLS: DRAG AND RELEASE"
@@ -293,7 +293,7 @@ function updateGameEntityClip() {
     const isVisible = window.gameWindowActive && rect.width > 0 && rect.height > 0;
     layer.style.visibility = isVisible ? 'visible' : 'hidden';
     layer.style.clipPath = isVisible
-        ? `inset(${rect.top}px ${Math.max(0, window.innerWidth - rect.right)}px ${Math.max(0, window.innerHeight - rect.bottom)}px ${rect.left}px)`
+        ? `inset(${Math.max(0, rect.top)}px ${Math.max(0, window.innerWidth - rect.right)}px ${Math.max(0, window.innerHeight - rect.bottom)}px ${Math.max(0, rect.left)}px)`
         : 'inset(0 100% 100% 0)';
 }
 
@@ -392,7 +392,7 @@ function initializeWallpaperWordmark() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     wordmark.addEventListener('animationiteration', (event) => {
-        if (event.target !== wordmark || event.animationName !== 'wallpaper-pulse') return;
+        if (event.target !== wordmark || !['wallpaper-pulse', 'game-wordmark-pulse'].includes(event.animationName)) return;
         if (wordmarkGlitchTimer) clearTimeout(wordmarkGlitchTimer);
         wordmarkGlitchTimer = window.setTimeout(() => {
             wordmarkGlitchTimer = null;
@@ -442,6 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).observe(gameStage);
     }
     window.addEventListener('resize', updateGameEntityClip);
+    window.addEventListener('scroll', updateGameEntityClip, { passive: true });
     document.addEventListener('mousemove', updateGameEntityClip);
 
     const submenus = document.querySelectorAll('.submenu');
@@ -550,10 +551,10 @@ document.addEventListener('touchstart', (e) => {
 
     tapTimer = setTimeout(() => {
         if (tapCount === 2) {
-            // DOUBLE-TAP -> Pulse / Push Aura (10 Energy)
+            // DOUBLE-TAP -> Pulse / Push Aura (5 Energy)
             castAuraWave('push');
         } else if (tapCount >= 3) {
-            // TRIPLE-TAP -> Damage Blast Aura (20 Energy)
+            // TRIPLE-TAP -> Damage Blast Aura (10 Energy)
             castAuraWave('damage');
         }
         tapCount = 0; // Reset counter after evaluation window ends
@@ -1649,7 +1650,7 @@ function updateHPDisplay() {
     const shieldBar = document.getElementById('shield-bar-inner');
     if (shieldBar) {
         shieldBar.style.width = Math.max(0, window.orbHP) + '%';
-        shieldBar.style.backgroundColor = window.orbHP > 60 ? '#00a8ff' : (window.orbHP > 25 ? '#ffcc00' : '#a855f7');
+        shieldBar.style.backgroundColor = '#ef4444';
     }
 }
 
@@ -1836,7 +1837,7 @@ function restoreEnergy(amount) {
 function castAuraWave(type) {
     if (window.orbHP <= 0 || window.gameBeaten) return;
 
-    const cost = type === 'damage' ? 20 : 10;
+    const cost = type === 'damage' ? 10 : 5;
     if (window.orbEnergy < cost) {
         playDamageTone(); 
         return;
@@ -3508,6 +3509,7 @@ function startDesktopShowcaseRotation(category) {
     const interval = category === 'apps' ? 6500 : 7500;
     if (desktopShowcaseTimers.has(category)) clearInterval(desktopShowcaseTimers.get(category));
     const timer = setInterval(() => {
+        if (window.matchMedia('(max-width: 768px)').matches) return;
         const showcase = document.getElementById(windowId);
         if (!showcase || showcase.style.display === 'none') return;
         const keys = Object.keys(moduleDatabase[category]);
@@ -3608,7 +3610,7 @@ function openWindow(id, options = {}) {
             if (pauseButton) pauseButton.textContent = 'Ⅱ';
         }
         win.style.display = 'flex';
-        win.style.zIndex = win.classList.contains('showcase-window') ? 100020 : 101;
+        win.style.zIndex = id === 'games-window' ? 10001 : (win.classList.contains('showcase-window') ? 100020 : 101);
         if (!options.keepPosition && !showcaseWindowIds.has(id)) centerWindowOnScreen(win);
         if (id === 'games-window') {
             updateGameEntityClip();
