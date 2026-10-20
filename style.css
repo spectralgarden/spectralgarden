@@ -326,7 +326,7 @@ body.boss-active.orb-damaged #canvas-container {
     z-index: 10;
     padding: 20px;
     padding-bottom: 60px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .wallpaper-logo {
