@@ -831,7 +831,7 @@ function spawnDataBug() {
 
                 if (harmlessRoll) {
                     isHarmless = true;
-                    glyphs = ['assets/images/junk/1_junk.png', '🪰', '⚙️', 'assets/images/junk/2_junk.png', 'assets/images/junk/3_junk.png', 'assets/images/junk/4_junk.png'];
+                    glyphs = ['assets/images/junk/1_junk.png', 'assets/images/junk/6_junk.png', 'assets/images/junk/5_junk.png', 'assets/images/junk/2_junk.png', 'assets/images/junk/3_junk.png', 'assets/images/junk/4_junk.png'];
                     chosenColor = '#668899'; 
                     chosenShadow = 'rgba(102, 136, 153, 0.5)';
                     bugElement.style.fontSize = '15px';
@@ -1608,6 +1608,17 @@ function updateKillsDisplay() {
 function updateLevelDisplay() {
     const lvlDisplay = document.getElementById('level-num-display');
     if (lvlDisplay) lvlDisplay.textContent = window.currentLevel;
+
+    const backgrounds = [
+        'spectral_garden_bg.png',
+        'reverse_asteroids_bg.png',
+        'astral_nebula_grove_bg.png'
+    ];
+    const background = document.getElementById('level-background');
+    if (background) {
+        const filename = backgrounds[(window.currentLevel - 1) % backgrounds.length];
+        background.style.backgroundImage = `url("assets/images/backgrounds/${filename}")`;
+    }
 }
 
 function updateXPDisplay() {
@@ -2083,32 +2094,15 @@ function advanceLevel() {
 }
 
 const BOSS_SIZE = 100;
-let cachedGameBounds = null;
-let cachedViewportWidth = 0;
-let cachedViewportHeight = 0;
 
 function getGameBounds() {
-    if (
-        cachedGameBounds &&
-        cachedViewportWidth === window.innerWidth &&
-        cachedViewportHeight === window.innerHeight
-    ) {
-        return cachedGameBounds;
-    }
-
-    const desktop = document.getElementById('desktop');
-    const rect = desktop?.getBoundingClientRect();
-    cachedGameBounds = rect && rect.width > 0 && rect.height > 0
-        ? {left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom}
-        : {
-            left: 0,
-            top: 0,
-            right: window.innerWidth,
-            bottom: Math.max(0, window.innerHeight - 40)
-        };
-    cachedViewportWidth = window.innerWidth;
-    cachedViewportHeight = window.innerHeight;
-    return cachedGameBounds;
+    // Game entities use viewport-fixed coordinates, so bounds must not follow page scroll.
+    return {
+        left: 0,
+        top: 0,
+        right: window.innerWidth,
+        bottom: Math.max(0, window.innerHeight - 40)
+    };
 }
 
 function getBossMovementBounds(gameBounds = getGameBounds()) {
@@ -2137,6 +2131,7 @@ function triggerBossFight() {
     if (window.bossActive) return;
     
     window.bossActive = true;
+    document.body.classList.add('boss-active');
     window.bossMaxHP = 600 + (window.currentLevel * 250);
     window.bossHP = window.bossMaxHP;
 
@@ -2167,7 +2162,7 @@ function triggerBossFight() {
             : bossSymbols[Math.floor(Math.random() * bossSymbols.length)];
     
     const bossTitles = [
-        "CORE_BREACH_CORRUPTOR.EXE",
+        "CORE_BREACH_SHADOW.EXE",
         "VOID_PHANTOM_OVERLORD.SYS",
         "ANOMALY_VECTOR_ZERO.BAT",
         "SPECTRAL_DAEMON_DESTRUCTOR",
@@ -2267,6 +2262,7 @@ function defeatBoss() {
 
 function retreatBoss() {
     window.bossActive = false;
+    document.body.classList.remove('boss-active');
     window.bossIsCharging = false;
     if (bossElement) {
         const retreatingBoss = bossElement;
@@ -2313,6 +2309,7 @@ function cleanupBossFight() {
         bossRetreatAdvanceTimer = null;
     }
     window.bossActive = false;
+    document.body.classList.remove('boss-active');
     if (bossElement) {
         bossElement.remove();
         bossElement = null;
