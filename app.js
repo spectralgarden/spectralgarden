@@ -172,7 +172,7 @@ const moduleDatabase = {
                      "• Random Draw: Simulates a digital pull.<br>" +
                      "• Zero Bloat: Pure ritual logic, no backend.<br><br>" +
                      "🧪 <strong>TECH STACK:</strong> HTML, CSS, Vanilla JS<br><br>",
-            pageUrl: "https://spectralgarden.github.io/akashictarot/",
+            pageUrl: "https://akashictarot.spectralgarden.net/",
             openLabel: "LAUNCH AKASHIC TAROT WEBAPP"
         },
         app_b: {
@@ -183,7 +183,7 @@ const moduleDatabase = {
                      "Enter your birth date, time, and location to explore personalized planetary lines across an interactive world map.<br><br>" +
                      "FEATURES: Astrocartography lines, relocation comparisons, planetary crossings, parans, and transit maps.",
             image: "assets/images/spectralatlasscreen.png",
-            pageUrl: "https://spectralgarden.github.io/spectralatlas/",
+            pageUrl: "https://spectralatlas.spectralgarden.net/",
             openLabel: "LAUNCH SPECTRAL ATLAS"
         },
         app_c: {
@@ -193,7 +193,7 @@ const moduleDatabase = {
             content: "ASTROLOGY TOOLS + COMMUNITY<br><br>" +
                      "Explore natal charts and synastry reports, and connect with others in the Flame Finder forum.",
             image: "assets/images/flamefinderscreenshot.png",
-            pageUrl: "https://flamefinder.spectralgarden.workers.dev/",
+            pageUrl: "https://flamefinder.spectralgarden.net/",
             openLabel: "LAUNCH FLAME FINDER"
         }
     },

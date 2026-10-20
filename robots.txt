@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://spectralgarden.github.io/spectralgarden/sitemap.xml
+Sitemap: https://spectralgarden.net/sitemap.xml
