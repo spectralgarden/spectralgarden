@@ -311,10 +311,18 @@ body.boss-active.orb-damaged #canvas-container {
     padding: 6px;
 }
 
-.showcase-cycle-label {
-    color: #6d28d9;
-    font: bold 9px "Courier New", monospace;
-    letter-spacing: 1.2px;
+.showcase-action-bar {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+}
+
+.showcase-action-bar > .retro-btn {
+    display: block;
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 9px;
+    line-height: 1.2;
 }
 
 #desktop {

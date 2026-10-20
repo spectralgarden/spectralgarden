@@ -3434,13 +3434,14 @@ function loadModule(category, key, options = {}) {
             };
         }
         
-        const actionBar = win.querySelector('.window-body .action-bar');
+        const actionBar = win.querySelector('.window-body .showcase-action-bar');
         actionBar.innerHTML = '';
         data.links.forEach(link => {
             const btn = document.createElement('a');
             btn.href = link.href;
             btn.className = 'retro-btn';
-            btn.textContent = link.text;
+            btn.textContent = 'DOWNLOAD VST3 WIN';
+            btn.setAttribute('aria-label', link.text);
             actionBar.appendChild(btn);
         });
         openWindow('vst-window', options);
