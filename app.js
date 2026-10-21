@@ -2268,7 +2268,7 @@ function triggerGameOverLeaderboardModal() {
     const scoreVal = document.getElementById('final-score-val');
     if (scoreVal) scoreVal.textContent = window.bugEliminationCount * 100 + (window.currentLevel * 500) + window.sleepParalysisPoints;
     if (modal) modal.style.display = 'flex';
-    renderLeaderboardList();
+    loadLeaderboard();
 }
 
 function clearGameBoard() {
@@ -2353,18 +2353,35 @@ function clearGameBoard() {
     bossProjectiles = [];
 }
 
-function submitScoreToLeaderboard() {
+async function submitScoreToLeaderboard() {
     const nameInput = document.getElementById('leaderboard-name-input');
     const nickname = (nameInput && nameInput.value.trim()) ? nameInput.value.trim().toUpperCase() : 'ANONYMOUS';
     const finalScore = window.bugEliminationCount * 100 + (window.currentLevel * 500) + window.sleepParalysisPoints;
+    const button = document.getElementById('leaderboard-submit-button');
+    const status = document.getElementById('leaderboard-status');
+    if (button) button.disabled = true;
+    if (status) status.textContent = 'Saving record...';
 
-    let scores = JSON.parse(localStorage.getItem('spectral_garden_lb') || '[]');
-    scores.push({ name: nickname, score: finalScore });
-    scores.sort((a, b) => b.score - a.score);
-    scores = scores.slice(0, 5);
-
-    localStorage.setItem('spectral_garden_lb', JSON.stringify(scores));
-    renderLeaderboardList();
+    try {
+        const response = await fetch('https://flamefinder.spectralgarden.net/api/games/astrals-end/scores', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: nickname, score: finalScore })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not save your score.');
+        renderLeaderboardList(result.scores);
+        if (status) status.textContent = result.ranked
+            ? 'Record saved to the global leaderboard.'
+            : 'Your score did not reach the global top five.';
+    } catch (error) {
+        if (status) status.textContent = error instanceof Error
+            ? `${error.message} Please try again.`
+            : 'Could not save your score. Please try again.';
+        return;
+    } finally {
+        if (button) button.disabled = false;
+    }
 
     clearGameBoard();
 
@@ -2421,13 +2438,32 @@ function submitScoreToLeaderboard() {
     }
 }window.submitScoreToLeaderboard = submitScoreToLeaderboard;
 
-function renderLeaderboardList() {
+async function loadLeaderboard() {
+    const status = document.getElementById('leaderboard-status');
+    if (status) status.textContent = 'Loading global leaderboard...';
+    try {
+        const response = await fetch('https://flamefinder.spectralgarden.net/api/games/astrals-end/leaderboard', {
+            cache: 'no-store'
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Could not load the leaderboard.');
+        renderLeaderboardList(result.scores);
+        if (status) status.textContent = '';
+    } catch (error) {
+        const listEl = document.getElementById('leaderboard-list');
+        if (listEl) listEl.textContent = 'GLOBAL LEADERBOARD UNAVAILABLE';
+        if (status) status.textContent = error instanceof Error
+            ? error.message
+            : 'Could not load the leaderboard.';
+    }
+}
+
+function renderLeaderboardList(scores) {
     const listEl = document.getElementById('leaderboard-list');
     if (!listEl) return;
-    
-    let scores = JSON.parse(localStorage.getItem('spectral_garden_lb') || '[]');
-    if (scores.length === 0) {
-        listEl.innerHTML = '<div style="text-align:center; color:#666;">NO RECORDS LOGGED</div>';
+
+    if (!Array.isArray(scores) || scores.length === 0) {
+        listEl.textContent = 'NO RECORDS LOGGED';
         return;
     }
 
@@ -2435,7 +2471,11 @@ function renderLeaderboardList() {
     scores.forEach((entry, idx) => {
         const row = document.createElement('div');
         row.className = 'lb-row';
-        row.innerHTML = `<span>#${idx + 1} ${entry.name}</span><span>${entry.score} PTS</span>`;
+        const name = document.createElement('span');
+        name.textContent = `#${idx + 1} ${entry.name}`;
+        const score = document.createElement('span');
+        score.textContent = `${entry.score} PTS`;
+        row.append(name, score);
         listEl.appendChild(row);
     });
 }

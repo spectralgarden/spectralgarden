@@ -237,11 +237,12 @@
                     <div class="gameover-content">
                         <div class="gameover-header">SYS_CRASH // CORE DESTROYED</div>
                         <div class="gameover-score-display">FINAL SCORE: <span id="final-score-val">0</span></div>
-                        <p>Enter your operator nickname for the local high-score matrix:</p>
+                        <p>Enter your operator nickname for the global high-score matrix:</p>
                         <input type="text" id="leaderboard-name-input" maxlength="12" placeholder="ANONYMOUS" autocomplete="off">
-                        <div class="gameover-btn-row"><button class="retro-btn" type="button" onclick="submitScoreToLeaderboard()">SUBMIT RECORD</button></div>
+                        <div class="gameover-btn-row"><button id="leaderboard-submit-button" class="retro-btn" type="button" onclick="submitScoreToLeaderboard()">SUBMIT RECORD</button></div>
+                        <div id="leaderboard-status" role="status" aria-live="polite"></div>
                         <div class="leaderboard-table-container">
-                            <div class="lb-title">-- LOCAL HIGH SCORES --</div>
+                            <div class="lb-title">-- GLOBAL HIGH SCORES --</div>
                             <div id="leaderboard-list"></div>
                         </div>
                     </div>
