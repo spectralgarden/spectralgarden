@@ -3976,6 +3976,22 @@ function navigateModule(category, direction) {
     loadModule(category, keys[index]);
 }
 
+function bringWindowToFront(win) {
+    const minimumZIndex = win.classList.contains('showcase-window')
+        ? 100020
+        : win.id === 'games-window'
+            ? 10001
+            : 101;
+    const highestVisibleZIndex = Array.from(document.querySelectorAll('.window'))
+        .reduce((highest, candidate) => {
+            if (candidate === win || getComputedStyle(candidate).display === 'none') return highest;
+            const zIndex = Number.parseInt(getComputedStyle(candidate).zIndex, 10);
+            return Number.isFinite(zIndex) ? Math.max(highest, zIndex) : highest;
+        }, minimumZIndex - 1);
+
+    win.style.zIndex = String(Math.max(minimumZIndex, highestVisibleZIndex + 1));
+}
+
 function dragElement(elmnt, header) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     if (header) {
@@ -3993,10 +4009,7 @@ function dragElement(elmnt, header) {
         
         document.body.classList.add('dragging-active');
         
-        document.querySelectorAll('.window').forEach(w => {
-            w.style.zIndex = w.classList.contains('showcase-window') ? 100020 : 10;
-        });
-        elmnt.style.zIndex = elmnt.classList.contains('showcase-window') ? 100021 : 100;
+        bringWindowToFront(elmnt);
     }
 
     function elementDrag(e) {
@@ -4041,7 +4054,7 @@ function openWindow(id, options = {}) {
             if (pauseButton) pauseButton.textContent = 'Ⅱ';
         }
         win.style.display = 'flex';
-        win.style.zIndex = id === 'games-window' ? 10001 : (win.classList.contains('showcase-window') ? 100020 : 101);
+        bringWindowToFront(win);
         if (!options.keepPosition && !showcaseWindowIds.has(id)) centerWindowOnScreen(win);
         if (id === 'games-window') {
             updateGameEntityClip();

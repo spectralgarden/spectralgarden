@@ -38,6 +38,16 @@ body {
     pointer-events: none;
 }
 
+.screen-frame::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to bottom, #111111 0 2px, #8b5cf6 2px 5px);
+}
+
 a, button, .retro-btn, .close-btn, .icon, .start-btn, .submenu-item, .menu-item, input, .window-header {
     cursor: url('assets/images/star_cursor.png') 32 2, pointer !important;
 }
