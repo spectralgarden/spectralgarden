@@ -2629,8 +2629,8 @@ function triggerBossFight() {
         'assets/images/boss/9_boss.png', 
         'assets/images/boss/12_boss.png',
         'assets/images/boss/13_boss.png',
-        '⚡', 
-        '🪐'
+        'assets/images/boss/15_boss.png', 
+        'assets/images/boss/16_boss.png'
     ];
     const chosenSymbol = window.currentLevel === 5
         ? 'assets/images/boss/5_boss.png'
