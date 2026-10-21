@@ -4075,7 +4075,7 @@ function openWindow(id, options = {}) {
             if (pauseButton) pauseButton.textContent = 'Ⅱ';
         }
         win.style.display = 'flex';
-        bringWindowToFront(win);
+        if (!options.rotate) bringWindowToFront(win);
         if (!options.keepPosition && !showcaseWindowIds.has(id)) centerWindowOnScreen(win);
         if (id === 'games-window') {
             updateGameEntityClip();
