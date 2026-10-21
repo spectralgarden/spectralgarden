@@ -276,6 +276,23 @@
             </div>
         </div>
 
+        <!-- Spectris game launch window -->
+        <div id="spectris-showcase-window" class="window games-showcase-window showcase-window" style="top: 17%; left: 19%; width: 62%; height: 66%; display: none;">
+            <div class="window-header">
+                <span class="window-title">C:\PROG\GAMES\SPECTRIS.EXE</span>
+                <button class="close-btn" type="button" onclick="closeWindow('spectris-showcase-window')" aria-label="Close Spectris">X</button>
+            </div>
+            <div class="window-body">
+                <div class="game-launch-bar showcase-action-bar"></div>
+                <div class="window-preview">
+                    <img id="spectris-img" src="assets/images/spectris-preview-placeholder.svg" alt="Spectris preview placeholder" />
+                </div>
+                <h3>SPECTRIS: ASTRAL ODYSSEY</h3>
+                <p>Stack, clear, and explore the astral realms in this cosmic puzzle adventure.</p>
+                <div class="app-data-box">STATUS: ONLINE<br>TYPE: COSMIC PUZZLE GAME</div>
+            </div>
+        </div>
+
     </div>
 
     <div id="game-entities-layer"></div>
@@ -343,6 +360,7 @@
                     <span>👾 GAMES</span> <span class="menu-item-arrow">▶</span>
                     <div class="submenu">
                         <div class="submenu-item" onclick="loadModule('games', 'game_a')">Astral's End</div>
+                        <div class="submenu-item" onclick="loadModule('games', 'game_b')">Spectris: Astral Odyssey</div>
                     </div>
                 </div>
 

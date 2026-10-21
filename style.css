@@ -281,7 +281,8 @@ body.boss-active.orb-damaged #canvas-container {
 }
 
 .apps-showcase-window,
-.vst-showcase-window {
+.vst-showcase-window,
+.games-showcase-window {
     z-index: 20;
     min-width: 260px;
     overflow: hidden;
@@ -292,14 +293,16 @@ body.boss-active.orb-damaged #canvas-container {
 }
 
 .apps-showcase-window .window-body,
-.vst-showcase-window .window-body {
+.vst-showcase-window .window-body,
+.games-showcase-window .window-body {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
 }
 
 .apps-showcase-window .window-preview,
-.vst-showcase-window .vst-preview {
+.vst-showcase-window .vst-preview,
+.games-showcase-window .window-preview {
     height: clamp(90px, 16vh, 145px);
     flex: 0 0 clamp(90px, 16vh, 145px);
 }

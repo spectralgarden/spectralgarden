@@ -158,6 +158,15 @@ const moduleDatabase = {
     image: "",
     content: "STATUS: READY\nGAME WINDOW: RESIZABLE\nCONTROLS: DRAG AND RELEASE"
         },
+        game_b: {
+            title: "C:\\PROG\\GAMES\\SPECTRIS.EXE",
+            header: "SPECTRIS: ASTRAL ODYSSEY",
+            desc: "Stack, clear, and explore the astral realms in this cosmic puzzle adventure.",
+            image: "assets/images/spectris-preview-placeholder.svg",
+            content: "STATUS: ONLINE<br>TYPE: COSMIC PUZZLE GAME",
+            pageUrl: "https://spectris.spectralgarden.net/",
+            openLabel: "LAUNCH SPECTRIS"
+        }
        
     },
    apps: {
@@ -288,7 +297,7 @@ window.gamePaused = true;
 window.gameWindowActive = false;
 window.activeShowcaseAlly = null;
 window.showcaseWindowId = null;
-const showcaseWindowIds = new Set(['apps-window', 'vst-window']);
+const showcaseWindowIds = new Set(['apps-window', 'vst-window', 'spectris-showcase-window']);
 
 let spawnIntervalTimer = null;
 let gameplayFrameHandle = null;
@@ -3833,9 +3842,31 @@ function loadModule(category, key, options = {}) {
         });
         openWindow('vst-window', options);
     } else if (category === 'games') {
-        const win = document.getElementById('games-window');
-        win.querySelector('.window-header .window-title').textContent = data.title;
-        openWindow('games-window', options);
+        if (data.pageUrl) {
+            const win = document.getElementById('spectris-showcase-window');
+            win.querySelector('.window-header .window-title').textContent = data.title;
+            win.querySelector('.window-body h3').textContent = data.header;
+            win.querySelector('.window-body p').textContent = data.desc;
+            win.querySelector('.app-data-box').innerHTML = data.content;
+
+            const launchBar = win.querySelector('.game-launch-bar');
+            launchBar.innerHTML = '';
+            const launchButton = document.createElement('button');
+            launchButton.className = 'retro-btn';
+            launchButton.type = 'button';
+            launchButton.textContent = data.openLabel || 'LAUNCH GAME';
+            launchButton.addEventListener('click', () => openGamePage(key));
+            launchBar.appendChild(launchButton);
+
+            const img = win.querySelector('#spectris-img');
+            img.alt = `${data.header} preview placeholder`;
+            img.src = data.image;
+            openWindow('spectris-showcase-window', options);
+        } else {
+            const win = document.getElementById('games-window');
+            win.querySelector('.window-header .window-title').textContent = data.title;
+            openWindow('games-window', options);
+        }
     } else if (category === 'apps') {
         const win = document.getElementById('apps-window');
         win.querySelector('.window-header .window-title').textContent = data.title;
@@ -3916,6 +3947,13 @@ function openAppPage(key) {
     }
 }
 window.openAppPage = openAppPage;
+
+function openGamePage(key) {
+    const data = moduleDatabase.games[key];
+    if (data?.pageUrl) {
+        window.open(data.pageUrl, '_blank', 'noopener,noreferrer');
+    }
+}
 
 function navigateModule(category, direction) {
     const keys = Object.keys(moduleDatabase[category]);
