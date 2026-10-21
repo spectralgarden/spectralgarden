@@ -1718,7 +1718,12 @@ function updateLevelDisplay() {
 
     const backgrounds = [
         'spectral_garden_bg.png',
-        'astral_nebula_grove_bg.png'
+        'astral_nebula_grove_bg.png',
+        'background3.png',
+        'background5.png',
+        'background6.png',
+        'background7.png',
+        'bg8.png'
     ];
     const background = document.getElementById('level-background');
     if (background) {
