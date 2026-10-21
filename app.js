@@ -1923,7 +1923,7 @@ function positionSleepParalysisOverlay() {
 }
 
 function clearSleepParalysisEnemies() {
-    sleepParalysisEnemies.forEach(enemy => enemy.element.remove());
+    sleepParalysisEnemies.forEach(enemy => enemy?.element?.remove());
     sleepParalysisEnemies = [];
 }
 
@@ -1986,6 +1986,12 @@ function updateSleepParalysisMode(now) {
     const orbY = window.orbScreenY || window.innerHeight / 2;
     for (let i = sleepParalysisEnemies.length - 1; i >= 0; i--) {
         const enemy = sleepParalysisEnemies[i];
+        if (!enemy || !Number.isFinite(enemy.x) || !Number.isFinite(enemy.y) ||
+            !Number.isFinite(enemy.speed) || !enemy.element?.style) {
+            enemy?.element?.remove();
+            sleepParalysisEnemies.splice(i, 1);
+            continue;
+        }
         const dx = orbX - enemy.x;
         const dy = orbY - enemy.y;
         const distance = Math.hypot(dx, dy) || 1;
@@ -2141,6 +2147,11 @@ function releaseSleepParalysisCharge() {
 
     for (let i = sleepParalysisEnemies.length - 1; i >= 0; i--) {
         const enemy = sleepParalysisEnemies[i];
+        if (!enemy || !Number.isFinite(enemy.x) || !Number.isFinite(enemy.y) || !enemy.element) {
+            enemy?.element?.remove();
+            sleepParalysisEnemies.splice(i, 1);
+            continue;
+        }
         if (Math.hypot(enemy.x - window.orbScreenX, enemy.y - window.orbScreenY) <= radius) {
             createExplosionParticles(enemy.x, enemy.y, '#ffffff');
             enemy.element.remove();
@@ -2873,8 +2884,14 @@ function updateGameplayLoop() {
         return;
     }
     if (window.sleepParalysisActive || window.sleepParalysisTransitioning) {
-        if (window.sleepParalysisActive) updateSleepParalysisMode(Date.now());
-        startGameplayLoop();
+        try {
+            if (window.sleepParalysisActive) updateSleepParalysisMode(Date.now());
+        } catch (error) {
+            console.error('Sleep paralysis update failed; restoring normal gameplay:', error);
+            resetSleepParalysisMode();
+        } finally {
+            startGameplayLoop();
+        }
         return;
     }
     maybeStartEvolvedBoss();
