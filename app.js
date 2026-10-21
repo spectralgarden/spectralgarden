@@ -162,7 +162,7 @@ const moduleDatabase = {
             title: "C:\\PROG\\GAMES\\SPECTRIS.EXE",
             header: "SPECTRIS: ASTRAL ODYSSEY",
             desc: "Stack, clear, and explore the astral realms in this cosmic puzzle adventure.",
-            image: "assets/images/spectris-preview-placeholder.svg",
+            image: "assets/images/spectrisscreenshot.png",
             content: "STATUS: ONLINE<br>TYPE: COSMIC PUZZLE GAME",
             pageUrl: "https://spectris.spectralgarden.net/",
             openLabel: "LAUNCH SPECTRIS"
