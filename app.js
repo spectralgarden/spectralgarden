@@ -2384,10 +2384,14 @@ async function submitScoreToLeaderboard() {
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'Could not save your score.');
-        renderLeaderboardList(result.scores);
-        if (status) status.textContent = result.ranked
-            ? 'Record saved to the global leaderboard.'
-            : 'Your score did not reach the global top five.';
+        if (result.pending) {
+            if (status) status.textContent = 'Score submitted for moderator review. If approved, it will appear on the global leaderboard if it ranks in the top five.';
+        } else {
+            renderLeaderboardList(result.scores);
+            if (status) status.textContent = result.ranked
+                ? 'Record saved to the global leaderboard.'
+                : 'Your score did not reach the global top five.';
+        }
     } catch (error) {
         if (status) status.textContent = error instanceof Error
             ? `${error.message} Please try again.`
