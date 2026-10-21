@@ -44,6 +44,7 @@ const zoomScale = 0.22;
 let isRespawning = false;
 let respawnTargetScale = 0.22;
 let respawnTimer = null;
+let sleepParalysisSavedOrbState = null;
 
 // Color lerp variables
 let targetSoftColor = null;
@@ -448,6 +449,16 @@ function onMouseDown(event) {
     raycaster.setFromCamera(mouse2D, camera);
     const intersects = raycaster.intersectObject(invisibleHitbox);
 
+    if (window.sleepParalysisActive) {
+        if (intersects.length > 0) {
+            isDraggingOrb = true;
+            if (typeof window.beginSleepParalysisCharge === 'function') {
+                window.beginSleepParalysisCharge();
+            }
+        }
+        return;
+    }
+
     if (intersects.length > 0) {
         isAimingSlingshot = true;
         isDraggingOrb = true;
@@ -462,6 +473,13 @@ function onMouseDown(event) {
 }
 
 function onMouseUp() {
+    if (window.sleepParalysisActive || window.sleepParalysisTransitioning) {
+        isDraggingOrb = false;
+        if (window.sleepParalysisCharging && typeof window.releaseSleepParalysisCharge === 'function') {
+            window.releaseSleepParalysisCharge();
+        }
+        return;
+    }
     if (isAimingSlingshot) {
         isAimingSlingshot = false;
         isDraggingOrb = false;
@@ -612,6 +630,7 @@ function checkOrbBugCollisions() {
     window.orbScreenX = screenX;
     window.orbScreenY = screenY;
     window.orbZoomScale = zoomScale; 
+    if (window.sleepParalysisActive || window.sleepParalysisTransitioning) return;
 
     const baseRadius = 140;
     const currentCollisionRadius = baseRadius * zoomScale;
@@ -706,7 +725,38 @@ function checkOrbBugCollisions() {
             }
         }
     }
+
 }
+
+function setSleepParalysisOrbMode(active) {
+    if (!sacredGeometryGroup) return;
+    if (active) {
+        if (!sleepParalysisSavedOrbState) {
+            sleepParalysisSavedOrbState = { x: posX, y: posY, vx, vy };
+        }
+        posX = 0;
+        posY = 0;
+        vx = 0;
+        vy = 0;
+        sacredGeometryGroup.position.set(0, 0, 0);
+        return;
+    }
+    if (sleepParalysisSavedOrbState) {
+        posX = sleepParalysisSavedOrbState.x;
+        posY = sleepParalysisSavedOrbState.y;
+        vx = sleepParalysisSavedOrbState.vx;
+        vy = sleepParalysisSavedOrbState.vy;
+        sacredGeometryGroup.position.set(posX, posY, 0);
+        sleepParalysisSavedOrbState = null;
+    }
+    isDraggingOrb = false;
+    isAimingSlingshot = false;
+}
+window.setSleepParalysisOrbMode = setSleepParalysisOrbMode;
+window.cancelSleepParalysisCharge = () => {
+    isDraggingOrb = false;
+    isAimingSlingshot = false;
+};
 
 function triggerSoftColorChange() {
     const hue = Math.random();
@@ -837,6 +887,18 @@ function animate() {
     animationFrameHandle = requestAnimationFrame(animate);
 
     updateOrbCoreLogo();
+
+    if (window.sleepParalysisActive || window.sleepParalysisTransitioning) {
+        posX = 0;
+        posY = 0;
+        vx = 0;
+        vy = 0;
+        sacredGeometryGroup.position.set(0, 0, 0);
+        updateOrbHPColors();
+        checkOrbBugCollisions();
+        renderer.render(scene, camera);
+        return;
+    }
 
     const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const spinFactor = window.gameBeaten ? 0.4 : 1.0;

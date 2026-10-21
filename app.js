@@ -211,6 +211,8 @@ const currentActiveKeys = {
 window.dataBugs = [];
 window.bugEliminationCount = 0;
 window.bugHighScore = parseInt(localStorage.getItem('spectral_bugs_highscore') || '0', 10);
+window.sleepParalysisPoints = 0;
+const sleepPortalSpawnedLevels = new Set();
 let bugIdCounter = 0;
 let showcaseAllyTimer = null;
 let lastShowcaseItemId = null;
@@ -242,8 +244,21 @@ let lastBossChargeTime = 0;
 let lastBossStarRainTime = 0;
 let lastBossMissileTime = 0;
 let bossRetreatTimer = null;
-let bossRetreatAdvanceTimer = null;
+let bossReturnTimer = null;
+let bossReturnReady = false;
 let bossProjectiles = [];
+window.bossRetreating = false;
+window.sleepParalysisActive = false;
+window.sleepParalysisTransitioning = false;
+window.sleepParalysisCharging = false;
+window.sleepParalysisRoundPoints = 0;
+let sleepParalysisEnemies = [];
+let sleepParalysisEndsAt = 0;
+let sleepParalysisNextSpawnAt = 0;
+let sleepParalysisChargeStartedAt = 0;
+let sleepParalysisLastDamageAt = 0;
+let sleepParalysisTransitionTimer = null;
+let sleepParalysisPausedAt = 0;
 let fireDemons = [];
 let fireDemonProjectiles = [];
 let nextFireDemonWaveAt = Date.now() + 12000;
@@ -295,6 +310,7 @@ function updateGameEntityClip() {
     layer.style.clipPath = isVisible
         ? `inset(${Math.max(0, rect.top)}px ${Math.max(0, window.innerWidth - rect.right)}px ${Math.max(0, window.innerHeight - rect.bottom)}px ${Math.max(0, rect.left)}px)`
         : 'inset(0 100% 100% 0)';
+    positionSleepParalysisOverlay();
 }
 
 function startGameplayLoop() {
@@ -312,7 +328,17 @@ function stopGameplayLoop() {
 
 function togglePauseGame() {
     if (!window.gameWindowActive) return;
+    const wasPaused = window.gamePaused;
     window.gamePaused = !window.gamePaused;
+    if (!wasPaused && window.sleepParalysisActive) {
+        sleepParalysisPausedAt = Date.now();
+        window.sleepParalysisCharging = false;
+        window.cancelSleepParalysisCharge?.();
+        document.body.classList.remove('sleep-aura-charging');
+    } else if (wasPaused && sleepParalysisPausedAt) {
+        if (sleepParalysisEndsAt) sleepParalysisEndsAt += Date.now() - sleepParalysisPausedAt;
+        sleepParalysisPausedAt = 0;
+    }
     const modal = document.getElementById('pause-modal');
     if (modal) modal.style.display = window.gamePaused ? 'flex' : 'none';
     const button = document.querySelector('#games-window .game-window-controls [aria-label="Pause or resume game"]');
@@ -534,6 +560,7 @@ let tapCount = 0;
 let tapTimer = null;
 
 document.addEventListener('touchstart', (e) => {
+    if (window.sleepParalysisActive) return;
     // Check if the user is tapping inside a window, menu, or button
     if (
         e.target.closest('#taskbar') || 
@@ -600,7 +627,7 @@ function scheduleShowcaseAlly(delay = 12000 + Math.random() * 18000) {
     showcaseAllyTimer = setTimeout(() => {
         showcaseAllyTimer = null;
         if (!window.gameWindowActive) return;
-        if (window.gamePaused || window.activeShowcaseAlly) {
+        if (window.gamePaused || window.sleepParalysisActive || window.sleepParalysisTransitioning || window.activeShowcaseAlly) {
             scheduleShowcaseAlly(1000);
             return;
         }
@@ -821,7 +848,7 @@ function toggleBugSubmenu(event) {
 }
 
 function spawnDataBug() {
-    if (window.gamePaused) return;
+    if (window.gamePaused || window.sleepParalysisActive || window.sleepParalysisTransitioning) return;
     const maxBugsAllowed = window.gameBeaten ? 20 : (20 + (window.currentLevel * 2));
     if (window.dataBugs.length >= maxBugsAllowed) return;
 
@@ -985,10 +1012,14 @@ function handlePowerUpSpawning() {
         const itemElement = document.createElement('div');
         itemElement.className = 'retro-powerup';
 
-        let itemType = window.nextPowerUpType;
+        const canSpawnPortal = window.currentLevel >= 5 &&
+            !sleepPortalSpawnedLevels.has(window.currentLevel);
+        let itemType = canSpawnPortal && Math.random() < 0.1
+            ? 'sleep_portal'
+            : window.nextPowerUpType;
 
         // Boss mode overrides
-        if (window.bossActive) {
+        if (window.bossActive && itemType !== 'sleep_portal') {
             itemType = Math.random() > 0.4 ? 'health_potion' : 'fighter';
         }
 
@@ -1000,7 +1031,8 @@ function handlePowerUpSpawning() {
             health_potion: ['health-potion', 'Health potion'],
             energy_cell: ['energy-cell', 'Energy cell'],
             time_fracture: ['time-fracture', 'Time fracture: slow time'],
-            time_forward: ['time-forward', 'Time forward: accelerate time']
+            time_forward: ['time-forward', 'Time forward: accelerate time'],
+            sleep_portal: ['sleep-paralysis-portal', 'Sleep paralysis portal']
         };
         const [powerUpClass, powerUpLabel] = powerUpStyles[itemType];
         itemElement.classList.add(powerUpClass);
@@ -1045,6 +1077,9 @@ function handlePowerUpSpawning() {
         } else if (itemType === 'time_forward') {
             itemElement.innerHTML = renderIcon('assets/images/items/timeforward.png');
             window.nextPowerUpType = 'fighter';
+        } else if (itemType === 'sleep_portal') {
+            itemElement.innerHTML = renderIcon('assets/images/soft/1.png');
+            sleepPortalSpawnedLevels.add(window.currentLevel);
         }
 
         // Positioning
@@ -1092,6 +1127,8 @@ function collectPowerUp() {
         setGameTimeEffect(0.45, 'TIME FRACTURE');
     } else if (type === 'time_forward') {
         setGameTimeEffect(1.7, 'TIME FORWARD');
+    } else if (type === 'sleep_portal') {
+        startSleepParalysisMode();
     }
 }
 window.collectPowerUp = collectPowerUp;
@@ -1630,8 +1667,8 @@ function updateHPDisplay() {
     if (wallpaperLogo) {
         const color = {
             r: Math.round(139 + (255 - 139) * damageRatio),
-            g: Math.round(92 + (55 - 92) * damageRatio),
-            b: Math.round(246 + (150 - 246) * damageRatio)
+            g: Math.round(92 + (24 - 92) * damageRatio),
+            b: Math.round(246 + (48 - 246) * damageRatio)
         };
         wallpaperLogo.style.setProperty('--health-color', `${color.r}, ${color.g}, ${color.b}`);
         wallpaperLogo.style.setProperty('--health-glow-opacity', (0.12 + damageRatio * 0.58).toFixed(2));
@@ -1754,6 +1791,7 @@ function takeDamage(amount) {
 window.takeDamage = takeDamage;
 
 function loseLifeOrTriggerGameOver() {
+    if (window.sleepParalysisActive) endSleepParalysisMode(false);
     window.playerLives--;
     updateLivesDisplay();
     document.body.classList.remove('orb-exploding');
@@ -1834,7 +1872,275 @@ function restoreEnergy(amount) {
     createExplosionParticles(sX, sY, '#ffd700');
 }
 
+function updateSleepParalysisHUD() {
+    const timer = document.getElementById('sleep-paralysis-timer');
+    const points = document.getElementById('sleep-paralysis-round-points');
+    const charge = document.getElementById('sleep-paralysis-charge-fill');
+    if (timer) {
+        const remaining = sleepParalysisEndsAt
+            ? Math.max(0, Math.ceil((sleepParalysisEndsAt - Date.now()) / 1000))
+            : 10;
+        timer.textContent = `${remaining}s`;
+    }
+    if (points) points.textContent = window.sleepParalysisRoundPoints.toLocaleString();
+    if (charge && window.sleepParalysisCharging) {
+        const progress = Math.min(1, (Date.now() - sleepParalysisChargeStartedAt) / 2200);
+        charge.style.width = `${progress * 100}%`;
+    }
+}
+
+function positionSleepParalysisOverlay() {
+    const overlay = document.getElementById('sleep-paralysis-overlay');
+    const hud = document.getElementById('sleep-paralysis-hud');
+    if (!overlay && !hud) return;
+    const bounds = getGameBounds();
+    if (overlay) {
+        overlay.style.inset = 'auto';
+        overlay.style.left = `${bounds.left}px`;
+        overlay.style.top = `${bounds.top}px`;
+        overlay.style.width = `${bounds.right - bounds.left}px`;
+        overlay.style.height = `${bounds.bottom - bounds.top}px`;
+    }
+    if (hud) {
+        hud.style.left = `${(bounds.left + bounds.right) / 2}px`;
+        hud.style.top = 'auto';
+        hud.style.bottom = `${window.innerHeight - bounds.bottom + 10}px`;
+    }
+}
+
+function clearSleepParalysisEnemies() {
+    sleepParalysisEnemies.forEach(enemy => enemy.element.remove());
+    sleepParalysisEnemies = [];
+}
+
+function spawnSleepParalysisEnemy() {
+    if (sleepParalysisEnemies.length >= 90) return;
+
+    const bounds = getGameBounds();
+    const sprite = `assets/images/sprites/sprites_${[1, 2, 3, 4, 5, 6, 7, 10, 11][Math.floor(Math.random() * 9)]}.png`;
+    const element = document.createElement('div');
+    element.className = 'sleep-paralysis-enemy';
+    const image = document.createElement('img');
+    image.src = sprite;
+    image.alt = '';
+    image.draggable = false;
+    element.appendChild(image);
+
+    const edge = Math.floor(Math.random() * 4);
+    let x;
+    let y;
+    if (edge === 0) {
+        x = bounds.left + Math.random() * (bounds.right - bounds.left);
+        y = bounds.top - 24;
+    } else if (edge === 1) {
+        x = bounds.right + 24;
+        y = bounds.top + Math.random() * (bounds.bottom - bounds.top);
+    } else if (edge === 2) {
+        x = bounds.left + Math.random() * (bounds.right - bounds.left);
+        y = bounds.bottom + 24;
+    } else {
+        x = bounds.left - 24;
+        y = bounds.top + Math.random() * (bounds.bottom - bounds.top);
+    }
+    element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    appendGameEntity(element);
+
+    sleepParalysisEnemies.push({
+        element,
+        x,
+        y,
+        speed: 1.4 + Math.random() * 1.2
+    });
+}
+
+function updateSleepParalysisMode(now) {
+    if (!sleepParalysisEndsAt) {
+        updateSleepParalysisHUD();
+        return;
+    }
+    if (now >= sleepParalysisEndsAt) {
+        endSleepParalysisMode(true);
+        return;
+    }
+
+    if (now >= sleepParalysisNextSpawnAt) {
+        spawnSleepParalysisEnemy();
+        sleepParalysisNextSpawnAt = now + 240 + Math.random() * 220;
+    }
+
+    const orbX = window.orbScreenX || window.innerWidth / 2;
+    const orbY = window.orbScreenY || window.innerHeight / 2;
+    for (let i = sleepParalysisEnemies.length - 1; i >= 0; i--) {
+        const enemy = sleepParalysisEnemies[i];
+        const dx = orbX - enemy.x;
+        const dy = orbY - enemy.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        enemy.x += (dx / distance) * enemy.speed;
+        enemy.y += (dy / distance) * enemy.speed;
+        enemy.element.style.transform = `translate3d(${enemy.x}px, ${enemy.y}px, 0) rotate(${Math.atan2(dy, dx)}rad)`;
+
+        if (distance < 42) {
+            enemy.element.remove();
+            sleepParalysisEnemies.splice(i, 1);
+            if (now - sleepParalysisLastDamageAt >= 500) {
+                sleepParalysisLastDamageAt = now;
+                takeDamage(12);
+            }
+        }
+    }
+    updateSleepParalysisHUD();
+}
+
+function startSleepParalysisMode() {
+    if (window.sleepParalysisActive || window.currentLevel < 5) return;
+
+    window.isClusterBombArmed = false;
+    window.sleepParalysisActive = true;
+    window.sleepParalysisTransitioning = true;
+    window.sleepParalysisCharging = false;
+    window.sleepParalysisRoundPoints = 0;
+    sleepParalysisEndsAt = 0;
+    sleepParalysisNextSpawnAt = 0;
+    sleepParalysisLastDamageAt = 0;
+    window.setSleepParalysisOrbMode?.(true);
+    document.body.classList.remove('bomb-armed');
+    document.getElementById('bomb-arm-prompt')?.remove();
+    bombAimIndicator?.remove();
+    bombAimIndicator = null;
+    document.body.classList.add('sleep-paralysis-active');
+
+    const overlay = document.createElement('div');
+    overlay.id = 'sleep-paralysis-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 48; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'sleep-paralysis-rain';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.setProperty('--rain-duration', `${0.45 + Math.random() * 0.75}s`);
+        particle.style.setProperty('--rain-delay', `${-Math.random() * 1.2}s`);
+        particle.style.setProperty('--rain-length', `${18 + Math.random() * 42}px`);
+        overlay.appendChild(particle);
+    }
+    const prompt = document.createElement('div');
+    prompt.className = 'sleep-paralysis-prompt';
+    prompt.textContent = 'PARALYSIS';
+    overlay.appendChild(prompt);
+    const orb = document.createElement('img');
+    orb.className = 'sleep-paralysis-orb';
+    orb.src = 'assets/images/sglogo.png';
+    orb.alt = '';
+    orb.draggable = false;
+    overlay.appendChild(orb);
+    appendGameEntity(overlay);
+
+    const hud = document.createElement('div');
+    hud.id = 'sleep-paralysis-hud';
+    hud.innerHTML = '<span>HOLD ORB // RELEASE TO FIRE</span><span>TIME <b id="sleep-paralysis-timer">10s</b> // SCORE <b id="sleep-paralysis-round-points">0</b></span><div class="sleep-paralysis-charge"><i id="sleep-paralysis-charge-fill"></i></div><small>CHARGE THE AURA TO REACH THE SWARM</small>';
+    appendGameEntity(hud);
+    positionSleepParalysisOverlay();
+
+    requestAnimationFrame(() => overlay.classList.add('is-active'));
+    sleepParalysisTransitionTimer = setTimeout(() => {
+        sleepParalysisTransitionTimer = null;
+        if (!window.sleepParalysisActive) return;
+        overlay.classList.add('is-gameplay');
+        hud.classList.add('is-active');
+        window.sleepParalysisTransitioning = false;
+        sleepParalysisEndsAt = Date.now() + 10000;
+        if (window.gamePaused) sleepParalysisPausedAt = Date.now();
+        sleepParalysisNextSpawnAt = Date.now();
+    }, 650);
+}
+
+function endSleepParalysisMode(survived) {
+    if (!window.sleepParalysisActive && !window.sleepParalysisTransitioning) return;
+
+    if (survived) {
+        window.sleepParalysisPoints += window.sleepParalysisRoundPoints;
+    }
+    window.sleepParalysisRoundPoints = 0;
+    window.sleepParalysisActive = false;
+    window.sleepParalysisTransitioning = true;
+    window.sleepParalysisCharging = false;
+    sleepParalysisEndsAt = 0;
+    sleepParalysisPausedAt = 0;
+    if (sleepParalysisTransitionTimer) {
+        clearTimeout(sleepParalysisTransitionTimer);
+        sleepParalysisTransitionTimer = null;
+    }
+    clearSleepParalysisEnemies();
+    document.body.classList.remove('sleep-aura-charging');
+    const overlay = document.getElementById('sleep-paralysis-overlay');
+    if (overlay) overlay.classList.remove('is-active');
+    const hud = document.getElementById('sleep-paralysis-hud');
+    if (hud) hud.remove();
+    sleepParalysisTransitionTimer = setTimeout(() => {
+        sleepParalysisTransitionTimer = null;
+        overlay?.remove();
+        document.body.classList.remove('sleep-paralysis-active');
+        window.sleepParalysisTransitioning = false;
+        window.setSleepParalysisOrbMode?.(false);
+    }, 650);
+}
+
+function resetSleepParalysisMode() {
+    if (sleepParalysisTransitionTimer) {
+        clearTimeout(sleepParalysisTransitionTimer);
+        sleepParalysisTransitionTimer = null;
+    }
+    clearSleepParalysisEnemies();
+    document.getElementById('sleep-paralysis-overlay')?.remove();
+    document.getElementById('sleep-paralysis-hud')?.remove();
+    document.body.classList.remove('sleep-paralysis-active', 'sleep-aura-charging');
+    window.sleepParalysisActive = false;
+    window.sleepParalysisTransitioning = false;
+    window.sleepParalysisCharging = false;
+    window.sleepParalysisRoundPoints = 0;
+    sleepParalysisEndsAt = 0;
+    sleepParalysisPausedAt = 0;
+    window.setSleepParalysisOrbMode?.(false);
+}
+
+function beginSleepParalysisCharge() {
+    if (!window.sleepParalysisActive || window.sleepParalysisCharging) return;
+    window.sleepParalysisCharging = true;
+    sleepParalysisChargeStartedAt = Date.now();
+    document.body.classList.add('sleep-aura-charging');
+}
+
+function releaseSleepParalysisCharge() {
+    if (!window.sleepParalysisActive || !window.sleepParalysisCharging) return;
+    const charge = Math.min(1, (Date.now() - sleepParalysisChargeStartedAt) / 2200);
+    const radius = 90 + charge * 240;
+    window.sleepParalysisCharging = false;
+    document.body.classList.remove('sleep-aura-charging');
+
+    const wave = document.createElement('div');
+    wave.className = 'sleep-paralysis-aura';
+    wave.style.left = `${window.orbScreenX || window.innerWidth / 2}px`;
+    wave.style.top = `${window.orbScreenY || window.innerHeight / 2}px`;
+    wave.style.width = `${radius * 2}px`;
+    wave.style.height = `${radius * 2}px`;
+    appendGameEntity(wave);
+    requestAnimationFrame(() => wave.classList.add('expanded'));
+    setTimeout(() => wave.remove(), 550);
+
+    for (let i = sleepParalysisEnemies.length - 1; i >= 0; i--) {
+        const enemy = sleepParalysisEnemies[i];
+        if (Math.hypot(enemy.x - window.orbScreenX, enemy.y - window.orbScreenY) <= radius) {
+            createExplosionParticles(enemy.x, enemy.y, '#ffffff');
+            enemy.element.remove();
+            sleepParalysisEnemies.splice(i, 1);
+            window.sleepParalysisRoundPoints += 2500;
+        }
+    }
+    updateSleepParalysisHUD();
+}
+window.beginSleepParalysisCharge = beginSleepParalysisCharge;
+window.releaseSleepParalysisCharge = releaseSleepParalysisCharge;
+
 function castAuraWave(type) {
+    if (window.sleepParalysisActive) return;
     if (window.orbHP <= 0 || window.gameBeaten) return;
 
     const cost = type === 'damage' ? 10 : 5;
@@ -1960,12 +2266,13 @@ function triggerGameOverLeaderboardModal() {
     playOverloadSound();
     const modal = document.getElementById('gameover-modal');
     const scoreVal = document.getElementById('final-score-val');
-    if (scoreVal) scoreVal.textContent = window.bugEliminationCount * 100 + (window.currentLevel * 500);
+    if (scoreVal) scoreVal.textContent = window.bugEliminationCount * 100 + (window.currentLevel * 500) + window.sleepParalysisPoints;
     if (modal) modal.style.display = 'flex';
     renderLeaderboardList();
 }
 
 function clearGameBoard() {
+    resetSleepParalysisMode();
     if (spawnIntervalTimer) clearInterval(spawnIntervalTimer);
     if (showcaseAllyTimer) clearTimeout(showcaseAllyTimer);
     spawnIntervalTimer = null;
@@ -2033,6 +2340,10 @@ function clearGameBoard() {
         '.laser-beam',
         '.bug-particle',
         '.aura-wave',
+        '.sleep-paralysis-enemy',
+        '.sleep-paralysis-aura',
+        '#sleep-paralysis-overlay',
+        '#sleep-paralysis-hud',
         '.aoe-explosion',
         '.sparkle-trail',
         '#bomb-arm-prompt',
@@ -2045,7 +2356,7 @@ function clearGameBoard() {
 function submitScoreToLeaderboard() {
     const nameInput = document.getElementById('leaderboard-name-input');
     const nickname = (nameInput && nameInput.value.trim()) ? nameInput.value.trim().toUpperCase() : 'ANONYMOUS';
-    const finalScore = window.bugEliminationCount * 100 + (window.currentLevel * 500);
+    const finalScore = window.bugEliminationCount * 100 + (window.currentLevel * 500) + window.sleepParalysisPoints;
 
     let scores = JSON.parse(localStorage.getItem('spectral_garden_lb') || '[]');
     scores.push({ name: nickname, score: finalScore });
@@ -2060,12 +2371,16 @@ function submitScoreToLeaderboard() {
     // --- Reset all game states back to Level 1 and clean up bosses ---
     window.playerLives = 3;
     window.bugEliminationCount = 0;
+    window.sleepParalysisPoints = 0;
+    sleepPortalSpawnedLevels.clear();
     window.currentLevel = 1;                  
     window.currentLevelXP = 0;
     window.xpNeededForNextLevel = 2000;       
     window.orbHP = 100;
     window.orbEnergy = 100;
     window.gameBeaten = false;
+    bossReturnReady = false;
+    window.bossRetreating = false;
     window.gamePaused = !window.gameWindowActive;
     window.isClusterBombArmed = false;
     window.nextPowerUpType = 'fighter';
@@ -2127,7 +2442,7 @@ function renderLeaderboardList() {
 
 function earnXP(amount) {
     if (window.gameBeaten) return;
-    if (window.bossActive) return;
+    if (window.bossActive || window.bossRetreating) return;
 
     window.currentLevelXP += amount;
 
@@ -2144,6 +2459,8 @@ function advanceLevel() {
     window.currentLevelXP = 0;
     if (window.currentLevel < 32) {
         window.currentLevel++;
+        window.bossRetreating = false;
+        bossReturnReady = false;
         window.xpNeededForNextLevel = 2000 + (window.currentLevel * 1000);
         updateLevelDisplay();
         updateXPDisplay();
@@ -2157,6 +2474,24 @@ function advanceLevel() {
     } else {
         triggerTranscendedEndState();
     }
+}
+
+function maybeStartEvolvedBoss() {
+    if (bossReturnReady && window.currentLevel === 6 && !window.bossActive && !window.gamePaused &&
+        !window.sleepParalysisActive && !window.sleepParalysisTransitioning) {
+        triggerBossFight();
+    }
+}
+
+function scheduleEvolvedBossReturn() {
+    if (bossReturnTimer) clearTimeout(bossReturnTimer);
+    bossReturnReady = false;
+    const delay = 15000 + Math.random() * 15000;
+    bossReturnTimer = setTimeout(() => {
+        bossReturnTimer = null;
+        bossReturnReady = true;
+        maybeStartEvolvedBoss();
+    }, delay);
 }
 
 const BOSS_SIZE = 100;
@@ -2199,6 +2534,9 @@ function clampBossPosition(gameBounds) {
 
 function triggerBossFight() {
     if (window.bossActive) return;
+    if (window.currentLevel === 6 && !bossReturnReady) return;
+    if (window.bossRetreating) return;
+    if (window.currentLevel === 6) bossReturnReady = false;
     
     window.bossActive = true;
     document.body.classList.add('boss-active');
@@ -2332,18 +2670,24 @@ function defeatBoss() {
 
 function retreatBoss() {
     window.bossActive = false;
+    window.bossRetreating = true;
     document.body.classList.remove('boss-active');
     window.bossIsCharging = false;
     if (bossElement) {
         const retreatingBoss = bossElement;
         retreatingBoss.classList.add('boss-retreating');
-        retreatingBoss.style.transform = `translate3d(${window.bossX}px, -140px, 0) scale(0.7)`;
+        retreatingBoss.style.transform = `translate3d(${window.bossX}px, ${-BOSS_SIZE - 40}px, 0) scale(0.7)`;
         bossRetreatTimer = setTimeout(() => {
             if (bossElement === retreatingBoss) {
                 retreatingBoss.remove();
                 bossElement = null;
             }
             bossRetreatTimer = null;
+            window.bossRetreating = false;
+            if (window.currentLevel === 5) {
+                advanceLevel();
+                scheduleEvolvedBossReturn();
+            }
         }, 900);
     }
 
@@ -2360,13 +2704,9 @@ function retreatBoss() {
         bannerText.textContent = 'BOSS 05 RETREATING';
         bannerSub.textContent = 'EVOLVED FORM DETECTED // LEVEL 06';
         banner.classList.add('show');
-        setTimeout(() => banner.classList.remove('show'), 1800);
+        setTimeout(() => banner.classList.remove('show'), 850);
     }
     playLevelUpSound();
-    bossRetreatAdvanceTimer = setTimeout(() => {
-        if (window.currentLevel === 5 && !window.bossActive) advanceLevel();
-        bossRetreatAdvanceTimer = null;
-    }, 900);
 }
 
 function cleanupBossFight() {
@@ -2374,11 +2714,12 @@ function cleanupBossFight() {
         clearTimeout(bossRetreatTimer);
         bossRetreatTimer = null;
     }
-    if (bossRetreatAdvanceTimer) {
-        clearTimeout(bossRetreatAdvanceTimer);
-        bossRetreatAdvanceTimer = null;
+    if (bossReturnTimer) {
+        clearTimeout(bossReturnTimer);
+        bossReturnTimer = null;
     }
     window.bossActive = false;
+    window.bossRetreating = false;
     document.body.classList.remove('boss-active');
     if (bossElement) {
         bossElement.remove();
@@ -2473,6 +2814,12 @@ function updateGameplayLoop() {
     if (window.gamePaused) {
         return;
     }
+    if (window.sleepParalysisActive || window.sleepParalysisTransitioning) {
+        if (window.sleepParalysisActive) updateSleepParalysisMode(Date.now());
+        startGameplayLoop();
+        return;
+    }
+    maybeStartEvolvedBoss();
 
     const movementScale = Math.max(0.25, Math.min(2, window.gameMovementScale || 1));
     const gameBounds = getGameBounds();
