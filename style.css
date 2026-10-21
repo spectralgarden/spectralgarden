@@ -340,14 +340,69 @@ body.boss-active.orb-damaged #canvas-container {
 
 #desktop {
     position: absolute;
-    top: 0;
+    top: 36px;
     left: 0;
     width: 100%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 76px);
     z-index: 10;
     padding: 20px;
     padding-bottom: 60px;
     overflow: visible;
+}
+
+.site-app-header {
+    position: relative;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    height: 36px;
+    padding: 0 16px;
+    border-bottom: 2px solid #111;
+    background: repeating-linear-gradient(0deg, #fff 0 3px, #f7f7f7 3px 4px);
+    box-shadow: 0 2px 0 rgba(139, 92, 246, 0.45);
+    font-family: "Courier New", Courier, monospace;
+}
+
+.site-app-brand,
+.site-app-links a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.site-app-brand {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+}
+
+.site-app-brand img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.site-app-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #6b21a8;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.site-app-links a:hover,
+.site-app-links a:focus-visible {
+    color: #111;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .wallpaper-logo {
@@ -2727,19 +2782,50 @@ body.orb-damaged #desktop .game-stage .wallpaper-inline-logo {
 }
 
 @media (max-width: 768px) {
+    .site-app-header {
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .site-app-brand {
+        gap: 5px;
+        font-size: 8px;
+        letter-spacing: 0;
+    }
+
+    .site-app-brand img {
+        width: 21px;
+        height: 21px;
+    }
+
+    .site-app-links {
+        gap: 8px;
+        font-size: 8px;
+        letter-spacing: 0;
+    }
+
     #desktop {
         position: relative;
+        top: 0;
         width: 100%;
-        height: calc(100vh - 40px);
-        height: calc(100svh - 40px);
+        height: calc(100vh - 76px);
+        height: calc(100svh - 76px);
         min-height: 0;
         overflow: hidden;
         padding: 0;
     }
 
-    #apps-window,
     #vst-window {
         display: none !important;
+    }
+
+    #apps-window {
+        position: fixed !important;
+        inset: 8px 5% 48px !important;
+        width: auto !important;
+        height: auto !important;
+        min-width: 0 !important;
+        resize: none !important;
     }
 
     #games-window.game-window,

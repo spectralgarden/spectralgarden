@@ -477,6 +477,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }).observe(gameStage);
     }
     window.addEventListener('resize', updateGameEntityClip);
+    window.addEventListener('resize', () => {
+        ['bug', 'help'].forEach(name => {
+            const submenu = document.getElementById(`${name}-submenu`);
+            const trigger = document.getElementById(`${name}-submenu-trigger`);
+            if (submenu?.style.display === 'block') positionGameSubmenu(submenu, trigger);
+        });
+    });
     window.addEventListener('scroll', updateGameEntityClip, { passive: true });
     document.addEventListener('mousemove', updateGameEntityClip);
 
@@ -517,7 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateGameEntityClip();
     loadModule('games', 'game_a', { keepPosition: true, silent: true });
-    loadModule('apps', Object.keys(moduleDatabase.apps)[0], { keepPosition: true, silent: true });
+    loadModule('apps', Object.keys(moduleDatabase.apps)[0], {
+        keepPosition: true,
+        silent: true,
+        populateOnly: window.matchMedia('(max-width: 768px)').matches
+    });
     loadModule('vst', Object.keys(moduleDatabase.vst)[0], { keepPosition: true, silent: true });
 
     document.addEventListener('click', (e) => {
@@ -601,9 +612,11 @@ function toggleHelpSubmenu(event) {
     event.stopPropagation();
     playUISound();
     const submenu = document.getElementById('help-submenu');
-    if (submenu) {
+    const trigger = document.getElementById('help-submenu-trigger');
+    if (submenu && trigger) {
         const isVisible = submenu.style.display === 'block';
         submenu.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) positionGameSubmenu(submenu, trigger);
     }
 }
 window.toggleHelpSubmenu = toggleHelpSubmenu;
@@ -843,6 +856,37 @@ function toggleStartMenu(event) {
     }
 }
 
+function positionGameSubmenu(submenu, trigger) {
+    if (!submenu || !trigger) return;
+    if (!window.matchMedia('(max-width: 768px)').matches) {
+        submenu.style.position = '';
+        submenu.style.left = '';
+        submenu.style.right = '';
+        submenu.style.top = '';
+        submenu.style.bottom = '';
+        return;
+    }
+
+    submenu.style.position = 'fixed';
+    submenu.style.right = 'auto';
+    submenu.style.bottom = 'auto';
+    const popupRect = submenu.getBoundingClientRect();
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const left = Math.max(8, Math.min(
+        triggerRect.right - popupRect.width,
+        viewportWidth - popupRect.width - 8
+    ));
+    const preferredTop = triggerRect.bottom + 6;
+    const top = preferredTop + popupRect.height <= viewportHeight - 8
+        ? preferredTop
+        : Math.max(8, triggerRect.top - popupRect.height - 6);
+
+    submenu.style.left = `${left}px`;
+    submenu.style.top = `${top}px`;
+}
+
 function toggleBugSubmenu(event) {
     event.stopPropagation();
     playUISound();
@@ -851,6 +895,7 @@ function toggleBugSubmenu(event) {
     if (submenu && trigger) {
         const isVisible = submenu.style.display === 'block';
         submenu.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) positionGameSubmenu(submenu, trigger);
         trigger.textContent = isVisible ? '◀' : '▶';
         trigger.setAttribute('aria-expanded', String(!isVisible));
     }
@@ -3923,7 +3968,7 @@ function loadModule(category, key, options = {}) {
             img.src = data.image || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200'><rect width='100%' height='100%' fill='%23111'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ff00' font-family='monospace'>[ ${data.header} PREVIEW ]</text></svg>`;
         }
 
-        openWindow('apps-window', options);
+        if (!options.populateOnly) openWindow('apps-window', options);
     } else if (category === 'music') {
         const win = document.getElementById('music-window');
         win.querySelector('.window-header .window-title').textContent = data.title;
