@@ -2610,9 +2610,18 @@ body.showcase-burst-flash::after {
     padding: 12px;
 }
 
-.game-toolbar .help-content-inner p {
-    margin-top: 8px;
+.game-toolbar .help-content-inner {
+    color: #eee8f5;
+}
+
+.game-toolbar .help-content-inner ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
     line-height: 1.5;
+}
+
+.game-toolbar .help-content-inner li + li {
+    margin-top: 5px;
 }
 
 .game-stage {
