@@ -1,0 +1,425 @@
+:root {
+    color-scheme: dark;
+    font-family: "Courier New", Courier, monospace;
+    background: #080b18;
+    color: #e5e7eb;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    --teal: #22d3ee;
+    --purple: #a78bfa;
+    --panel: #101323;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    padding: 58px 0 42px;
+    background:
+        radial-gradient(ellipse at 16% 20%, rgba(34, 211, 238, 0.12), transparent 34%),
+        radial-gradient(ellipse at 84% 72%, rgba(139, 92, 246, 0.18), transparent 38%),
+        linear-gradient(145deg, #080b18 0%, #111126 48%, #080f1d 100%);
+}
+
+a {
+    color: inherit;
+}
+
+.skip-link {
+    position: fixed;
+    z-index: 10;
+    top: 8px;
+    left: 8px;
+    padding: 8px 12px;
+    transform: translateY(-160%);
+    background: #fff;
+    color: #111827;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+.games-topbar,
+.games-taskbar {
+    position: fixed;
+    z-index: 5;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    color: #111827;
+    font: 700 11px/1.2 "Courier New", Courier, monospace;
+}
+
+.games-topbar {
+    top: 0;
+    min-height: 58px;
+    gap: 28px;
+    padding: 0 22px;
+    border-bottom: 1px solid #cbd5e1;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+}
+
+.games-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #111827;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.games-brand img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.games-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748b;
+}
+
+.games-breadcrumbs a,
+.games-back-link,
+.games-taskbar a {
+    color: #334155;
+    text-decoration: none;
+}
+
+.games-breadcrumbs a:hover,
+.games-back-link:hover,
+.games-taskbar a:hover {
+    color: #6d28d9;
+    text-decoration: underline;
+}
+
+.games-back-link {
+    margin-left: auto;
+    padding: 9px 12px;
+    border: 1px solid #94a3b8;
+}
+
+.games-desktop {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 34px 0 56px;
+}
+
+.games-intro {
+    margin: 0 0 26px;
+    text-align: center;
+}
+
+.games-eyebrow,
+.game-window__kicker {
+    margin: 0;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+.games-intro h1 {
+    margin: 8px 0;
+    color: #f8fafc;
+    font-size: clamp(30px, 5vw, 46px);
+    letter-spacing: 0.16em;
+    text-shadow: 0 0 18px rgba(167, 139, 250, 0.52);
+}
+
+.games-intro > p:last-child {
+    margin: 0 auto;
+    max-width: 580px;
+    color: #cbd5e1;
+    font: 14px/1.6 Arial, sans-serif;
+}
+
+.games-window-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 26px;
+}
+
+.game-window {
+    min-width: 0;
+    overflow: hidden;
+    border: 2px solid var(--purple);
+    background: var(--panel);
+    box-shadow:
+        0 0 0 1px rgba(34, 211, 238, 0.42),
+        0 16px 44px rgba(0, 0, 0, 0.42),
+        0 0 28px rgba(139, 92, 246, 0.22);
+}
+
+.game-window--spectris {
+    border-color: var(--teal);
+    box-shadow:
+        0 0 0 1px rgba(167, 139, 250, 0.55),
+        0 16px 44px rgba(0, 0, 0, 0.42),
+        0 0 28px rgba(34, 211, 238, 0.18);
+}
+
+.game-window__bar {
+    display: flex;
+    min-height: 38px;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-bottom: 2px solid var(--teal);
+    background: #080b14;
+    color: #dbeafe;
+    font-size: 10px;
+}
+
+.game-window--spectris .game-window__bar {
+    border-bottom-color: var(--purple);
+}
+
+.game-window__lights {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.game-window__lights i {
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--teal);
+    border-radius: 50%;
+}
+
+.game-window__lights i:nth-child(2) {
+    border-color: var(--purple);
+}
+
+.game-window__lights i:nth-child(3) {
+    border-color: #94a3b8;
+}
+
+.game-window__filename {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.game-window__status {
+    margin-left: auto;
+    color: var(--teal);
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.game-window--spectris .game-window__status {
+    color: var(--purple);
+}
+
+.game-window__body {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+}
+
+.game-window__info {
+    display: flex;
+    min-height: 164px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.game-window__kicker {
+    font-size: 9px;
+}
+
+.game-window__info h2 {
+    margin: 7px 0;
+    color: #f8fafc;
+    font-size: clamp(20px, 2.4vw, 27px);
+}
+
+.game-window__info p:not(.game-window__kicker) {
+    max-width: 54ch;
+    margin: 0;
+    color: #cbd5e1;
+    font: 14px/1.55 Arial, sans-serif;
+}
+
+.game-launch {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 13px;
+    border: 1px solid var(--teal);
+    background: rgba(34, 211, 238, 0.08);
+    color: #ecfeff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.game-window--spectris .game-launch {
+    border-color: var(--purple);
+    background: rgba(167, 139, 250, 0.1);
+}
+
+.game-launch:hover,
+.game-launch:focus-visible {
+    background: rgba(34, 211, 238, 0.2);
+    box-shadow: 0 0 14px rgba(34, 211, 238, 0.3);
+}
+
+.game-window--spectris .game-launch:hover,
+.game-window--spectris .game-launch:focus-visible {
+    background: rgba(167, 139, 250, 0.22);
+    box-shadow: 0 0 14px rgba(167, 139, 250, 0.35);
+}
+
+.game-launch:focus-visible,
+.games-topbar a:focus-visible,
+.games-taskbar a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.game-window__preview {
+    position: relative;
+    height: clamp(180px, 22vw, 250px);
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid rgba(34, 211, 238, 0.65);
+    background: #050814;
+}
+
+.game-window--spectris .game-window__preview {
+    border-color: rgba(167, 139, 250, 0.72);
+}
+
+.game-window__preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-window--spectris .game-window__preview img {
+    object-position: center 42%;
+}
+
+.game-window__preview figcaption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 8px 10px;
+    background: linear-gradient(transparent, rgba(4, 7, 16, 0.92));
+    color: #e2e8f0;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+}
+
+.games-taskbar {
+    bottom: 0;
+    min-height: 42px;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 0 20px;
+    border-top: 1px solid #cbd5e1;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.games-taskbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.games-online-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.65);
+}
+
+.games-taskbar__crumb {
+    color: #64748b;
+}
+
+@media (max-width: 760px) {
+    body {
+        padding-top: 58px;
+    }
+
+    .games-topbar {
+        gap: 14px;
+        padding: 0 12px;
+    }
+
+    .games-brand span {
+        display: none;
+    }
+
+    .games-brand img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .games-breadcrumbs {
+        gap: 7px;
+    }
+
+    .games-back-link {
+        padding: 8px;
+        font-size: 9px;
+    }
+
+    .games-desktop {
+        width: min(540px, calc(100% - 24px));
+        padding-top: 26px;
+    }
+
+    .games-intro {
+        margin-bottom: 20px;
+    }
+
+    .games-window-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .game-window__info {
+        min-height: 0;
+    }
+
+    .game-window__preview {
+        height: clamp(190px, 58vw, 290px);
+    }
+
+    .games-taskbar {
+        padding: 0 12px;
+        font-size: 9px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

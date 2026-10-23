@@ -392,6 +392,7 @@ body.boss-active.orb-damaged #canvas-container {
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-right: 8px;
     color: #6b21a8;
     font-size: 10px;
     font-weight: 700;

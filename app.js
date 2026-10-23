@@ -524,6 +524,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateGameEntityClip();
     loadModule('games', 'game_a', { keepPosition: true, silent: true });
+    if (new URLSearchParams(window.location.search).get('launch') === 'astrals-end') {
+        openWindow('games-window', { keepPosition: true, silent: true });
+    }
     loadModule('apps', Object.keys(moduleDatabase.apps)[0], {
         keepPosition: true,
         silent: true,
