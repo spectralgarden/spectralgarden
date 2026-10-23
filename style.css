@@ -351,8 +351,9 @@ body.boss-active.orb-damaged #canvas-container {
 }
 
 .site-app-header {
-    position: relative;
-    z-index: 11;
+    position: sticky;
+    top: 0;
+    z-index: 10001;
     display: flex;
     align-items: center;
     justify-content: space-between;
