@@ -3833,3 +3833,14 @@ body.sleep-aura-charging #orb-core-logo {
     from { filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 15px #c084fc); }
     to { filter: drop-shadow(0 0 15px #ffffff) drop-shadow(0 0 32px #ffffff); }
 }
+
+@media screen and (max-width: 380px) {
+    .site-app-brand span {
+        display: none;
+    }
+
+    .site-app-links {
+        gap: 5px;
+        margin-right: 0;
+    }
+}
