@@ -1628,8 +1628,9 @@ function armClusterBomb() {
     prompt.setAttribute('aria-live', 'assertive');
     prompt.innerHTML = '<strong>AOE BOMB ARMED</strong><span>CLICK OR TAP THE FIELD TO DETONATE</span>';
     prompt.style.left = `${(bounds.left + bounds.right) / 2}px`;
-    prompt.style.top = `${bounds.top + 12}px`;
     appendGameEntity(prompt);
+    const promptHeight = prompt.getBoundingClientRect().height;
+    prompt.style.top = `${Math.max(bounds.top + 12, bounds.bottom - promptHeight - 12)}px`;
 
     bombAimIndicator = document.createElement('div');
     bombAimIndicator.id = 'bomb-aim-indicator';
