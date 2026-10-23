@@ -2590,6 +2590,11 @@ body.showcase-burst-flash::after {
     white-space: nowrap;
 }
 
+.game-toolbar #bug-submenu-trigger {
+    width: 26px;
+    padding: 5px 0;
+}
+
 .game-toolbar #help-submenu,
 .game-toolbar #bug-submenu {
     position: absolute;
@@ -2623,6 +2628,24 @@ body.showcase-burst-flash::after {
 
 .game-toolbar .help-content-inner li + li {
     margin-top: 5px;
+}
+
+.game-toolbar #bug-submenu #help-submenu-container {
+    display: block;
+    width: 100%;
+}
+
+.game-toolbar #bug-submenu #help-submenu-trigger {
+    width: 100%;
+}
+
+.game-toolbar #bug-submenu #help-submenu {
+    position: static;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    margin-top: 6px;
+    padding: 8px;
 }
 
 .game-stage {

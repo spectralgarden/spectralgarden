@@ -195,22 +195,8 @@
                     <div class="shield-label"><span>HEALTH</span><span id="shield-text">100%</span></div>
                     <div class="shield-bar-outer"><div id="shield-bar-inner" class="shield-bar-inner"></div></div>
                 </div>
-                <div id="help-submenu-container">
-                    <button id="help-submenu-trigger" class="retro-btn" type="button" onclick="toggleHelpSubmenu(event)">? CONTROLS</button>
-                    <div id="help-submenu">
-                        <div class="help-content-inner">
-                            <div class="help-title">[ ASTRAL'S END // FIELD MANUAL ]</div>
-                            <ul>
-                                <li>Click or touch the core, drag it back, then release to launch it in the opposite direction. Pull farther for a stronger launch.</li>
-                                <li>Hit hostile entities with the core, and touch floating power-ups to collect them.</li>
-                                <li>Avoid enemy attacks and watch your HEALTH and LIVES in the toolbar.</li>
-                                <li>Use the pause button in the game window controls to pause or resume.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
                 <div id="bug-submenu-container">
-                    <button id="bug-submenu-trigger" class="retro-btn" type="button" onclick="toggleBugSubmenu(event)" aria-label="Open player stats and sound options" aria-controls="bug-submenu" aria-expanded="false">STATS + AUDIO</button>
+                    <button id="bug-submenu-trigger" class="retro-btn" type="button" onclick="toggleBugSubmenu(event)" aria-label="Open player stats and sound options" aria-controls="bug-submenu" aria-expanded="false">◀</button>
                     <div id="bug-submenu">
                         <div class="bug-counter-container">
                             <span class="bug-submenu-icon">👾</span>
@@ -223,6 +209,20 @@
                                 <label for="game-volume">VOLUME <output id="game-volume-value" for="game-volume">5%</output></label>
                                 <input id="game-volume" type="range" min="0" max="100" value="5" aria-label="Game sound volume">
                                 <button id="game-mute-toggle" class="retro-btn" type="button" aria-pressed="false">MUTE</button>
+                                <div id="help-submenu-container">
+                                    <button id="help-submenu-trigger" class="retro-btn" type="button" onclick="toggleHelpSubmenu(event)" aria-controls="help-submenu" aria-expanded="false">? CONTROLS</button>
+                                    <div id="help-submenu">
+                                        <div class="help-content-inner">
+                                            <div class="help-title">[ ASTRAL'S END // FIELD MANUAL ]</div>
+                                            <ul>
+                                                <li>Click or touch the core, drag it back, then release to launch it in the opposite direction. Pull farther for a stronger launch.</li>
+                                                <li>Hit hostile entities with the core, and touch floating power-ups to collect them.</li>
+                                                <li>Avoid enemy attacks and watch your HEALTH and LIVES in the toolbar.</li>
+                                                <li>Use the pause button in the game window controls to pause or resume.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -565,7 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bugMenu && bugMenu.style.display === 'block') {
             if (!bugMenu.contains(e.target) && !bugTrigger.contains(e.target)) {
                 bugMenu.style.display = 'none';
-                bugTrigger.textContent = '◀';
+                bugTrigger.setAttribute('aria-expanded', 'false');
+                const helpMenu = document.getElementById('help-submenu');
+                const helpTrigger = document.getElementById('help-submenu-trigger');
+                if (helpMenu && helpTrigger) {
+                    helpMenu.style.display = 'none';
+                    helpTrigger.setAttribute('aria-expanded', 'false');
+                }
             }
         }
 
@@ -574,6 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (helpMenu && helpMenu.style.display === 'block') {
             if (!helpMenu.contains(e.target) && !helpTrigger.contains(e.target)) {
                 helpMenu.style.display = 'none';
+                helpTrigger.setAttribute('aria-expanded', 'false');
             }
         }
     });
@@ -620,6 +627,7 @@ function toggleHelpSubmenu(event) {
         const isVisible = submenu.style.display === 'block';
         submenu.style.display = isVisible ? 'none' : 'block';
         if (!isVisible) positionGameSubmenu(submenu, trigger);
+        trigger.setAttribute('aria-expanded', String(!isVisible));
     }
 }
 window.toggleHelpSubmenu = toggleHelpSubmenu;
@@ -899,8 +907,15 @@ function toggleBugSubmenu(event) {
         const isVisible = submenu.style.display === 'block';
         submenu.style.display = isVisible ? 'none' : 'block';
         if (!isVisible) positionGameSubmenu(submenu, trigger);
-        trigger.textContent = isVisible ? '◀' : '▶';
         trigger.setAttribute('aria-expanded', String(!isVisible));
+        if (isVisible) {
+            const helpMenu = document.getElementById('help-submenu');
+            const helpTrigger = document.getElementById('help-submenu-trigger');
+            if (helpMenu && helpTrigger) {
+                helpMenu.style.display = 'none';
+                helpTrigger.setAttribute('aria-expanded', 'false');
+            }
+        }
     }
 }
 
