@@ -20,6 +20,133 @@
     -webkit-user-drag: auto;
 }
 
+.site-guide.site-guide--page {
+    box-sizing: border-box;
+    margin-top: 16px;
+    margin-bottom: 64px;
+}
+
+.site-guide-taskbar {
+    position: fixed;
+    z-index: 10002;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 42px;
+    padding: 0 20px;
+    border-top: 1px solid #cbd5e1;
+    background: #f8fafc;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+    color: #111827;
+    font: 700 11px/1.2 "Courier New", Courier, monospace;
+}
+
+.site-guide-taskbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.site-guide-taskbar__online-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.65);
+}
+
+.site-guide-taskbar__crumb {
+    color: #64748b;
+}
+
+.site-guide-taskbar a {
+    color: #334155;
+    text-decoration: none;
+}
+
+.site-guide-taskbar a:hover,
+.site-guide-taskbar a:focus-visible {
+    color: #6d28d9;
+    text-decoration: underline;
+}
+
+body.site-guide-page {
+    padding-bottom: 52px;
+}
+
+@media (max-width: 600px) {
+    .site-guide-taskbar {
+        padding: 0 12px;
+        font-size: 9px;
+    }
+
+    .site-guide-taskbar__crumb {
+        display: none;
+    }
+}
+
+.site-app-header {
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    height: 36px;
+    padding: 0 16px;
+    border-bottom: 2px solid #111;
+    background: repeating-linear-gradient(0deg, #fff 0 3px, #f7f7f7 3px 4px);
+    box-shadow: 0 2px 0 rgba(139, 92, 246, 0.45);
+    font-family: "Courier New", Courier, monospace;
+}
+
+.site-app-brand,
+.site-app-links a {
+    color: #111;
+    text-decoration: none;
+}
+
+.site-app-brand {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.7px;
+}
+
+.site-app-brand img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.site-app-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-right: 8px;
+    color: #6b21a8;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.site-app-links a:hover,
+.site-app-links a:focus-visible {
+    color: #111;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .site-guide__intro {
     max-width: 760px;
     margin-bottom: 28px;
@@ -159,9 +286,42 @@
 }
 
 @media (max-width: 768px) {
+    .site-app-header {
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .site-app-brand {
+        gap: 5px;
+        font-size: 8px;
+        letter-spacing: 0;
+    }
+
+    .site-app-brand img {
+        width: 21px;
+        height: 21px;
+    }
+
+    .site-app-links {
+        gap: 8px;
+        font-size: 8px;
+        letter-spacing: 0;
+    }
+
     .site-guide {
         width: 100%;
-        margin-top: 0;
+        margin-top: 36px;
         padding: 24px 18px;
+    }
+}
+
+@media (max-width: 380px) {
+    .site-app-brand span {
+        display: none;
+    }
+
+    .site-app-links {
+        gap: 5px;
+        margin-right: 0;
     }
 }

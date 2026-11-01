@@ -752,6 +752,7 @@ body.orb-exploding .wallpaper-inline-logo {
 
 #taskbar .taskbar-right > button[onclick*="tos-window"],
 #taskbar .taskbar-right > button[onclick*="contact-window"],
+#taskbar .taskbar-right > .taskbar-about-btn,
 #taskbar .taskbar-right > .taskbar-forum-btn {
     border-color: #8b5cf6 !important;
     color: #8b5cf6;
@@ -760,6 +761,7 @@ body.orb-exploding .wallpaper-inline-logo {
 
 #taskbar .taskbar-right > button[onclick*="tos-window"]:hover,
 #taskbar .taskbar-right > button[onclick*="contact-window"]:hover,
+#taskbar .taskbar-right > .taskbar-about-btn:hover,
 #taskbar .taskbar-right > .taskbar-forum-btn:hover {
     color: #ffffff;
     box-shadow: 3px 3px 0 #8b5cf6;
@@ -1994,13 +1996,18 @@ body.showcase-burst-flash::after {
     transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:focus-visible {
     background: linear-gradient(100deg, rgba(124, 58, 237, 0.16), rgba(217, 70, 239, 0.12));
     color: #ffffff;
     border-left-color: #a855f7;
     box-shadow: 0 0 14px rgba(139, 92, 246, 0.55), inset 0 0 12px rgba(217, 70, 239, 0.18);
     text-shadow: 0 0 8px rgba(192, 132, 252, 0.9);
     background-color: #24133d;
+}
+
+.start-menu-content > a.menu-item {
+    text-decoration: none;
 }
 
 .menu-item-arrow {
@@ -2896,6 +2903,7 @@ body.orb-damaged #desktop .game-stage .wallpaper-inline-logo {
 
     #taskbar .taskbar-right > button[onclick*="tos-window"],
     #taskbar .taskbar-right > button[onclick*="contact-window"],
+    #taskbar .taskbar-right > .taskbar-about-btn,
     #taskbar .taskbar-right > .taskbar-forum-btn,
     #taskbar .taskbar-right > #system-clock {
         display: flex !important;
