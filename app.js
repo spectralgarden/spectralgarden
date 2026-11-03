@@ -731,6 +731,8 @@ function spawnShowcaseAlly() {
         openShowcaseAlly(category, key, element);
     });
     appendGameEntity(element);
+    const width = element.offsetWidth;
+    const height = element.offsetHeight;
 
     window.activeShowcaseAlly = {
         category,
@@ -738,6 +740,8 @@ function spawnShowcaseAlly() {
         element,
         x,
         y,
+        width,
+        height,
         vx: 2.5 + Math.random() * 1.7,
         bossHit: false
     };
@@ -3028,8 +3032,8 @@ function updateGameplayLoop() {
         ally.x += ally.vx * movementScale;
         ally.element.style.transform = `translate3d(${ally.x}px, ${ally.y}px, 0)`;
 
-        const allyWidth = ally.element.offsetWidth;
-        const allyHeight = ally.element.offsetHeight;
+        const allyWidth = ally.width;
+        const allyHeight = ally.height;
         for (let i = window.dataBugs.length - 1; i >= 0; i--) {
             const bug = window.dataBugs[i];
             const bugX = bug.x + 12;
@@ -3238,7 +3242,9 @@ function updateGameplayLoop() {
         const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
         const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
         const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 24;
-        if (Math.hypot(fighter.x + 30 - orbX, fighter.y + 20 - orbY) < collisionRadius) {
+        const fighterDx = fighter.x + 30 - orbX;
+        const fighterDy = fighter.y + 20 - orbY;
+        if (fighterDx * fighterDx + fighterDy * fighterDy < collisionRadius * collisionRadius) {
             damageEnemyFighter(fighter);
             takeDamage(8);
             continue;
@@ -3284,7 +3290,10 @@ function updateGameplayLoop() {
 
         const orbX = window.orbScreenX || (gameBounds.left + gameBounds.right) / 2;
         const orbY = window.orbScreenY || (gameBounds.top + gameBounds.bottom) / 2;
-        if (Math.hypot(mine.x + 18 - orbX, mine.y + 18 - orbY) < 50 * (window.orbZoomScale || 0.22) + 32) {
+        const collisionRadius = 50 * (window.orbZoomScale || 0.22) + 32;
+        const mineDx = mine.x + 18 - orbX;
+        const mineDy = mine.y + 18 - orbY;
+        if (mineDx * mineDx + mineDy * mineDy < collisionRadius * collisionRadius) {
             detonateMine(mine);
             continue;
         }
@@ -3345,27 +3354,32 @@ function updateGameplayLoop() {
         }
 
         let target = null;
-        let minDist = 280;
+        let minDistSq = 280 * 280;
 
         for (const fighter of enemyFighters) {
-            const distance = Math.hypot(fighter.x + 30 - drone.x, fighter.y + 20 - drone.y);
-            if (distance < minDist) {
-                minDist = distance;
+            const dx = fighter.x + 30 - drone.x;
+            const dy = fighter.y + 20 - drone.y;
+            const distanceSq = dx * dx + dy * dy;
+            if (distanceSq < minDistSq) {
+                minDistSq = distanceSq;
                 target = { id: 'enemy-fighter', fighter, x: fighter.x + 30, y: fighter.y + 20 };
             }
         }
 
         if (window.bossActive && bossElement) {
-            const dB = Math.hypot(window.bossX + 50 - drone.x, window.bossY + 50 - drone.y);
-            if (dB < minDist) {
-                minDist = dB;
+            const dx = window.bossX + 50 - drone.x;
+            const dy = window.bossY + 50 - drone.y;
+            const distanceSq = dx * dx + dy * dy;
+            if (distanceSq < minDistSq) {
+                minDistSq = distanceSq;
                 target = { id: 'boss', x: window.bossX + 50, y: window.bossY + 50 };
             }
         }
 
         if (!target && confettiNpc) {
-            const d = Math.hypot(confettiNpc.x + 38 - drone.x, confettiNpc.y + 38 - drone.y);
-            if (d < minDist) {
+            const dx = confettiNpc.x + 38 - drone.x;
+            const dy = confettiNpc.y + 38 - drone.y;
+            if (dx * dx + dy * dy < minDistSq) {
                 target = {
                     id: 'confetti-npc',
                     x: confettiNpc.x + 38,
@@ -3376,9 +3390,11 @@ function updateGameplayLoop() {
 
         if (!target) {
             for (const demon of fireDemons) {
-                const d = Math.hypot(demon.x + 34 - drone.x, demon.y + 34 - drone.y);
-                if (d < minDist) {
-                    minDist = d;
+                const dx = demon.x + 34 - drone.x;
+                const dy = demon.y + 34 - drone.y;
+                const distanceSq = dx * dx + dy * dy;
+                if (distanceSq < minDistSq) {
+                    minDistSq = distanceSq;
                     target = { id: 'fire-demon', demon, x: demon.x + 34, y: demon.y + 34 };
                 }
             }
@@ -3388,9 +3404,11 @@ function updateGameplayLoop() {
             for (let b = 0; b < window.dataBugs.length; b++) {
                 const bug = window.dataBugs[b];
                 if (bug.isPeaceful) continue;
-                const d = Math.hypot(bug.x - drone.x, bug.y - drone.y);
-                if (d < minDist) {
-                    minDist = d;
+                const dx = bug.x - drone.x;
+                const dy = bug.y - drone.y;
+                const distanceSq = dx * dx + dy * dy;
+                if (distanceSq < minDistSq) {
+                    minDistSq = distanceSq;
                     target = bug;
                 }
             }
@@ -3428,8 +3446,9 @@ function updateGameplayLoop() {
         for (let b = window.dataBugs.length - 1; b >= 0; b--) {
             const bug = window.dataBugs[b];
             if (bug.isPeaceful) continue;
-            const d = Math.hypot(bug.x - tornado.x, bug.y - tornado.y);
-            if (d < 110) {
+            const dx = bug.x - tornado.x;
+            const dy = bug.y - tornado.y;
+            if (dx * dx + dy * dy < 110 * 110) {
                 explodeBug(bug.id);
             }
         }
@@ -3437,8 +3456,9 @@ function updateGameplayLoop() {
         damageConfettiNpcInRadius(tornado.x, tornado.y, 110);
 
         if (window.bossActive && bossElement) {
-            const dBoss = Math.hypot(window.bossX + 50 - tornado.x, window.bossY + 50 - tornado.y);
-            if (dBoss < 110) {
+            const dx = window.bossX + 50 - tornado.x;
+            const dy = window.bossY + 50 - tornado.y;
+            if (dx * dx + dy * dy < 110 * 110) {
                 damageBoss(5); 
             }
         }
