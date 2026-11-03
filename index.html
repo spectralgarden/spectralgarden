@@ -150,7 +150,10 @@
         <div id="vst-window" class="window vst-showcase-window" style="top: 49%; left: 65%; width: 31%; height: 39%; display: none;">
             <div class="window-header">
                 <span class="window-title">C:\PROG\VST_UNITS\MATRIX.EXE</span>
-                <button class="close-btn" onclick="closeWindow('vst-window')">X</button>
+                <div class="showcase-window-controls">
+                    <button id="vst-rotation-toggle" class="showcase-rotation-btn" type="button" aria-label="Pause VST carousel" title="Pause VST carousel" aria-pressed="false" onclick="toggleShowcaseRotation('vst')">Ⅱ</button>
+                    <button class="close-btn" onclick="closeWindow('vst-window')">X</button>
+                </div>
             </div>
             <div class="window-body">
                 <div class="action-bar showcase-action-bar"></div>
@@ -273,7 +276,10 @@
         <div id="apps-window" class="window apps-showcase-window" style="top: 7%; left: 65%; width: 31%; height: 38%; display: none;">
             <div class="window-header">
                 <span class="window-title">C:\PROG\APPS\AKASHIC_TAROT.EXE</span>
-                <button class="close-btn" onclick="closeWindow('apps-window')">X</button>
+                <div class="showcase-window-controls">
+                    <button id="apps-rotation-toggle" class="showcase-rotation-btn" type="button" aria-label="Pause apps carousel" title="Pause apps carousel" aria-pressed="false" onclick="toggleShowcaseRotation('apps')">Ⅱ</button>
+                    <button class="close-btn" onclick="closeWindow('apps-window')">X</button>
+                </div>
             </div>
             <div class="window-body">
                 <div class="app-launch-bar showcase-action-bar"></div>

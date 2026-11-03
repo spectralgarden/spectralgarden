@@ -805,6 +805,29 @@ body.orb-exploding .wallpaper-inline-logo {
     line-height: 18px;
 }
 
+.showcase-window-controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 4px;
+}
+
+.showcase-rotation-btn {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid #8b5cf6;
+    background: #111111;
+    color: #8b5cf6;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
+}
+
+.showcase-rotation-btn:hover {
+    background: #8b5cf6;
+    color: #ffffff;
+}
+
 .close-btn:hover {
     background: #8b5cf6;
     color: #ffffff;

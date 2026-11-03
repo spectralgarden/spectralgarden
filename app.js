@@ -235,6 +235,7 @@ let bugIdCounter = 0;
 let showcaseAllyTimer = null;
 let lastShowcaseItemId = null;
 const desktopShowcaseTimers = new Map();
+const pausedShowcaseRotations = new Set();
 
 // Lives & Player state
 window.playerLives = 3;
@@ -4019,7 +4020,7 @@ function loadModule(category, key, options = {}) {
     if ((category === 'apps' || category === 'vst') && !options.rotate && !desktopShowcaseTimers.has(category)) {
         startDesktopShowcaseRotation(category);
     }
-    closeStartMenu();
+    if (!options.rotate) closeStartMenu();
 }
 
 function startDesktopShowcaseRotation(category) {
@@ -4028,6 +4029,7 @@ function startDesktopShowcaseRotation(category) {
     if (desktopShowcaseTimers.has(category)) clearInterval(desktopShowcaseTimers.get(category));
     const timer = setInterval(() => {
         if (window.matchMedia('(max-width: 768px)').matches) return;
+        if (pausedShowcaseRotations.has(category)) return;
         const showcase = document.getElementById(windowId);
         if (!showcase || showcase.style.display === 'none') return;
         const keys = Object.keys(moduleDatabase[category]);
@@ -4037,6 +4039,25 @@ function startDesktopShowcaseRotation(category) {
         loadModule(category, nextKey, { keepPosition: true, rotate: true, silent: true });
     }, interval);
     desktopShowcaseTimers.set(category, timer);
+}
+
+function toggleShowcaseRotation(category) {
+    if (category !== 'apps' && category !== 'vst') return;
+
+    const isPaused = !pausedShowcaseRotations.has(category);
+    if (isPaused) {
+        pausedShowcaseRotations.add(category);
+    } else {
+        pausedShowcaseRotations.delete(category);
+    }
+
+    const button = document.getElementById(`${category}-rotation-toggle`);
+    if (!button) return;
+    const label = isPaused ? `Resume ${category === 'apps' ? 'apps' : 'VST'} carousel` : `Pause ${category === 'apps' ? 'apps' : 'VST'} carousel`;
+    button.textContent = isPaused ? '▶' : 'Ⅱ';
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    button.setAttribute('aria-pressed', String(isPaused));
 }
 
 function openAppPage(key) {
