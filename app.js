@@ -148,6 +148,15 @@ const moduleDatabase = {
             links: [
                 { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/HollowLight/releases/download/hollowlight/Hollow.Light.zip" }
             ]
+        },
+    vst_q: {
+            title: "C:\\PROG\\VST_UNITS\\SPECTRAL_BLOOM.VST3",
+            header: "Spectral Bloom",
+            desc: "A premium hybrid analog-digital synthesizer tailored for Witch House, Darkwave, Coldwave, Shoegaze, Dream Pop, Industrial, Ambient Cinematic, Synthwave, and atmospheric electronic music.",
+            image: "assets/images/vst_spectral_bloom.gif",
+            links: [
+                { text: "DOWNLOAD VST3", href: "https://github.com/spectralgarden/spectralbloom/releases/download/vst3/Spectral.Bloom.zip" }
+            ]
         }
     },
     games: {
