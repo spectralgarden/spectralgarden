@@ -3841,7 +3841,10 @@ body.sleep-paralysis-active #orb-core-logo {
 }
 
 body.sleep-aura-charging #orb-core-logo {
-    filter: drop-shadow(0 0 12px #ffffff) drop-shadow(0 0 26px #c084fc);
+    animation: none;
+    filter: drop-shadow(0 0 var(--sleep-charge-glow, 12px) #ffffff)
+        drop-shadow(0 0 var(--sleep-charge-glow-wide, 26px) #c084fc);
+    transform: translate(-50%, -50%) scale(var(--sleep-charge-scale, 1));
 }
 
 @keyframes sleep-rain {

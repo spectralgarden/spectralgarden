@@ -354,6 +354,7 @@ function togglePauseGame() {
         window.sleepParalysisCharging = false;
         window.cancelSleepParalysisCharge?.();
         document.body.classList.remove('sleep-aura-charging');
+        resetSleepParalysisChargeVisual();
     } else if (wasPaused && sleepParalysisPausedAt) {
         if (sleepParalysisEndsAt) sleepParalysisEndsAt += Date.now() - sleepParalysisPausedAt;
         sleepParalysisPausedAt = 0;
@@ -1964,6 +1965,14 @@ function restoreEnergy(amount) {
     createExplosionParticles(sX, sY, '#ffd700');
 }
 
+function resetSleepParalysisChargeVisual() {
+    const orb = document.getElementById('orb-core-logo');
+    if (!orb) return;
+    orb.style.removeProperty('--sleep-charge-scale');
+    orb.style.removeProperty('--sleep-charge-glow');
+    orb.style.removeProperty('--sleep-charge-glow-wide');
+}
+
 function updateSleepParalysisHUD() {
     const timer = document.getElementById('sleep-paralysis-timer');
     const points = document.getElementById('sleep-paralysis-round-points');
@@ -1978,6 +1987,12 @@ function updateSleepParalysisHUD() {
     if (charge && window.sleepParalysisCharging) {
         const progress = Math.min(1, (Date.now() - sleepParalysisChargeStartedAt) / 2200);
         charge.style.width = `${progress * 100}%`;
+        const orb = document.getElementById('orb-core-logo');
+        if (orb) {
+            orb.style.setProperty('--sleep-charge-scale', (1 + progress * 0.4).toFixed(3));
+            orb.style.setProperty('--sleep-charge-glow', `${12 + progress * 18}px`);
+            orb.style.setProperty('--sleep-charge-glow-wide', `${26 + progress * 34}px`);
+        }
     }
 }
 
@@ -2082,7 +2097,7 @@ function updateSleepParalysisMode(now) {
             sleepParalysisEnemies.splice(i, 1);
             if (now - sleepParalysisLastDamageAt >= 500) {
                 sleepParalysisLastDamageAt = now;
-                takeDamage(12);
+                takeDamage(13.2);
             }
         }
     }
@@ -2168,6 +2183,7 @@ function endSleepParalysisMode(survived) {
     }
     clearSleepParalysisEnemies();
     document.body.classList.remove('sleep-aura-charging');
+    resetSleepParalysisChargeVisual();
     const overlay = document.getElementById('sleep-paralysis-overlay');
     if (overlay) overlay.classList.remove('is-active');
     const hud = document.getElementById('sleep-paralysis-hud');
@@ -2190,6 +2206,7 @@ function resetSleepParalysisMode() {
     document.getElementById('sleep-paralysis-overlay')?.remove();
     document.getElementById('sleep-paralysis-hud')?.remove();
     document.body.classList.remove('sleep-paralysis-active', 'sleep-aura-charging');
+    resetSleepParalysisChargeVisual();
     window.sleepParalysisActive = false;
     window.sleepParalysisTransitioning = false;
     window.sleepParalysisCharging = false;
@@ -2212,6 +2229,7 @@ function releaseSleepParalysisCharge() {
     const radius = 90 + charge * 240;
     window.sleepParalysisCharging = false;
     document.body.classList.remove('sleep-aura-charging');
+    resetSleepParalysisChargeVisual();
 
     const wave = document.createElement('div');
     wave.className = 'sleep-paralysis-aura';
